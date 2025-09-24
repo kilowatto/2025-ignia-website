@@ -3,8 +3,15 @@ import { defineConfig } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
 import tailwind from '@tailwindcss/vite'
 import i18next from "astro-i18next";
+import node from '@astrojs/node';
 
 export default defineConfig({
+  // Configurar para Server-Side Rendering para permitir detección de idioma
+  output: 'server',
+  adapter: node({
+    mode: 'standalone'
+  }),
+  
   integrations: [sitemap(), i18next()],
   vite: {
     plugins: [tailwind()],

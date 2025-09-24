@@ -4,5 +4,9 @@
     "products": "Products",
     "services": "Services",
     "support": "Support"
+  },
+  "meta": {
+    "title": "Ignia - Empowering Your Digital Journey",
+    "description": "Ignia is a leading technology solutions provider, offering innovative products and services to help businesses thrive in the digital age."
   }
 }

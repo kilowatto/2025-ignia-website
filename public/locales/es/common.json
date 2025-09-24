@@ -4,5 +4,9 @@
     "products": "Productos",
     "services": "Servicios",
     "support": "Soporte"
+  },
+  "meta": {
+    "title": "Ignia - Potenciando Tu Viaje Digital",
+    "description": "Ignia es un proveedor líder de soluciones tecnológicas, ofreciendo productos y servicios innovadores para ayudar a las empresas a prosperar en la era digital."
   }
 }

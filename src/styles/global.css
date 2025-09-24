@@ -1,28 +1,27 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    /* Marca */
+    --color-primary: #f36b1c;
+    --color-secondary: #0b6ab0;
 
-@theme {
-  /* Marca */
-  --color-primary: #f36b1c;
-  --color-secondary: #0b6ab0;
+    /* Complementarios */
+    --color-accent1: #f8a337;
+    --color-accent2: #CE4912;
 
-  /* Complementarios */
-  --color-accent1: #f8a337;
-  --color-accent2: #CE4912;
+    /* Grises (legibilidad) */
+    --color-gray-900: #000000;
+    --color-gray-800: #434547;
+    --color-gray-600: #727476;
+    --color-gray-400: #A4A6A8;
+    --color-gray-100: #ffffff;
 
-  /* Grises (legibilidad) */
-  --color-gray-900: #000000;
-  --color-gray-800: #434547;
-  --color-gray-600: #727476;
-  --color-gray-400: #A4A6A8;
-  --color-gray-100: #ffffff;
-
-  /* Tipografías */
-  --font-title: "Raleway Light", sans-serif;
-  --font-subtitle: "Raleway Medium", sans-serif;
-  --font-body: "Raleway Regular", sans-serif;
-
-  
+    /* Tipografías */
+    --font-title: "Raleway Light", sans-serif;
+    --font-subtitle: "Raleway Medium", sans-serif;
+    --font-body: "Raleway Regular", sans-serif;
+  }
 }
 
   /* --- INICIO DE LA MODIFICACIÓN --- */
@@ -30,6 +29,7 @@
   .nav-link {
     /* Esta es la duración al SALIR del hover */
     transition-duration: 2.5s;
+    color: var(--color-secondary);
   }
   
   .nav-link:hover {

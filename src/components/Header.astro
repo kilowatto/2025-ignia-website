@@ -1,13 +1,25 @@
 ---
 const locale = Astro.currentLocale || "en";
 
-// Cargamos las traducciones directamente
-const translations = await import(`../../public/locales/${locale}/common.json`);
+// Importamos las traducciones usando import estático
+import enTranslations from "../../public/locales/en/common.json";
+import esTranslations from "../../public/locales/es/common.json";
+import frTranslations from "../../public/locales/fr/common.json";
+
+// Importamos el componente del selector de idiomas
+import LangSelect from "./langSelect.astro";
+
+// Mapa de traducciones
+const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+};
 
 // Función simple de traducción
 const t = (key: string): string => {
   const keys = key.split(".");
-  let value: any = translations.default;
+  let value: any = translations[locale as keyof typeof translations];
 
   for (const k of keys) {
     value = value?.[k];
@@ -26,7 +38,7 @@ const links = [
 const base = locale === "en" ? "" : `/${locale}`;
 ---
 
-<header class="w-full bg-white shadow-md shadow-amber-500">
+<header class="w-full bg-white shadow-[0_4px_7px_0_var(--color-primary)]">
   <div
     class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-24"
   >
@@ -35,26 +47,32 @@ const base = locale === "en" ? "" : `/${locale}`;
       <img class="h-16 w-auto" src="/logo.svg" alt="Ignia Cloud Logo" />
     </a>
 
-    <nav>
-      <div id="magic-nav-container" class="relative flex items-center gap-8">
-        {
-          links.map((link) => (
-            <a
-              aria-label={t(link.tKey)}
-              href={locale === "en" ? link.href : `/${locale}${link.href}`}
-              class="nav-link text-secondary font-medium text-lg py-2"
-            >
-              {t(link.tKey)}
-            </a>
-          ))
-        }
+    <div class="flex items-center gap-6">
+      <nav>
+        <div id="magic-nav-container" class="relative flex items-center gap-8">
+          {
+            links.map((link) => (
+              <a
+                aria-label={t(link.tKey)}
+                href={locale === "en" ? link.href : `/${locale}${link.href}`}
+                class="nav-link text-secondary font-medium text-lg py-2 "
+              >
+                {t(link.tKey)}
+              </a>
+            ))
+          }
 
-        <span
-          id="magic-line"
-          class="absolute bottom-0 h-1 bg-primary rounded-full"
-          style="opacity: 0;"></span>
-      </div>
-    </nav>
+          <span
+            id="magic-line"
+            class="absolute bottom-0 bg-primary rounded-full shadow-lg magic-line-debug"
+            style="opacity: 0; width: 0px; height: 6px; transform: translateX(0px); background-color: #f36b1c !important; z-index: 100; transition: all 0.3s ease;"
+          ></span>
+        </div>
+      </nav>
+
+      <!-- Selector de idiomas -->
+      <LangSelect />
+    </div>
   </div>
 </header>
 
@@ -64,35 +82,124 @@ const base = locale === "en" ? "" : `/${locale}`;
     transition:
       transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s ease-in-out;
+      opacity 0.3s ease-in-out !important;
+    z-index: 100 !important;
+    pointer-events: none !important;
+    background-color: #f36b1c !important;
+    height: 6px !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
+  }
+
+  /* Clase adicional para debuggear */
+  .magic-line-debug {
+    background: #f36b1c !important;
+    display: block !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    height: 6px !important;
+    border-radius: 9999px !important;
+    z-index: 9999 !important;
+    box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
+  }
+
+  /* Asegurar que el container tenga posición relativa */
+  #magic-nav-container {
+    position: relative !important;
+  }
+
+  /* Sobrescribir cualquier transición que pueda interferir */
+  .nav-link {
+    position: relative !important;
+    z-index: 5 !important;
   }
 </style>
 <script>
-  // ... tu script no necesita cambios
-  const navContainer = document.getElementById(
-    "magic-nav-container"
-  ) as HTMLElement;
-  const magicLine = document.getElementById("magic-line") as HTMLElement;
-  const navLinks = document.querySelectorAll<HTMLElement>(".nav-link");
-  let hideTimeout: number;
+  // Script del magic line más robusto
+  let magicLineInitialized = false;
 
-  navLinks.forEach((link) => {
-    link.addEventListener("mouseenter", () => {
-      const linkWidth = link.offsetWidth;
-      const linkLeft = link.offsetLeft;
-      magicLine.style.width = `${linkWidth}px`;
-      magicLine.style.transform = `translateX(${linkLeft}px)`;
-      magicLine.style.opacity = "1";
+  function initMagicLine() {
+    if (magicLineInitialized) return;
+
+    const navContainer = document.querySelector(
+      "#magic-nav-container"
+    ) as HTMLElement;
+    const magicLine = document.querySelector("#magic-line") as HTMLElement;
+    const navLinks = document.querySelectorAll<HTMLElement>(".nav-link");
+
+    console.log("🔍 Magic Line Debug:", {
+      navContainer: !!navContainer,
+      magicLine: !!magicLine,
+      navLinksCount: navLinks.length,
     });
-  });
 
-  navContainer.addEventListener("mouseleave", () => {
-    hideTimeout = window.setTimeout(() => {
-      magicLine.style.opacity = "0";
-    }, 2500);
-  });
+    if (!navContainer || !magicLine || navLinks.length === 0) {
+      console.error("❌ Magic Line: Missing elements");
+      setTimeout(initMagicLine, 100); // Retry after 100ms
+      return;
+    }
 
-  navContainer.addEventListener("mouseenter", () => {
-    clearTimeout(hideTimeout);
-  });
+    magicLineInitialized = true;
+    console.log("✅ Magic Line: Initialized successfully");
+
+    let hideTimeout: number;
+
+    navLinks.forEach((link, index) => {
+      link.addEventListener("mouseenter", () => {
+        clearTimeout(hideTimeout);
+        const rect = link.getBoundingClientRect();
+        const containerRect = navContainer.getBoundingClientRect();
+        const linkWidth = rect.width;
+        const linkLeft = rect.left - containerRect.left;
+
+        console.log(`🎯 Link ${index} hover:`, { linkWidth, linkLeft });
+
+        // Aplicar todos los estilos de una vez
+        Object.assign(magicLine.style, {
+          width: `${linkWidth}px`,
+          transform: `translateX(${linkLeft}px)`,
+          opacity: "1",
+          backgroundColor: "#f36b1c",
+          height: "6px",
+          zIndex: "9999",
+          position: "absolute",
+          bottom: "0px",
+          borderRadius: "9999px",
+          boxShadow: "0 4px 6px -1px rgba(243, 107, 28, 0.5)",
+          transition: "all 0.3s ease",
+        });
+
+        console.log("🎨 Magic line styles applied:", {
+          width: magicLine.style.width,
+          opacity: magicLine.style.opacity,
+          backgroundColor: magicLine.style.backgroundColor,
+        });
+      });
+    });
+
+    navContainer.addEventListener("mouseleave", () => {
+      hideTimeout = window.setTimeout(() => {
+        console.log("🫥 Hiding magic line");
+        magicLine.style.opacity = "0";
+      }, 500); // Aumenté el delay a 500ms
+    });
+
+    // Evento adicional para mantener la línea visible
+    navContainer.addEventListener("mouseenter", () => {
+      clearTimeout(hideTimeout);
+    });
+  }
+
+  // Intentar inicializar en diferentes momentos
+  document.addEventListener("DOMContentLoaded", initMagicLine);
+
+  // Fallback si DOMContentLoaded ya pasó
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMagicLine);
+  } else {
+    initMagicLine();
+  }
+
+  // Triple fallback
+  setTimeout(initMagicLine, 500);
 </script>

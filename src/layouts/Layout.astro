@@ -1,18 +1,36 @@
 ---
+const locale = Astro.currentLocale || "en";
+
 // src/layouts/Layout.astro
-import Header from "../components/Header.astro"; // Importas el Header aquí
+import Header from "../components/Header.astro";
+import LanguageDetection from "../components/LanguageDetection.astro";
 import "../styles/global.css";
-const { title } = Astro.props;
+const { title, Content_Description } = Astro.props;
+
+//importaciones de i18n
+import enTranslations from "../../public/locales/en/common.json";
+import esTranslations from "../../public/locales/es/common.json";
+import frTranslations from "../../public/locales/fr/common.json";
+const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+};
+
+// Obtener idioma actual para configurar el lang del HTML
+const currentLocale = Astro.currentLocale || "en";
 ---
 
-<html lang="es">
+<html lang={currentLocale}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
+    <meta name="description" content={Content_Description} />
   </head>
   <body>
+    <LanguageDetection />
     <Header />
 
     <main>

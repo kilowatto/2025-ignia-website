@@ -4,5 +4,9 @@
     "products": "Produits",
     "services": "Services",
     "support": "Soutien"
+  },
+  "meta": {
+    "title": "Ignia - Votre partenaire technologique de confiance",
+    "description": "Chez Ignia, nous offrons des solutions technologiques innovantes pour propulser votre entreprise vers l'avenir. Découvrez nos produits et services de pointe."
   }
 }
