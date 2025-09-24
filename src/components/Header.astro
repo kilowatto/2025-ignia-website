@@ -1,0 +1,98 @@
+---
+const locale = Astro.currentLocale || "en";
+
+// Cargamos las traducciones directamente
+const translations = await import(`../../public/locales/${locale}/common.json`);
+
+// Función simple de traducción
+const t = (key: string): string => {
+  const keys = key.split(".");
+  let value: any = translations.default;
+
+  for (const k of keys) {
+    value = value?.[k];
+  }
+
+  return value || key;
+};
+
+// 1. Reemplazamos los textos por claves de traducción
+const links = [
+  { href: "/soluciones/", tKey: "nav.solutions" },
+  { href: "/productos/", tKey: "nav.products" },
+  { href: "/servicios/", tKey: "nav.services" },
+  { href: "/soporte/", tKey: "nav.support" },
+];
+const base = locale === "en" ? "" : `/${locale}`;
+---
+
+<header class="w-full bg-white shadow-md shadow-amber-500">
+  <div
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-24"
+  >
+    <a href={locale === "en" ? "/" : `/${locale}/`}>
+      {/* El logo ahora apunta a la raíz del idioma actual */}
+      <img class="h-16 w-auto" src="/logo.svg" alt="Ignia Cloud Logo" />
+    </a>
+
+    <nav>
+      <div id="magic-nav-container" class="relative flex items-center gap-8">
+        {
+          links.map((link) => (
+            <a
+              aria-label={t(link.tKey)}
+              href={locale === "en" ? link.href : `/${locale}${link.href}`}
+              class="nav-link text-secondary font-medium text-lg py-2"
+            >
+              {t(link.tKey)}
+            </a>
+          ))
+        }
+
+        <span
+          id="magic-line"
+          class="absolute bottom-0 h-1 bg-primary rounded-full"
+          style="opacity: 0;"></span>
+      </div>
+    </nav>
+  </div>
+</header>
+
+{/* El style y el script permanecen exactamente iguales */}
+<style>
+  #magic-line {
+    transition:
+      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.3s ease-in-out;
+  }
+</style>
+<script>
+  // ... tu script no necesita cambios
+  const navContainer = document.getElementById(
+    "magic-nav-container"
+  ) as HTMLElement;
+  const magicLine = document.getElementById("magic-line") as HTMLElement;
+  const navLinks = document.querySelectorAll<HTMLElement>(".nav-link");
+  let hideTimeout: number;
+
+  navLinks.forEach((link) => {
+    link.addEventListener("mouseenter", () => {
+      const linkWidth = link.offsetWidth;
+      const linkLeft = link.offsetLeft;
+      magicLine.style.width = `${linkWidth}px`;
+      magicLine.style.transform = `translateX(${linkLeft}px)`;
+      magicLine.style.opacity = "1";
+    });
+  });
+
+  navContainer.addEventListener("mouseleave", () => {
+    hideTimeout = window.setTimeout(() => {
+      magicLine.style.opacity = "0";
+    }, 2500);
+  });
+
+  navContainer.addEventListener("mouseenter", () => {
+    clearTimeout(hideTimeout);
+  });
+</script>

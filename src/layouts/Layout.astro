@@ -1,0 +1,22 @@
+---
+// src/layouts/Layout.astro
+import Header from "../components/Header.astro"; // Importas el Header aquí
+import "../styles/global.css";
+const { title } = Astro.props;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

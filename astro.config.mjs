@@ -1,17 +1,26 @@
-// @ts-check
-import { defineConfig } from 'astro/config';
+// astro.config.ts
+import { defineConfig } from 'astro/config'
+import sitemap from '@astrojs/sitemap'
+import tailwind from '@tailwindcss/vite'
+import i18next from "astro-i18next";
 
-import sitemap from '@astrojs/sitemap';
-
-import tailwindcss from '@tailwindcss/vite';
-
-import ogCanvas from 'astro-og-canvas';
-
-// https://astro.build/config
 export default defineConfig({
-  integrations: [sitemap(), ogCanvas()],
-
+  integrations: [sitemap(), i18next()],
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwind()],
+  },
+
+  i18n: {
+    // Tu idioma por defecto. Las visitas a "/" irán a inglés.
+    defaultLocale: 'en',
+
+    // La lista de todos los idiomas que soportas.
+    locales: ['en', 'es', 'fr'],
+
+    routing: {
+      // No añade el prefijo 'en' a las URLs en inglés.
+      // Tendrás: tudominio.com/, tudominio.com/es/, tudominio.com/fr/
+      prefixDefaultLocale: false, 
+    }
   }
-});
+})
