@@ -148,6 +148,7 @@ export const searchDataES: SearchItem[] = [
     }
 ];
 
+
 export const searchDataFR: SearchItem[] = [
     // Servicios principales
     {
