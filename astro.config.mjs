@@ -10,9 +10,7 @@ export default defineConfig({
   
   // Configurar para Server-Side Rendering para permitir detección de idioma
   output: 'static', // Cambiado a 'static' de 'server'
-  adapter: node({
-    mode: 'standalone'
-  }),
+  
   
   integrations: [
     sitemap({
