@@ -9,7 +9,7 @@ export default defineConfig({
   site: 'https://ignia.cloud', // ⭐ REQUERIDO para sitemap
   
   // Configurar para Server-Side Rendering para permitir detección de idioma
-  output: 'server',
+  output: 'static', // Cambiado a 'static' de 'server'
   adapter: node({
     mode: 'standalone'
   }),
