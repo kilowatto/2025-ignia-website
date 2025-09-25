@@ -19,6 +19,24 @@ const translations = {
 
 // Obtener idioma actual para configurar el lang del HTML
 const currentLocale = Astro.currentLocale || "en";
+
+// URLs dinámicas según el idioma para datos estructurados
+const baseUrl = "https://ignia.cloud";
+const siteUrl =
+  currentLocale === "en" ? baseUrl : `${baseUrl}/${currentLocale}`;
+const searchUrl =
+  currentLocale === "en"
+    ? `${baseUrl}/search`
+    : `${baseUrl}/${currentLocale}/search`;
+
+// Nombres del sitio según idioma
+const siteNames = {
+  en: "Ignia Cloud",
+  es: "Ignia Cloud",
+  fr: "Ignia Cloud",
+};
+const siteName =
+  siteNames[currentLocale as keyof typeof siteNames] || siteNames.en;
 ---
 
 <html lang={currentLocale}>
@@ -29,35 +47,41 @@ const currentLocale = Astro.currentLocale || "en";
     <title>{title}</title>
     <meta name="description" content={Content_Description} />
     <!-- Organización -->
-    <script type="application/ld+json">
-      {
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
-        "@id": "https://ignia.cloud/#org",
-        "name": "Ignia Cloud",
-        "url": "https://ignia.cloud/",
-        "logo": "https://ignia.cloud/logo.svg",
-        "sameAs": [
+        "@id": `${baseUrl}/#org`,
+        name: "Ignia Cloud",
+        url: baseUrl,
+        logo: `${baseUrl}/logo.svg`,
+        sameAs: [
           "https://www.linkedin.com/company/ignia-cloud/",
-          "https://x.com/igniacloud"
-        ]
-      }
-    </script>
-
+          "https://x.com/igniacloud",
+        ],
+      })}
+    />
     <!-- Sitio -->
-    <!-- Sitio -->
-    <script type="application/ld+json">
-      {
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "@id": "https://ignia.cloud/#website",
-        "url": "https://ignia.cloud/",
-        "name": "Ignia Cloud",
-        "publisher": {
-          "@id": "https://ignia.cloud/#org"
-        }
-      }
-    </script>
+        "@id": `${baseUrl}/#website-${currentLocale}`,
+        url: siteUrl,
+        name: siteName,
+        inLanguage: currentLocale,
+        publisher: {
+          "@id": `${baseUrl}/#org`,
+        },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${searchUrl}?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      })}
+    />
   </head>
   <body>
     <LanguageDetection />
