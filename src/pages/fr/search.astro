@@ -5,6 +5,9 @@ import Layout from "../../layouts/Layout.astro";
 // Obtener el query de búsqueda de la URL
 const url = Astro.url;
 const searchQuery = url.searchParams.get("q") || "";
+const category = url.searchParams.get("category") || "";
+const type = url.searchParams.get("type") || "";
+const page = parseInt(url.searchParams.get("page") || "1");
 
 // Importamos las traducciones
 import frTranslations from "../../../public/locales/fr/common.json";
@@ -19,6 +22,9 @@ const t = (key: string): string => {
 
   return value || key;
 };
+
+// Configurar página para SEO
+const pageType = "SearchResultsPage";
 ---
 
 <Layout
@@ -28,8 +34,10 @@ const t = (key: string): string => {
   Content_Description={searchQuery
     ? `${t("search.results_for")} "${searchQuery}" sur le site web d'Ignia`
     : "Résultats de recherche sur le site web d'Ignia"}
+  pageType={pageType}
 >
-  <div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header de recherche -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-4">
         {
@@ -39,19 +47,20 @@ const t = (key: string): string => {
         }
       </h1>
 
-      <!-- Formulario de búsqueda en la página de resultados -->
-      <form action="/fr/search" method="GET" class="max-w-2xl">
+      <!-- Formulaire de recherche amélioré -->
+      <form action="/fr/search" method="GET" class="max-w-3xl mb-6">
         <div class="relative">
           <input
             type="search"
             name="q"
             value={searchQuery}
             placeholder={t("search.placeholder")}
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white shadow-sm text-lg"
+            class="w-full pl-12 pr-20 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-white shadow-sm text-lg"
             autocomplete="off"
+            id="search-input"
           />
           <div
-            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
           >
             <svg
               class="w-6 h-6 text-gray-400"
@@ -68,239 +77,523 @@ const t = (key: string): string => {
           </div>
           <button
             type="submit"
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-md hover:bg-secondary transition-colors"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-all duration-200 font-medium shadow-sm"
           >
             Rechercher
           </button>
         </div>
       </form>
+
+      <!-- Filtres avancés -->
+      <div class="flex flex-wrap gap-4 mb-6" id="filters-container">
+        <!-- Filtre par catégorie -->
+        <div class="relative">
+          <select
+            name="category"
+            id="category-filter"
+            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          >
+            <option value="">Toutes les Catégories</option>
+            <option value="service">Services</option>
+            <option value="product">Produits</option>
+            <option value="article">Articles</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filtre par type -->
+        <div class="relative">
+          <select
+            name="type"
+            id="type-filter"
+            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          >
+            <option value="">Tous les Types</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bouton pour effacer les filtres -->
+        <button
+          type="button"
+          id="clear-filters"
+          class="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+        >
+          Effacer les Filtres
+        </button>
+      </div>
     </div>
 
-    <!-- Contenedor de resultados -->
-    <div id="search-results" class="space-y-6">
-      <div class="text-center py-8">
-        <svg
-          class="w-16 h-16 text-gray-400 mx-auto mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <p class="text-gray-500" id="loading-text">
-          {
-            searchQuery
-              ? "Recherche..."
-              : "Entrez un terme de recherche pour commencer"
-          }
-        </p>
-      </div>
+    <!-- Conteneur principal avec sidebar et résultats -->
+    <div class="flex gap-8">
+      <!-- Sidebar avec statistiques et filtres -->
+      <aside class="w-64 hidden lg:block">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 class="font-semibold text-gray-900 mb-4">Statistiques de Recherche</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Total des Résultats:</span>
+              <span class="font-medium" id="total-results">0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Temps de Recherche:</span>
+              <span class="font-medium" id="search-time">0ms</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Page Actuelle:</span>
+              <span class="font-medium" id="current-page">1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions associées -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" id="related-suggestions" style="display: none;">
+          <h3 class="font-semibold text-gray-900 mb-4">Recherches Associées</h3>
+          <div class="space-y-2" id="suggestions-list">
+            <!-- Les suggestions se rempliront dynamiquement -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Résultats de recherche -->
+      <main class="flex-1">
+        <!-- Information des résultats -->
+        <div class="flex items-center justify-between mb-6" id="results-header" style="display: none;">
+          <div class="text-sm text-gray-600" id="results-info">
+            <!-- Se remplira dynamiquement -->
+          </div>
+          
+          <!-- Tri -->
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-sm text-gray-600">Trier par:</label>
+            <select
+              id="sort-select"
+              class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            >
+              <option value="relevance">Pertinence</option>
+              <option value="title">Titre A-Z</option>
+              <option value="category">Catégorie</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conteneur des résultats -->
+        <div id="search-results" class="space-y-6">
+          <div class="text-center py-12">
+            <svg
+              class="w-20 h-20 text-gray-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p class="text-gray-500 text-lg" id="loading-text">
+              {searchQuery ? "Recherche..." : "Entrez un terme de recherche pour commencer"}
+            </p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="flex items-center justify-center space-x-2 mt-8" id="pagination" style="display: none;">
+          <!-- Se remplira dynamiquement -->
+        </nav>
+      </main>
     </div>
   </div>
 </Layout>
 
 <script>
   import MiniSearch from "minisearch";
+  import { getSearchDataByLocale } from "../../data/searchData.ts";
+  import { performSearch, getSearchSuggestions } from "../../utils/searchConfig.ts";
 
-  // Datos de ejemplo para la búsqueda en francés
-  const searchData = [
-    {
-      id: 1,
-      title: "Solutions Cloud",
-      content:
-        "Solutions complètes de cloud computing pour les entreprises modernes. Infrastructure évolutive, sécurisée et fiable.",
-      url: "/fr/soluciones/",
-      category: "Solutions",
-    },
-    {
-      id: 2,
-      title: "Services d'Intelligence Artificielle",
-      content:
-        "Solutions alimentées par l'IA pour transformer les opérations de votre entreprise et améliorer les capacités de prise de décision.",
-      url: "/fr/IA/",
-      category: "Services",
-    },
-    {
-      id: 3,
-      title: "Support IT Géré",
-      content:
-        "Services professionnels de support et de gestion IT pour maintenir vos systèmes en fonctionnement 24h/24 et 7j/7.",
-      url: "/fr/Managed-IT/",
-      category: "Support",
-    },
-    {
-      id: 4,
-      title: "Produits d'Entreprise",
-      content:
-        "Produits d'entreprise de pointe conçus pour l'évolutivité, la sécurité et la performance.",
-      url: "/fr/productos/",
-      category: "Produits",
-    },
-    {
-      id: 5,
-      title: "Support Technique",
-      content:
-        "Équipe experte de support technique prête à vous aider avec toutes questions ou problèmes que vous pourriez avoir.",
-      url: "/fr/soporte/",
-      category: "Support",
-    },
-    {
-      id: 6,
-      title: "Services Personnalisés",
-      content:
-        "Services technologiques sur mesure conçus pour répondre à vos exigences et objectifs spécifiques d'entreprise.",
-      url: "/fr/servicios/",
-      category: "Services",
-    },
-  ];
+  // Configuration de pagination
+  const RESULTS_PER_PAGE = 6;
+  let currentPage = 1;
+  let totalResults = 0;
+  let lastQuery = "";
+  let lastFilters: { category?: string; type?: string } = {};
+  let lastSort = "relevance";
+  let searchStartTime = 0;
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const resultsContainer = document.getElementById("search-results");
     const loadingText = document.getElementById("loading-text");
-    const searchQuery =
-      new URLSearchParams(window.location.search).get("q") || "";
+    const resultsHeader = document.getElementById("results-header");
+    const resultsInfo = document.getElementById("results-info");
+    const totalResultsSpan = document.getElementById("total-results");
+    const searchTimeSpan = document.getElementById("search-time");
+    const currentPageSpan = document.getElementById("current-page");
+    const paginationContainer = document.getElementById("pagination");
+    const relatedSuggestions = document.getElementById("related-suggestions");
+    const suggestionsListsContainer = document.getElementById("suggestions-list");
 
-    // Configurar MiniSearch
-    const miniSearch = new MiniSearch({
-      fields: ["title", "content", "category"], // campos para buscar
-      storeFields: ["title", "content", "url", "category"], // campos para almacenar
-      searchOptions: {
-        boost: { title: 2 }, // dar más peso al título
-        fuzzy: 0.2, // permitir coincidencias difusas
-      },
-    });
+    // Obtenir les paramètres d'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get("q") || "";
+    const categoryFilter = urlParams.get("category") || "";
+    const typeFilter = urlParams.get("type") || "";
+    currentPage = parseInt(urlParams.get("page") || "1");
 
-    // Indexar los datos
-    miniSearch.addAll(searchData);
+    // Mettre à jour les filtres dans l'interface
+    const categorySelect = document.getElementById("category-filter") as HTMLSelectElement;
+    const typeSelect = document.getElementById("type-filter") as HTMLSelectElement;
+    const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
+    const clearFiltersBtn = document.getElementById("clear-filters");
 
-    // Función para realizar la búsqueda
-    function performSearch(query: string) {
+    if (categorySelect) categorySelect.value = categoryFilter;
+    if (typeSelect) typeSelect.value = typeFilter;
+
+    // Obtenir les données de recherche pour la langue française (fr)
+    const searchData = getSearchDataByLocale("fr");
+
+    // Remplir les filtres dynamiquement
+    populateFilters(searchData);
+
+    // Fonction pour remplir les filtres avec les données réelles
+    function populateFilters(data: any[]) {
+      const types = [...new Set(data.map(item => item.type))];
+      
+      if (typeSelect) {
+        typeSelect.innerHTML = '<option value="">Tous les Types</option>';
+        types.forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+          typeSelect.appendChild(option);
+        });
+        typeSelect.value = typeFilter;
+      }
+    }
+
+    // Fonction principale pour effectuer la recherche
+    async function executeSearch(query: string, filters: { category?: string; type?: string } = {}, sort: string = "relevance", page: number = 1) {
       if (!query.trim()) {
         showEmptyState();
         return;
       }
 
-      loadingText!.textContent = "Recherche...";
+      searchStartTime = performance.now();
+      showLoadingState();
 
-      setTimeout(() => {
-        const results = miniSearch
-          .search(query, {
-            prefix: true, // buscar prefijos también
-          })
-          .slice(0, 10); // limitar a 10 resultados
+      try {
+        // Utiliser la fonction de recherche de searchConfig.ts
+        const results = performSearch({
+          query,
+          locale: "fr",
+          filters: {
+            type: filters.type ? [filters.type] : undefined,
+            category: filters.category ? [filters.category] : undefined
+          },
+          sortBy: sort as 'relevance' | 'date' | 'priority'
+        });
+        
+        // Calculer la pagination
+        totalResults = results.length;
+        const startIndex = (page - 1) * RESULTS_PER_PAGE;
+        const endIndex = startIndex + RESULTS_PER_PAGE;
+        const paginatedResults = results.slice(startIndex, endIndex);
 
-        displayResults(results, query);
-      }, 300); // Simular delay de búsqueda
+        const searchTime = performance.now() - searchStartTime;
+
+        // Mettre à jour les statistiques
+        updateStatistics(totalResults, searchTime, page);
+
+        // Afficher les résultats
+        displayResults(paginatedResults, query);
+        
+        // Afficher la pagination
+        updatePagination(page, Math.ceil(totalResults / RESULTS_PER_PAGE));
+        
+        // Afficher les suggestions associées
+        displayRelatedSuggestions(query);
+
+        // Sauvegarder l'état
+        lastQuery = query;
+        lastFilters = filters;
+        lastSort = sort;
+
+      } catch (error) {
+        console.error("Erreur lors de la recherche:", error);
+        showErrorState();
+      }
     }
 
-    // Función para mostrar resultados
+    // Fonction pour afficher les résultats
     function displayResults(results: any[], query: string) {
       if (results.length === 0) {
-        resultsContainer!.innerHTML = `
-          <div class="text-center py-8">
-            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.462-.793-6.172-2.172M6.828 6.828A9.966 9.966 0 0012 3c2.34 0 4.462.793 6.172 2.172M12 21a9.966 9.966 0 01-6.172-2.172"></path>
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun résultat trouvé</h3>
-            <p class="text-gray-500">Essayez de rechercher avec des mots-clés différents ou vérifiez votre orthographe.</p>
-          </div>
-        `;
+        showNoResultsState(query);
         return;
       }
 
       const resultsHTML = results
         .map(
           (result) => `
-        <article class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-start justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                  ${result.category}
-                </span>
-                <span class="text-sm text-gray-500">Score: ${Math.round(result.score * 100) / 100}</span>
+          <article class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 group">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                    ${result.category}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    ${result.type}
+                  </span>
+                  ${result.score ? `<span class="text-xs text-gray-400">Score: ${Math.round(result.score * 100) / 100}</span>` : ''}
+                </div>
+                
+                <h2 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors">
+                  <a href="${result.url}" class="block">
+                    ${highlightMatch(result.title, query)}
+                  </a>
+                </h2>
+                
+                <p class="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                  ${highlightMatch(result.description, query)}
+                </p>
+                
+                ${result.tags ? `
+                <div class="flex flex-wrap gap-2 mb-4">
+                  ${result.tags.map((tag: string) => `
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-gray-50 text-gray-600 border border-gray-200">
+                      #${tag}
+                    </span>
+                  `).join('')}
+                </div>
+                ` : ''}
+                
+                <div class="flex items-center justify-between">
+                  <a 
+                    href="${result.url}" 
+                    class="inline-flex items-center text-primary hover:text-secondary transition-colors font-medium group"
+                  >
+                    Lire plus
+                    <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+                  
+                  ${result.lastUpdated ? `
+                  <span class="text-xs text-gray-400">
+                    Mis à jour: ${new Date(result.lastUpdated).toLocaleDateString()}
+                  </span>
+                  ` : ''}
+                </div>
               </div>
-              <h2 class="text-xl font-semibold text-gray-900 mb-2">
-                <a href="${result.url}" class="hover:text-primary transition-colors">
-                  ${highlightMatch(result.title, query)}
-                </a>
-              </h2>
-              <p class="text-gray-600 mb-3 line-clamp-3">
-                ${highlightMatch(result.content, query)}
-              </p>
-              <a href="${result.url}" class="inline-flex items-center text-primary hover:text-secondary transition-colors">
-                Lire la suite
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
             </div>
-          </div>
-        </article>
-      `
+          </article>
+        `
         )
         .join("");
 
-      resultsContainer!.innerHTML = `
-        <div class="mb-4">
-          <p class="text-sm text-gray-600">
-            ${results.length} résultat${results.length !== 1 ? "s" : ""} trouvé${results.length !== 1 ? "s" : ""} pour "<strong>${query}</strong>"
-          </p>
-        </div>
-        ${resultsHTML}
-      `;
+      resultsContainer!.innerHTML = resultsHTML;
+      resultsHeader!.style.display = "flex";
+      resultsInfo!.textContent = `Affichage ${((currentPage - 1) * RESULTS_PER_PAGE) + 1}-${Math.min(currentPage * RESULTS_PER_PAGE, totalResults)} sur ${totalResults} résultats pour "${query}"`;
     }
 
-    // Función para resaltar coincidencias
     function highlightMatch(text: string, query: string): string {
-      if (!query) return text;
-
-      const regex = new RegExp(`(${query})`, "gi");
-      return text.replace(
-        regex,
-        '<mark class="bg-yellow-200 font-medium">$1</mark>'
-      );
+      if (!query || !text) return text;
+      const words = query.split(/\s+/).filter(word => word.length > 2);
+      let highlightedText = text;
+      words.forEach(word => {
+        const regex = new RegExp(`(${word})`, "gi");
+        highlightedText = highlightedText.replace(
+          regex,
+          '<mark class="bg-yellow-200/70 text-yellow-900 font-medium px-1 rounded">$1</mark>'
+        );
+      });
+      return highlightedText;
     }
 
-    // Función para mostrar estado vacío
+    function updateStatistics(total: number, time: number, page: number) {
+      if (totalResultsSpan) totalResultsSpan.textContent = total.toString();
+      if (searchTimeSpan) searchTimeSpan.textContent = `${Math.round(time)}ms`;
+      if (currentPageSpan) currentPageSpan.textContent = page.toString();
+    }
+
+    function updatePagination(page: number, totalPages: number) {
+      if (totalPages <= 1) {
+        paginationContainer!.style.display = "none";
+        return;
+      }
+      paginationContainer!.style.display = "flex";
+      
+      let paginationHTML = "";
+      if (page > 1) {
+        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page - 1}">Précédent</button>`;
+      }
+
+      const startPage = Math.max(1, page - 2);
+      const endPage = Math.min(totalPages, page + 2);
+
+      if (startPage > 1) {
+        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="1">1</button>`;
+        if (startPage > 2) {
+          paginationHTML += `<span class="px-3 py-2 text-sm font-medium text-gray-500">...</span>`;
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const isActive = i === page;
+        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium border ${isActive ? 'text-primary bg-primary/10 border-primary' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700'} transition-colors" data-page="${i}">${i}</button>`;
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          paginationHTML += `<span class="px-3 py-2 text-sm font-medium text-gray-500">...</span>`;
+        }
+        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${totalPages}">${totalPages}</button>`;
+      }
+
+      if (page < totalPages) {
+        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page + 1}">Suivant</button>`;
+      }
+
+      paginationContainer!.innerHTML = paginationHTML;
+
+      document.querySelectorAll('.pagination-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const newPage = parseInt((e.target as HTMLElement).dataset.page || '1');
+          currentPage = newPage;
+          updateURL();
+          executeSearch(lastQuery, lastFilters, lastSort, newPage);
+        });
+      });
+    }
+
+    function displayRelatedSuggestions(query: string) {
+      if (!query) {
+        relatedSuggestions!.style.display = "none";
+        return;
+      }
+      try {
+        const suggestions = getSearchSuggestions(query, "fr", 5);
+        if (suggestions.length > 0) {
+          const suggestionsHTML = suggestions.map(suggestion => `<button class="suggestion-btn w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">${suggestion}</button>`).join('');
+          suggestionsListsContainer!.innerHTML = suggestionsHTML;
+          relatedSuggestions!.style.display = "block";
+          document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const suggestion = (e.target as HTMLElement).textContent || '';
+              const searchInput = document.getElementById('search-input') as HTMLInputElement;
+              if (searchInput) {
+                searchInput.value = suggestion;
+                executeSearch(suggestion, getFilters(), lastSort, 1);
+                updateURL();
+              }
+            });
+          });
+        } else {
+          relatedSuggestions!.style.display = "none";
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'obtention des suggestions:", error);
+        relatedSuggestions!.style.display = "none";
+      }
+    }
+
+    function getFilters() {
+      return {
+        category: categorySelect?.value || '',
+        type: typeSelect?.value || ''
+      };
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      if (lastQuery) params.set('q', lastQuery);
+      if (lastFilters.category) params.set('category', lastFilters.category);
+      if (lastFilters.type) params.set('type', lastFilters.type);
+      if (currentPage > 1) params.set('page', currentPage.toString());
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.pushState({}, '', newUrl);
+    }
+
+    function showLoadingState() {
+      resultsContainer!.innerHTML = `<div class="text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div><p class="text-gray-500 text-lg">Recherche en cours...</p></div>`;
+      resultsHeader!.style.display = "none";
+      paginationContainer!.style.display = "none";
+    }
+
     function showEmptyState() {
-      resultsContainer!.innerHTML = `
-        <div class="text-center py-8">
-          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <p class="text-gray-500">Entrez un terme de recherche pour commencer</p>
-        </div>
-      `;
+      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><p class="text-gray-500 text-lg">Entrez un terme de recherche pour commencer</p></div>`;
+      resultsHeader!.style.display = "none";
+      paginationContainer!.style.display = "none";
+      relatedSuggestions!.style.display = "none";
     }
 
-    // Realizar búsqueda inicial si hay query
+    function showNoResultsState(query: string) {
+      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.462-.793-6.172-2.172M6.828 6.828A9.966 9.966 0 0012 3c2.34 0 4.462.793 6.172 2.172M12 21a9.966 9.966 0 01-6.172-2.172"></path></svg><h3 class="text-xl font-medium text-gray-900 mb-2">Aucun résultat trouvé</h3><p class="text-gray-500 mb-4">Essayez de rechercher avec des mots-clés différents ou vérifiez l'orthographe.</p><div class="text-sm text-gray-400"><p>Conseils de recherche:</p><ul class="list-disc list-inside mt-2 space-y-1"><li>Utilisez des mots-clés plus généraux</li><li>Vérifiez l'orthographe</li><li>Essayez différentes combinaisons de mots</li><li>Supprimez les filtres pour voir plus de résultats</li></ul></div></div>`;
+      resultsHeader!.style.display = "none";
+      paginationContainer!.style.display = "none";
+    }
+
+    function showErrorState() {
+      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h3 class="text-xl font-medium text-gray-900 mb-2">Erreur de Recherche</h3><p class="text-gray-500">Une erreur s'est produite lors de la recherche. Veuillez réessayer.</p></div>`;
+      resultsHeader!.style.display = "none";
+      paginationContainer!.style.display = "none";
+    }
+
+    // Event Listeners
+    const searchForm = document.querySelector("form");
+    searchForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const query = formData.get("q") as string;
+      currentPage = 1;
+      executeSearch(query, getFilters(), lastSort, currentPage);
+      updateURL();
+    });
+
+    categorySelect?.addEventListener("change", () => {
+      currentPage = 1;
+      executeSearch(lastQuery, getFilters(), lastSort, currentPage);
+      updateURL();
+    });
+
+    typeSelect?.addEventListener("change", () => {
+      currentPage = 1;
+      executeSearch(lastQuery, getFilters(), lastSort, currentPage);
+      updateURL();
+    });
+
+    sortSelect?.addEventListener("change", (e) => {
+      lastSort = (e.target as HTMLSelectElement).value;
+      currentPage = 1;
+      executeSearch(lastQuery, lastFilters, lastSort, currentPage);
+      updateURL();
+    });
+
+    clearFiltersBtn?.addEventListener("click", () => {
+      if (categorySelect) categorySelect.value = "";
+      if (typeSelect) typeSelect.value = "";
+      currentPage = 1;
+      lastFilters = {};
+      if (lastQuery) {
+        executeSearch(lastQuery, {}, lastSort, currentPage);
+        updateURL();
+      }
+    });
+
     if (searchQuery) {
-      performSearch(searchQuery);
+      lastFilters = getFilters();
+      executeSearch(searchQuery, lastFilters, lastSort, currentPage);
     } else {
       showEmptyState();
     }
-
-    // Escuchar cambios en el formulario
-    const searchForm = document.querySelector("form");
-    searchForm?.addEventListener("submit", (e) => {
-      const formData = new FormData(e.target as HTMLFormElement);
-      const query = formData.get("q") as string;
-
-      // Actualizar URL sin recargar la página
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set("q", query);
-      window.history.pushState({}, "", newUrl.toString());
-
-      // Realizar búsqueda
-      performSearch(query);
-
-      e.preventDefault();
-    });
   });
 </script>
 
@@ -313,7 +606,70 @@ const t = (key: string): string => {
   }
 
   mark {
-    border-radius: 2px;
-    padding: 1px 2px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-weight: 500;
+  }
+
+  /* Animaciones para resultados */
+  article {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+
+  article:nth-child(2) { animation-delay: 0.1s; }
+  article:nth-child(3) { animation-delay: 0.2s; }
+  article:nth-child(4) { animation-delay: 0.3s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mejoras para paginación */
+  .pagination-btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pagination-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .pagination-btn:hover::before {
+    left: 100%;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    aside {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .flex.gap-8 {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    #filters-container {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    #filters-container > div {
+      width: 100%;
+    }
   }
 </style>
