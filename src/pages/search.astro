@@ -5,6 +5,9 @@ import Layout from "../layouts/Layout.astro";
 // Obtener el query de búsqueda de la URL
 const url = Astro.url;
 const searchQuery = url.searchParams.get("q") || "";
+const category = url.searchParams.get("category") || "";
+const type = url.searchParams.get("type") || "";
+const page = parseInt(url.searchParams.get("page") || "1");
 
 // Importamos las traducciones
 import enTranslations from "../../public/locales/en/common.json";
@@ -19,6 +22,9 @@ const t = (key: string): string => {
 
   return value || key;
 };
+
+// Configurar página para SEO
+const pageType = "SearchResultsPage";
 ---
 
 <Layout
@@ -28,8 +34,10 @@ const t = (key: string): string => {
   Content_Description={searchQuery
     ? `${t("search.results_for")} "${searchQuery}" on Ignia website`
     : "Search results on Ignia website"}
+  pageType={pageType}
 >
-  <div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header de búsqueda -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-4">
         {
@@ -39,19 +47,20 @@ const t = (key: string): string => {
         }
       </h1>
 
-      <!-- Formulario de búsqueda en la página de resultados -->
-      <form action="/search" method="GET" class="max-w-2xl">
+      <!-- Formulario de búsqueda mejorado -->
+      <form action="/search" method="GET" class="max-w-3xl mb-6">
         <div class="relative">
           <input
             type="search"
             name="q"
             value={searchQuery}
             placeholder={t("search.placeholder")}
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white shadow-sm text-lg"
+            class="w-full pl-12 pr-20 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-white shadow-sm text-lg"
             autocomplete="off"
+            id="search-input"
           />
           <div
-            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
           >
             <svg
               class="w-6 h-6 text-gray-400"
@@ -68,33 +77,140 @@ const t = (key: string): string => {
           </div>
           <button
             type="submit"
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-md hover:bg-secondary transition-colors"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-all duration-200 font-medium shadow-sm"
           >
-            Search
+            {t("search.button")}
           </button>
         </div>
       </form>
+
+      <!-- Filtros avanzados -->
+      <div class="flex flex-wrap gap-4 mb-6" id="filters-container">
+        <!-- Filtro por categoría -->
+        <div class="relative">
+          <select
+            name="category"
+            id="category-filter"
+            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          >
+            <option value="">All Categories</option>
+            <option value="service">Services</option>
+            <option value="product">Products</option>
+            <option value="article">Articles</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filtro por tipo -->
+        <div class="relative">
+          <select
+            name="type"
+            id="type-filter"
+            class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          >
+            <option value="">All Types</option>
+          </select>
+          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Botón para limpiar filtros -->
+        <button
+          type="button"
+          id="clear-filters"
+          class="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+        >
+          Clear Filters
+        </button>
+      </div>
     </div>
 
-    <!-- Contenedor de resultados -->
-    <div id="search-results" class="space-y-6">
-      <div class="text-center py-8">
-        <svg
-          class="w-16 h-16 text-gray-400 mx-auto mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <p class="text-gray-500" id="loading-text">
-          {searchQuery ? "Searching..." : "Enter a search term to begin"}
-        </p>
-      </div>
+    <!-- Contenedor principal con sidebar y resultados -->
+    <div class="flex gap-8">
+      <!-- Sidebar con estadísticas y filtros -->
+      <aside class="w-64 hidden lg:block">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+          <h3 class="font-semibold text-gray-900 mb-4">Search Statistics</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Total Results:</span>
+              <span class="font-medium" id="total-results">0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Search Time:</span>
+              <span class="font-medium" id="search-time">0ms</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Current Page:</span>
+              <span class="font-medium" id="current-page">1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sugerencias relacionadas -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" id="related-suggestions" style="display: none;">
+          <h3 class="font-semibold text-gray-900 mb-4">Related Searches</h3>
+          <div class="space-y-2" id="suggestions-list">
+            <!-- Las sugerencias se llenarán dinámicamente -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Resultados de búsqueda -->
+      <main class="flex-1">
+        <!-- Información de resultados -->
+        <div class="flex items-center justify-between mb-6" id="results-header" style="display: none;">
+          <div class="text-sm text-gray-600" id="results-info">
+            <!-- Se llenará dinámicamente -->
+          </div>
+          
+          <!-- Ordenamiento -->
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-sm text-gray-600">Sort by:</label>
+            <select
+              id="sort-select"
+              class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            >
+              <option value="relevance">Relevance</option>
+              <option value="title">Title A-Z</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Contenedor de resultados -->
+        <div id="search-results" class="space-y-6">
+          <div class="text-center py-12">
+            <svg
+              class="w-20 h-20 text-gray-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p class="text-gray-500 text-lg" id="loading-text">
+              {searchQuery ? "Searching..." : "Enter a search term to begin"}
+            </p>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <nav class="flex items-center justify-center space-x-2 mt-8" id="pagination" style="display: none;">
+          <!-- Se llenará dinámicamente -->
+        </nav>
+      </main>
     </div>
   </div>
 </Layout>

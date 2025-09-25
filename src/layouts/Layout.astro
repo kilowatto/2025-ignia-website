@@ -5,12 +5,12 @@ import LanguageDetection from "../components/LanguageDetection.astro";
 import "../styles/global.css";
 
 // Props expandidas para datos estructurados
-const { 
-  title, 
+const {
+  title,
   Content_Description,
   // Props para datos estructurados
   pageType = "WebPage", // WebPage, Article, Product, Service, etc.
-  articleHeadline, 
+  articleHeadline,
   articleAuthor,
   articleDatePublished,
   articleDateModified,
@@ -36,12 +36,17 @@ const currentLocale = Astro.currentLocale || "en";
 
 // URLs dinámicas según el idioma para datos estructurados
 const baseUrl = "https://ignia.cloud";
-const siteUrl = currentLocale === "en" ? baseUrl : `${baseUrl}/${currentLocale}`;
-const searchUrl = currentLocale === "en" ? `${baseUrl}/search` : `${baseUrl}/${currentLocale}/search`;
+const siteUrl =
+  currentLocale === "en" ? baseUrl : `${baseUrl}/${currentLocale}`;
+const searchUrl =
+  currentLocale === "en"
+    ? `${baseUrl}/search`
+    : `${baseUrl}/${currentLocale}/search`;
 
 // URL actual de la página
 const currentPath = Astro.url.pathname;
-const currentUrl = canonicalUrl || `${siteUrl}${currentPath === '/' ? '' : currentPath}`;
+const currentUrl =
+  canonicalUrl || `${siteUrl}${currentPath === "/" ? "" : currentPath}`;
 
 // Nombres del sitio según idioma
 const siteNames = {
@@ -49,70 +54,73 @@ const siteNames = {
   es: "Ignia Cloud",
   fr: "Ignia Cloud",
 };
-const siteName = siteNames[currentLocale as keyof typeof siteNames] || siteNames.en;
+const siteName =
+  siteNames[currentLocale as keyof typeof siteNames] || siteNames.en;
 
 // Función para generar breadcrumbs automáticos
 function generateAutoBreadcrumbs() {
   if (breadcrumbs.length > 0) return breadcrumbs;
-  
-  const pathSegments = currentPath.split('/').filter(segment => segment);
+
+  const pathSegments = currentPath.split("/").filter((segment) => segment);
   const autoBreadcrumbs = [
     {
       "@type": "ListItem",
       position: 1,
       name: "Inicio", // Usar texto fijo por ahora
-      item: siteUrl
-    }
+      item: siteUrl,
+    },
   ];
 
   let buildPath = siteUrl;
   let position = 2;
-  
+
   pathSegments.forEach((segment, index) => {
     // Saltar el código de idioma si no es inglés
-    if (index === 0 && ['es', 'fr'].includes(segment)) return;
-    
+    if (index === 0 && ["es", "fr"].includes(segment)) return;
+
     buildPath += `/${segment}`;
-    
+
     // Mapear segmentos a nombres legibles
     const segmentNames = {
       en: {
-        'soluciones': 'Solutions',
-        'productos': 'Products', 
-        'servicios': 'Services',
-        'soporte': 'Support',
-        'search': 'Search',
-        'IA': 'AI',
-        'Managed-IT': 'Managed IT'
+        soluciones: "Solutions",
+        productos: "Products",
+        servicios: "Services",
+        soporte: "Support",
+        search: "Search",
+        IA: "AI",
+        "Managed-IT": "Managed IT",
       },
       es: {
-        'soluciones': 'Soluciones',
-        'productos': 'Productos',
-        'servicios': 'Servicios', 
-        'soporte': 'Soporte',
-        'search': 'Búsqueda',
-        'IA': 'IA',
-        'Managed-IT': 'IT Gestionado'
+        soluciones: "Soluciones",
+        productos: "Productos",
+        servicios: "Servicios",
+        soporte: "Soporte",
+        search: "Búsqueda",
+        IA: "IA",
+        "Managed-IT": "IT Gestionado",
       },
       fr: {
-        'soluciones': 'Solutions',
-        'productos': 'Produits',
-        'servicios': 'Services',
-        'soporte': 'Support',
-        'search': 'Recherche',
-        'IA': 'IA',
-        'Managed-IT': 'IT Géré'
-      }
+        soluciones: "Solutions",
+        productos: "Produits",
+        servicios: "Services",
+        soporte: "Support",
+        search: "Recherche",
+        IA: "IA",
+        "Managed-IT": "IT Géré",
+      },
     };
-    
-    const segmentName = segmentNames[currentLocale as keyof typeof segmentNames]?.[segment as keyof typeof segmentNames['en']] || 
-                      segment.charAt(0).toUpperCase() + segment.slice(1);
-    
+
+    const segmentName =
+      segmentNames[currentLocale as keyof typeof segmentNames]?.[
+        segment as keyof (typeof segmentNames)["en"]
+      ] || segment.charAt(0).toUpperCase() + segment.slice(1);
+
     autoBreadcrumbs.push({
       "@type": "ListItem",
       position: position++,
       name: segmentName,
-      item: buildPath
+      item: buildPath,
     });
   });
 
@@ -132,11 +140,11 @@ function generatePageStructuredData() {
     description: Content_Description,
     inLanguage: currentLocale,
     isPartOf: {
-      "@id": `${baseUrl}/#website-${currentLocale}`
+      "@id": `${baseUrl}/#website-${currentLocale}`,
     },
     publisher: {
-      "@id": `${baseUrl}/#org`
-    }
+      "@id": `${baseUrl}/#org`,
+    },
   };
 
   // Datos específicos para artículos
@@ -144,17 +152,19 @@ function generatePageStructuredData() {
     return {
       ...baseData,
       headline: articleHeadline,
-      author: articleAuthor ? {
-        "@type": "Person",
-        name: articleAuthor
-      } : undefined,
+      author: articleAuthor
+        ? {
+            "@type": "Person",
+            name: articleAuthor,
+          }
+        : undefined,
       datePublished: articleDatePublished,
       dateModified: articleDateModified || articleDatePublished,
       mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": currentUrl
+        "@id": currentUrl,
       },
-      image: images.length > 0 ? images : undefined
+      image: images.length > 0 ? images : undefined,
     };
   }
 
@@ -164,12 +174,12 @@ function generatePageStructuredData() {
       ...baseData,
       "@type": "Service",
       provider: {
-        "@id": `${baseUrl}/#org`
+        "@id": `${baseUrl}/#org`,
       },
       areaServed: {
         "@type": "Country",
-        name: ["Colombia", "Latin America"]
-      }
+        name: ["Colombia", "Latin America"],
+      },
     };
   }
 
@@ -186,10 +196,10 @@ const pageStructuredData = generatePageStructuredData();
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={Content_Description} />
-    
+
     <!-- Canonical URL -->
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={Content_Description} />
@@ -197,7 +207,7 @@ const pageStructuredData = generatePageStructuredData();
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={currentLocale} />
     {ogImage && <meta property="og:image" content={ogImage} />}
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
@@ -205,54 +215,67 @@ const pageStructuredData = generatePageStructuredData();
     {ogImage && <meta name="twitter:image" content={ogImage} />}
 
     <!-- Datos Estructurados: Organización -->
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "@id": `${baseUrl}/#org`,
-      "name": "Ignia Cloud",
-      "url": baseUrl,
-      "logo": `${baseUrl}/logo.svg`,
-      "sameAs": [
-        "https://www.linkedin.com/company/ignia-cloud/",
-        "https://x.com/igniacloud"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": ["Spanish", "English", "French"]
-      }
-    })} />
-    
-    <!-- Datos Estructurados: Sitio Web -->
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": `${baseUrl}/#website-${currentLocale}`,
-      "url": siteUrl,
-      "name": siteName,
-      "inLanguage": currentLocale,
-      "publisher": {
-        "@id": `${baseUrl}/#org`
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": `${searchUrl}?q={search_term_string}`,
-        "query-input": "required name=search_term_string"
-      }
-    })} />
-    
-    <!-- Datos Estructurados: Página Específica -->
-    <script type="application/ld+json" set:html={JSON.stringify(pageStructuredData)} />
-    
-    <!-- Datos Estructurados: Breadcrumbs (solo si hay más de 1) -->
-    {finalBreadcrumbs.length > 1 && (
-      <script type="application/ld+json" set:html={JSON.stringify({
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": finalBreadcrumbs
-      })} />
-    )}
-    
+        "@type": "Organization",
+        "@id": `${baseUrl}/#org`,
+        name: "Ignia Cloud",
+        url: baseUrl,
+        logo: `${baseUrl}/logo.svg`,
+        sameAs: [
+          "https://www.linkedin.com/company/ignia-cloud/",
+          "https://x.com/igniacloud",
+        ],
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          availableLanguage: ["Spanish", "English", "French"],
+        },
+      })}
+    />
+
+    <!-- Datos Estructurados: Sitio Web -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website-${currentLocale}`,
+        url: siteUrl,
+        name: siteName,
+        inLanguage: currentLocale,
+        publisher: {
+          "@id": `${baseUrl}/#org`,
+        },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${searchUrl}?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      })}
+    />
+
+    <!-- Datos Estructurados: Página Específica -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(pageStructuredData)}
+    />
+
+    <!-- Datos Estructurados: Breadcrumbs (solo si hay más de 1) -->
+    {
+      finalBreadcrumbs.length > 1 && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: finalBreadcrumbs,
+          })}
+        />
+      )
+    }
   </head>
   <body>
     <LanguageDetection />
