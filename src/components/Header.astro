@@ -8,6 +8,7 @@ import frTranslations from "../../public/locales/fr/common.json";
 
 // Importamos el componente del selector de idiomas
 import LangSelect from "./langSelect.astro";
+import SearchBox from "./SearchBox.astro";
 
 // Mapa de traducciones
 const translations = {
@@ -33,51 +34,137 @@ const links = [
   { href: "/soluciones/", tKey: "nav.solutions" },
   { href: "/productos/", tKey: "nav.products" },
   { href: "/servicios/", tKey: "nav.services" },
+  { href: "/IA/", tKey: "nav.AI" },
+  { href: "/Managed-IT/", tKey: "nav.Managed-IT" },
   { href: "/soporte/", tKey: "nav.support" },
 ];
 const base = locale === "en" ? "" : `/${locale}`;
 ---
 
-<header class="w-full bg-white shadow-[0_4px_7px_0_var(--color-primary)]">
-  <div
-    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-24"
-  >
-    <a href={locale === "en" ? "/" : `/${locale}/`}>
-      {/* El logo ahora apunta a la raíz del idioma actual */}
-      <img class="h-16 w-auto" src="/logo.svg" alt="Ignia Cloud Logo" />
-    </a>
+<header
+  class="w-full bg-white shadow-[0_4px_7px_0_var(--color-primary)] relative"
+>
+  <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+    <!-- Header principal -->
+    <div class="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-24">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href={locale === "en" ? "/" : `/${locale}/`} class="block">
+          <img
+            class="h-10 sm:h-12 md:h-14 lg:h-16 w-auto transition-all duration-200 hover:scale-105"
+            src="/logo.svg"
+            alt="Ignia Cloud Logo"
+          />
+        </a>
+      </div>
 
-    <div class="flex items-center gap-6">
-      <nav>
-        <div id="magic-nav-container" class="relative flex items-center gap-8">
-          {
-            links.map((link) => (
-              <a
-                aria-label={t(link.tKey)}
-                href={locale === "en" ? link.href : `/${locale}${link.href}`}
-                class="nav-link text-secondary font-medium text-lg py-2 "
-              >
-                {t(link.tKey)}
-              </a>
-            ))
-          }
+      <!-- Desktop Navigation (Pantallas grandes) -->
+      <div class="hidden xl:flex items-center space-x-8 2xl:space-x-12">
+        <nav id="main-nav" class="transition-all duration-300 ease-in-out">
+          <div
+            id="magic-nav-container"
+            class="relative flex items-center space-x-6 2xl:space-x-8"
+          >
+            {
+              links.map((link) => (
+                <a
+                  aria-label={t(link.tKey)}
+                  href={locale === "en" ? link.href : `/${locale}${link.href}`}
+                  class="nav-link text-secondary font-medium text-base lg:text-lg 2xl:text-xl py-2 px-1 hover:text-primary transition-colors duration-200 whitespace-nowrap"
+                >
+                  {t(link.tKey)}
+                </a>
+              ))
+            }
+            <span
+              id="magic-line"
+              class="absolute bottom-0 bg-primary rounded-full shadow-lg magic-line-debug"
+              style="opacity: 0; width: 0px; height: 6px; transform: translateX(0px); background-color: #f36b1c !important; z-index: 100; transition: all 0.3s ease;"
+            ></span>
+          </div>
+        </nav>
+      </div>
 
-          <span
-            id="magic-line"
-            class="absolute bottom-0 bg-primary rounded-full shadow-lg magic-line-debug"
-            style="opacity: 0; width: 0px; height: 6px; transform: translateX(0px); background-color: #f36b1c !important; z-index: 100; transition: all 0.3s ease;"
-          ></span>
+      <!-- Right side items -->
+      <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+        <!-- Búsqueda - siempre visible -->
+        <SearchBox />
+
+        <!-- Language selector -->
+        <div class="hidden sm:block">
+          <LangSelect />
         </div>
-      </nav>
 
-      <!-- Selector de idiomas -->
-      <LangSelect />
+        <!-- Mobile menu button -->
+        <button
+          id="mobile-menu-button"
+          class="xl:hidden inline-flex items-center justify-center p-2 rounded-md text-secondary hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-all duration-200"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Abrir menú principal</span>
+          <!-- Hamburger icon -->
+          <svg
+            class="block h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <!-- Close icon (hidden by default) -->
+          <svg
+            class="hidden h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div class="xl:hidden" id="mobile-menu" style="display: none;">
+      <div
+        class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200 shadow-lg"
+      >
+        {
+          links.map((link) => (
+            <a
+              href={locale === "en" ? link.href : `/${locale}${link.href}`}
+              class="mobile-nav-link block px-3 py-3 rounded-md text-base font-medium text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
+            >
+              {t(link.tKey)}
+            </a>
+          ))
+        }
+
+        <!-- Language selector en móvil -->
+        <div class="sm:hidden pt-2 border-t border-gray-100 mt-2">
+          <div class="px-3 py-2">
+            <LangSelect />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
-{/* El style y el script permanecen exactamente iguales */}
+{/* Estilos responsivos */}
 <style>
+  /* Magic Line Styles */
   #magic-line {
     transition:
       transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -91,7 +178,6 @@ const base = locale === "en" ? "" : `/${locale}`;
     box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
   }
 
-  /* Clase adicional para debuggear */
   .magic-line-debug {
     background: #f36b1c !important;
     display: block !important;
@@ -103,103 +189,358 @@ const base = locale === "en" ? "" : `/${locale}`;
     box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
   }
 
-  /* Asegurar que el container tenga posición relativa */
   #magic-nav-container {
     position: relative !important;
   }
 
-  /* Sobrescribir cualquier transición que pueda interferir */
   .nav-link {
     position: relative !important;
     z-index: 5 !important;
+    /* Eliminar cualquier borde o efecto adicional que cause doble barra */
+    border-bottom: none !important;
+    border: none !important;
+  }
+
+  /* Eliminar pseudo-elementos que puedan crear bordes adicionales */
+  .nav-link::before,
+  .nav-link::after {
+    display: none !important;
+  }
+
+  /* Mobile menu animations */
+  #mobile-menu.show {
+    display: block !important;
+    animation: slideDown 0.3s ease-out forwards;
+  }
+
+  #mobile-menu.hide {
+    animation: slideUp 0.3s ease-in forwards;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Responsive Breakpoints */
+
+  /* Pantallas muy pequeñas (teléfonos plegables cerrados: 280px-320px) */
+  @media (max-width: 320px) {
+    .max-w-8xl {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .mobile-nav-link {
+      font-size: 0.9rem;
+      padding: 0.75rem;
+    }
+  }
+
+  /* Teléfonos estándar (321px-480px) */
+  @media (min-width: 321px) and (max-width: 480px) {
+    header {
+      min-height: 4rem;
+    }
+  }
+
+  /* Teléfonos plegables abiertos y pantallas pequeñas (481px-640px) */
+  @media (min-width: 481px) and (max-width: 640px) {
+    .mobile-nav-link {
+      font-size: 1rem;
+      padding: 0.875rem 1rem;
+    }
+  }
+
+  /* Tablets pequeñas (641px-768px) */
+  @media (min-width: 641px) and (max-width: 768px) {
+    header {
+      min-height: 4.5rem;
+    }
+
+    .mobile-nav-link {
+      display: inline-block;
+      width: auto;
+      margin-right: 1rem;
+    }
+
+    #mobile-menu .space-y-1 {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Tablets grandes (769px-1024px) */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    header {
+      min-height: 5rem;
+    }
+  }
+
+  /* Laptops (1025px-1280px) */
+  @media (min-width: 1025px) and (max-width: 1280px) {
+    header {
+      min-height: 5.5rem;
+    }
+  }
+
+  /* Pantallas grandes (1281px-1536px) */
+  @media (min-width: 1281px) and (max-width: 1536px) {
+    .max-w-8xl {
+      max-width: 88rem;
+    }
+  }
+
+  /* Pantallas extra grandes 27"+ (1537px-2560px) */
+  @media (min-width: 1537px) and (max-width: 2560px) {
+    .max-w-8xl {
+      max-width: 100rem;
+    }
+
+    .nav-link {
+      font-size: 1.25rem;
+      padding: 0.75rem 1rem;
+    }
+  }
+
+  /* Pantallas ultra-wide y 32"+ (2561px+) */
+  @media (min-width: 2561px) {
+    .max-w-8xl {
+      max-width: 120rem;
+    }
+
+    header {
+      min-height: 7rem;
+    }
+
+    .nav-link {
+      font-size: 1.375rem;
+      padding: 1rem 1.25rem;
+    }
+  }
+
+  /* Mobile menu animations */
+  #mobile-menu {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top;
+  }
+
+  #mobile-menu.show {
+    display: block !important;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  #mobile-menu.hide {
+    animation: slideUp 0.3s ease-in;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: scaleY(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1) translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 1;
+      transform: scaleY(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scaleY(0.95) translateY(-10px);
+    }
+  }
+
+  /* Hover effects para pantallas grandes - ELIMINADO PARA EVITAR CONFLICTOS */
+  /* Los hover effects serán manejados solo por el magic line JavaScript */
+
+  /* Focus states for accessibility */
+  .nav-link:focus,
+  .mobile-nav-link:focus,
+  #mobile-menu-button:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .nav-link,
+    .mobile-nav-link {
+      font-weight: 600;
+    }
+
+    #magic-line {
+      height: 4px !important;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    #magic-line,
+    .nav-link,
+    .mobile-nav-link,
+    #mobile-menu {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 </style>
 <script>
-  // Script del magic line más robusto
-  let magicLineInitialized = false;
+  console.log("🚀 Starting Header script...");
 
-  function initMagicLine() {
-    if (magicLineInitialized) return;
-
+  // Magic Line para desktop
+  function setupMagicLine() {
+    console.log("🎯 Setting up Magic Line");
     const navContainer = document.querySelector(
       "#magic-nav-container"
     ) as HTMLElement;
     const magicLine = document.querySelector("#magic-line") as HTMLElement;
-    const navLinks = document.querySelectorAll<HTMLElement>(".nav-link");
+    const navLinks = document.querySelectorAll(
+      ".nav-link"
+    ) as NodeListOf<HTMLElement>;
 
-    console.log("🔍 Magic Line Debug:", {
-      navContainer: !!navContainer,
-      magicLine: !!magicLine,
-      navLinksCount: navLinks.length,
-    });
-
-    if (!navContainer || !magicLine || navLinks.length === 0) {
-      console.error("❌ Magic Line: Missing elements");
-      setTimeout(initMagicLine, 100); // Retry after 100ms
+    if (!navContainer || !magicLine || !navLinks.length) {
+      console.log("❌ Magic Line elements not found, retrying...");
+      setTimeout(setupMagicLine, 100);
       return;
     }
 
-    magicLineInitialized = true;
-    console.log("✅ Magic Line: Initialized successfully");
+    console.log("✅ Magic Line elements found:", {
+      container: !!navContainer,
+      line: !!magicLine,
+      links: navLinks.length,
+    });
 
-    let hideTimeout: number;
-
-    navLinks.forEach((link, index) => {
+    navLinks.forEach((link) => {
       link.addEventListener("mouseenter", () => {
-        clearTimeout(hideTimeout);
-        const rect = link.getBoundingClientRect();
-        const containerRect = navContainer.getBoundingClientRect();
-        const linkWidth = rect.width;
-        const linkLeft = rect.left - containerRect.left;
+        if (window.innerWidth >= 1280) {
+          const rect = link.getBoundingClientRect();
+          const containerRect = navContainer.getBoundingClientRect();
+          const linkWidth = rect.width;
+          const linkLeft = rect.left - containerRect.left;
 
-        console.log(`🎯 Link ${index} hover:`, { linkWidth, linkLeft });
-
-        // Aplicar todos los estilos de una vez
-        Object.assign(magicLine.style, {
-          width: `${linkWidth}px`,
-          transform: `translateX(${linkLeft}px)`,
-          opacity: "1",
-          backgroundColor: "#f36b1c",
-          height: "6px",
-          zIndex: "9999",
-          position: "absolute",
-          bottom: "0px",
-          borderRadius: "9999px",
-          boxShadow: "0 4px 6px -1px rgba(243, 107, 28, 0.5)",
-          transition: "all 0.3s ease",
-        });
-
-        console.log("🎨 Magic line styles applied:", {
-          width: magicLine.style.width,
-          opacity: magicLine.style.opacity,
-          backgroundColor: magicLine.style.backgroundColor,
-        });
+          magicLine.style.width = `${linkWidth}px`;
+          magicLine.style.transform = `translateX(${linkLeft}px)`;
+          magicLine.style.opacity = "1";
+        }
       });
     });
 
     navContainer.addEventListener("mouseleave", () => {
-      hideTimeout = window.setTimeout(() => {
-        console.log("🫥 Hiding magic line");
+      setTimeout(() => {
         magicLine.style.opacity = "0";
-      }, 500); // Aumenté el delay a 500ms
-    });
-
-    // Evento adicional para mantener la línea visible
-    navContainer.addEventListener("mouseenter", () => {
-      clearTimeout(hideTimeout);
+      }, 300);
     });
   }
 
-  // Intentar inicializar en diferentes momentos
-  document.addEventListener("DOMContentLoaded", initMagicLine);
+  // Menú móvil SIMPLIFICADO
+  function setupMobileMenu() {
+    console.log("📱 Setting up Mobile Menu");
+    const button = document.getElementById(
+      "mobile-menu-button"
+    ) as HTMLButtonElement;
+    const menu = document.getElementById("mobile-menu") as HTMLElement;
 
-  // Fallback si DOMContentLoaded ya pasó
+    if (!button || !menu) {
+      console.log("❌ Mobile menu elements not found, retrying...");
+      setTimeout(setupMobileMenu, 100);
+      return;
+    }
+
+    console.log("✅ Mobile menu elements found");
+
+    let isOpen = false;
+
+    button.addEventListener("click", () => {
+      console.log("🔄 Button clicked! Current state:", isOpen);
+
+      isOpen = !isOpen;
+
+      if (isOpen) {
+        console.log("📱 Opening menu...");
+        menu.style.display = "block";
+        menu.classList.add("show");
+        button.setAttribute("aria-expanded", "true");
+
+        // Cambiar iconos
+        const hamburger = button.querySelector("svg:first-child") as SVGElement;
+        const close = button.querySelector("svg:last-child") as SVGElement;
+        if (hamburger && close) {
+          hamburger.classList.add("hidden");
+          close.classList.remove("hidden");
+        }
+      } else {
+        console.log("📱 Closing menu...");
+        menu.classList.remove("show");
+        menu.classList.add("hide");
+        button.setAttribute("aria-expanded", "false");
+
+        // Cambiar iconos
+        const hamburger = button.querySelector("svg:first-child") as SVGElement;
+        const close = button.querySelector("svg:last-child") as SVGElement;
+        if (hamburger && close) {
+          hamburger.classList.remove("hidden");
+          close.classList.add("hidden");
+        }
+
+        setTimeout(() => {
+          menu.style.display = "none";
+          menu.classList.remove("hide");
+        }, 300);
+      }
+    });
+
+    // Cerrar al hacer clic en enlaces
+    const links = menu.querySelectorAll(
+      ".mobile-nav-link"
+    ) as NodeListOf<HTMLElement>;
+    links.forEach((link) => {
+      link.addEventListener("click", () => {
+        if (isOpen) {
+          button.click(); // Simular click del botón para cerrar
+        }
+      });
+    });
+  }
+
+  // Inicializar todo
+  function init() {
+    console.log("🚀 Initializing header...");
+    setupMagicLine();
+    setupMobileMenu();
+  }
+
+  // Múltiples puntos de inicialización
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initMagicLine);
+    document.addEventListener("DOMContentLoaded", init);
   } else {
-    initMagicLine();
+    init();
   }
 
-  // Triple fallback
-  setTimeout(initMagicLine, 500);
+  // Fallbacks
+  setTimeout(init, 100);
+  setTimeout(init, 500);
 </script>

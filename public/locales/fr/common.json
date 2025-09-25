@@ -3,7 +3,23 @@
     "solutions": "Solutions",
     "products": "Produits",
     "services": "Services",
+    "AI": "Intelligence Artificielle (IA)",
+    "Managed-IT": "Informatique Gérée",
     "support": "Soutien"
+  },
+  "search": {
+    "placeholder": "Rechercher...",
+    "aria_label": "Rechercher sur le site web",
+    "results_title": "Résultats de Recherche",
+    "no_results": "Aucun résultat trouvé",
+    "results_for": "Résultats pour",
+    "modal_title": "Rechercher",
+    "close": "Fermer",
+    "search_button": "Rechercher",
+    "suggestions": "Suggestions rapides:",
+    "keyboard_shortcuts": "Raccourcis clavier",
+    "to_search": "pour rechercher",
+    "to_close": "pour fermer"
   },
   "meta": {
     "title": "Ignia - Votre partenaire technologique de confiance",

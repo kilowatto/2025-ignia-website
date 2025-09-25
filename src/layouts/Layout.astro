@@ -28,6 +28,36 @@ const currentLocale = Astro.currentLocale || "en";
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={Content_Description} />
+    <!-- Organización -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://ignia.cloud/#org",
+        "name": "Ignia Cloud",
+        "url": "https://ignia.cloud/",
+        "logo": "https://ignia.cloud/logo.svg",
+        "sameAs": [
+          "https://www.linkedin.com/company/ignia-cloud/",
+          "https://x.com/igniacloud"
+        ]
+      }
+    </script>
+
+    <!-- Sitio -->
+    <!-- Sitio -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://ignia.cloud/#website",
+        "url": "https://ignia.cloud/",
+        "name": "Ignia Cloud",
+        "publisher": {
+          "@id": "https://ignia.cloud/#org"
+        }
+      }
+    </script>
   </head>
   <body>
     <LanguageDetection />

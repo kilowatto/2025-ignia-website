@@ -1,0 +1,315 @@
+---
+// src/pages/search.astro
+import Layout from "../layouts/Layout.astro";
+
+// Obtener el query de búsqueda de la URL
+const url = Astro.url;
+const searchQuery = url.searchParams.get("q") || "";
+
+// Importamos las traducciones
+import enTranslations from "../../public/locales/en/common.json";
+
+const t = (key: string): string => {
+  const keys = key.split(".");
+  let value: any = enTranslations;
+
+  for (const k of keys) {
+    value = value?.[k];
+  }
+
+  return value || key;
+};
+---
+
+<Layout
+  title={searchQuery
+    ? `${t("search.results_for")} "${searchQuery}" - Ignia`
+    : `${t("search.results_title")} - Ignia`}
+  Content_Description={searchQuery
+    ? `${t("search.results_for")} "${searchQuery}" on Ignia website`
+    : "Search results on Ignia website"}
+>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">
+        {
+          searchQuery
+            ? `${t("search.results_for")} "${searchQuery}"`
+            : t("search.results_title")
+        }
+      </h1>
+
+      <!-- Formulario de búsqueda en la página de resultados -->
+      <form action="/search" method="GET" class="max-w-2xl">
+        <div class="relative">
+          <input
+            type="search"
+            name="q"
+            value={searchQuery}
+            placeholder={t("search.placeholder")}
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white shadow-sm text-lg"
+            autocomplete="off"
+          />
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <svg
+              class="w-6 h-6 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <button
+            type="submit"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-md hover:bg-secondary transition-colors"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Contenedor de resultados -->
+    <div id="search-results" class="space-y-6">
+      <div class="text-center py-8">
+        <svg
+          class="w-16 h-16 text-gray-400 mx-auto mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <p class="text-gray-500" id="loading-text">
+          {searchQuery ? "Searching..." : "Enter a search term to begin"}
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import MiniSearch from "minisearch";
+
+  // Datos de ejemplo para la búsqueda
+  const searchData = [
+    {
+      id: 1,
+      title: "Cloud Solutions",
+      content:
+        "Comprehensive cloud computing solutions for modern businesses. Scalable, secure, and reliable infrastructure.",
+      url: "/soluciones/",
+      category: "Solutions",
+    },
+    {
+      id: 2,
+      title: "Artificial Intelligence Services",
+      content:
+        "AI-powered solutions to transform your business operations and enhance decision-making capabilities.",
+      url: "/IA/",
+      category: "Services",
+    },
+    {
+      id: 3,
+      title: "Managed IT Support",
+      content:
+        "Professional IT support and management services to keep your systems running smoothly 24/7.",
+      url: "/Managed-IT/",
+      category: "Support",
+    },
+    {
+      id: 4,
+      title: "Enterprise Products",
+      content:
+        "Cutting-edge enterprise products designed for scalability, security, and performance.",
+      url: "/productos/",
+      category: "Products",
+    },
+    {
+      id: 5,
+      title: "Technical Support",
+      content:
+        "Expert technical support team ready to help you with any questions or issues you may have.",
+      url: "/soporte/",
+      category: "Support",
+    },
+    {
+      id: 6,
+      title: "Custom Services",
+      content:
+        "Tailored technology services designed to meet your specific business requirements and goals.",
+      url: "/servicios/",
+      category: "Services",
+    },
+  ];
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const resultsContainer = document.getElementById("search-results");
+    const loadingText = document.getElementById("loading-text");
+    const searchQuery =
+      new URLSearchParams(window.location.search).get("q") || "";
+
+    // Configurar MiniSearch
+    const miniSearch = new MiniSearch({
+      fields: ["title", "content", "category"], // campos para buscar
+      storeFields: ["title", "content", "url", "category"], // campos para almacenar
+      searchOptions: {
+        boost: { title: 2 }, // dar más peso al título
+        fuzzy: 0.2, // permitir coincidencias difusas
+      },
+    });
+
+    // Indexar los datos
+    miniSearch.addAll(searchData);
+
+    // Función para realizar la búsqueda
+    function performSearch(query: string) {
+      if (!query.trim()) {
+        showEmptyState();
+        return;
+      }
+
+      loadingText!.textContent = "Searching...";
+
+      setTimeout(() => {
+        const results = miniSearch
+          .search(query, {
+            prefix: true, // buscar prefijos también
+          })
+          .slice(0, 10); // limitar a 10 resultados
+
+        displayResults(results, query);
+      }, 300); // Simular delay de búsqueda
+    }
+
+    // Función para mostrar resultados
+    function displayResults(results: any[], query: string) {
+      if (results.length === 0) {
+        resultsContainer!.innerHTML = `
+          <div class="text-center py-8">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.462-.793-6.172-2.172M6.828 6.828A9.966 9.966 0 0012 3c2.34 0 4.462.793 6.172 2.172M12 21a9.966 9.966 0 01-6.172-2.172"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No results found</h3>
+            <p class="text-gray-500">Try searching with different keywords or check your spelling.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const resultsHTML = results
+        .map(
+          (result) => `
+        <article class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  ${result.category}
+                </span>
+                <span class="text-sm text-gray-500">Score: ${Math.round(result.score * 100) / 100}</span>
+              </div>
+              <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                <a href="${result.url}" class="hover:text-primary transition-colors">
+                  ${highlightMatch(result.title, query)}
+                </a>
+              </h2>
+              <p class="text-gray-600 mb-3 line-clamp-3">
+                ${highlightMatch(result.content, query)}
+              </p>
+              <a href="${result.url}" class="inline-flex items-center text-primary hover:text-secondary transition-colors">
+                Read more
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      `
+        )
+        .join("");
+
+      resultsContainer!.innerHTML = `
+        <div class="mb-4">
+          <p class="text-sm text-gray-600">
+            Found ${results.length} result${results.length !== 1 ? "s" : ""} for "<strong>${query}</strong>"
+          </p>
+        </div>
+        ${resultsHTML}
+      `;
+    }
+
+    // Función para resaltar coincidencias
+    function highlightMatch(text: string, query: string): string {
+      if (!query) return text;
+
+      const regex = new RegExp(`(${query})`, "gi");
+      return text.replace(
+        regex,
+        '<mark class="bg-yellow-200 font-medium">$1</mark>'
+      );
+    }
+
+    // Función para mostrar estado vacío
+    function showEmptyState() {
+      resultsContainer!.innerHTML = `
+        <div class="text-center py-8">
+          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <p class="text-gray-500">Enter a search term to begin</p>
+        </div>
+      `;
+    }
+
+    // Realizar búsqueda inicial si hay query
+    if (searchQuery) {
+      performSearch(searchQuery);
+    } else {
+      showEmptyState();
+    }
+
+    // Escuchar cambios en el formulario
+    const searchForm = document.querySelector("form");
+    searchForm?.addEventListener("submit", (e) => {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const query = formData.get("q") as string;
+
+      // Actualizar URL sin recargar la página
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("q", query);
+      window.history.pushState({}, "", newUrl.toString());
+
+      // Realizar búsqueda
+      performSearch(query);
+
+      e.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  mark {
+    border-radius: 2px;
+    padding: 1px 2px;
+  }
+</style>

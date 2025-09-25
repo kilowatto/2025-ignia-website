@@ -1,0 +1,324 @@
+---
+// src/components/SearchBox.astro
+const locale = Astro.currentLocale || "en";
+
+// Importamos las traducciones usando import estático
+import enTranslations from "../../public/locales/en/common.json";
+import esTranslations from "../../public/locales/es/common.json";
+import frTranslations from "../../public/locales/fr/common.json";
+
+// Mapa de traducciones
+const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+};
+
+// Función simple de traducción
+const t = (key: string): string => {
+  const keys = key.split(".");
+  let value: any = translations[locale as keyof typeof translations];
+
+  for (const k of keys) {
+    value = value?.[k];
+  }
+
+  return value || key;
+};
+
+// URL de la página de resultados según el idioma
+const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
+---
+
+<!-- Botón de lupa (siempre visible) -->
+<button
+  id="search-toggle"
+  class="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+  aria-label={t("search.aria_label")}
+  type="button"
+>
+  <svg
+    class="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+  </svg>
+</button>
+
+<!-- Modal de búsqueda -->
+<div
+  id="search-modal"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="search-title"
+>
+  <div
+    class="relative w-full max-w-2xl mx-4 bg-white rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-200"
+  >
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+      <h2 id="search-title" class="text-xl font-semibold text-gray-900">
+        {t("search.modal_title")}
+      </h2>
+      <button
+        id="close-search"
+        class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+        aria-label={t("search.close")}
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Contenido del modal -->
+    <div class="p-6">
+      <form action={searchUrl} method="GET" id="search-form">
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <svg
+              class="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <input
+            type="search"
+            name="q"
+            id="search-input"
+            placeholder={t("search.placeholder")}
+            class="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-gray-50 focus:bg-white"
+            autocomplete="off"
+            spellcheck="false"
+            autofocus
+          />
+        </div>
+
+        <!-- Botón de búsqueda -->
+        <button
+          type="submit"
+          class="mt-4 w-full bg-primary text-white py-3 px-6 rounded-xl font-medium hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          {t("search.search_button")}
+        </button>
+      </form>
+
+      <!-- Sugerencias rápidas -->
+      <div class="mt-6">
+        <p class="text-sm text-gray-500 mb-3">{t("search.suggestions")}</p>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.solutions")}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.products")}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.AI")}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.support")}
+          </button>
+        </div>
+      </div>
+
+      <!-- Atajos de teclado -->
+      <div class="mt-6 pt-4 border-t border-gray-100">
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <span>{t("search.keyboard_shortcuts")}</span>
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+              <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">↵</kbd>
+              {t("search.to_search")}
+            </span>
+            <span class="flex items-center gap-1">
+              <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd>
+              {t("search.to_close")}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Modal animations */
+  .animate-in {
+    animation-duration: 0.2s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+  }
+
+  .fade-in {
+    animation-name: fadeIn;
+  }
+
+  .zoom-in {
+    animation-name: zoomIn;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes zoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Modal styles */
+  #search-modal {
+    backdrop-filter: blur(4px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #search-modal.show {
+    display: flex !important;
+  }
+
+  /* Focus styles */
+  #search-input:focus {
+    box-shadow: 0 0 0 3px rgba(243, 107, 28, 0.1);
+  }
+
+  /* Suggestion tags */
+  .suggestion-tag:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Keyboard shortcuts */
+  kbd {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(55 65 81);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchToggle = document.getElementById("search-toggle");
+    const searchModal = document.getElementById("search-modal");
+    const closeSearch = document.getElementById("close-search");
+    const searchInput = document.getElementById(
+      "search-input"
+    ) as HTMLInputElement;
+    const suggestionTags = document.querySelectorAll(".suggestion-tag");
+
+    if (!searchToggle || !searchModal || !closeSearch || !searchInput) {
+      console.error("❌ Modal search components not found");
+      return;
+    }
+
+    console.log("✅ Modal search initialized");
+
+    // Función para abrir el modal
+    function openModal() {
+      searchModal!.classList.remove("hidden");
+      searchModal!.classList.add("show");
+      document.body.style.overflow = "hidden"; // Prevent background scroll
+
+      // Focus en el input después de la animación
+      setTimeout(() => {
+        searchInput!.focus();
+      }, 200);
+
+      console.log("🔍 Search modal opened");
+    }
+
+    // Función para cerrar el modal
+    function closeModal() {
+      searchModal!.classList.add("hidden");
+      searchModal!.classList.remove("show");
+      document.body.style.overflow = ""; // Restore scroll
+      searchInput!.value = ""; // Clear search
+
+      console.log("🔍 Search modal closed");
+    }
+
+    // Event listeners
+    searchToggle.addEventListener("click", openModal);
+    closeSearch.addEventListener("click", closeModal);
+
+    // Cerrar con clic en backdrop
+    searchModal.addEventListener("click", (e) => {
+      if (e.target === searchModal) {
+        closeModal();
+      }
+    });
+
+    // Cerrar con Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !searchModal.classList.contains("hidden")) {
+        closeModal();
+      }
+    });
+
+    // Sugerencias rápidas
+    suggestionTags.forEach((tag) => {
+      tag.addEventListener("click", () => {
+        searchInput.value = tag.textContent?.trim() || "";
+        searchInput.focus();
+      });
+    });
+
+    // Submit con Enter
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && searchInput.value.trim()) {
+        const form = searchInput.closest("form") as HTMLFormElement;
+        if (form) {
+          form.submit();
+        }
+      }
+    });
+
+    console.log("🔍 All modal event listeners attached");
+  });
+</script>
