@@ -98,9 +98,20 @@ const pageType = "SearchResultsPage";
             <option value="product">Products</option>
             <option value="article">Articles</option>
           </select>
-          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          <div
+            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
             </svg>
           </div>
         </div>
@@ -114,9 +125,20 @@ const pageType = "SearchResultsPage";
           >
             <option value="">All Types</option>
           </select>
-          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          <div
+            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
             </svg>
           </div>
         </div>
@@ -136,7 +158,9 @@ const pageType = "SearchResultsPage";
     <div class="flex gap-8">
       <!-- Sidebar con estadísticas y filtros -->
       <aside class="w-64 hidden lg:block">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6"
+        >
           <h3 class="font-semibold text-gray-900 mb-4">Search Statistics</h3>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
@@ -155,7 +179,11 @@ const pageType = "SearchResultsPage";
         </div>
 
         <!-- Sugerencias relacionadas -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" id="related-suggestions" style="display: none;">
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+          id="related-suggestions"
+          style="display: none;"
+        >
           <h3 class="font-semibold text-gray-900 mb-4">Related Searches</h3>
           <div class="space-y-2" id="suggestions-list">
             <!-- Las sugerencias se llenarán dinámicamente -->
@@ -166,14 +194,20 @@ const pageType = "SearchResultsPage";
       <!-- Resultados de búsqueda -->
       <main class="flex-1">
         <!-- Información de resultados -->
-        <div class="flex items-center justify-between mb-6" id="results-header" style="display: none;">
+        <div
+          class="flex items-center justify-between mb-6"
+          id="results-header"
+          style="display: none;"
+        >
           <div class="text-sm text-gray-600" id="results-info">
             <!-- Se llenará dinámicamente -->
           </div>
-          
+
           <!-- Ordenamiento -->
           <div class="flex items-center gap-2">
-            <label for="sort-select" class="text-sm text-gray-600">Sort by:</label>
+            <label for="sort-select" class="text-sm text-gray-600"
+              >Sort by:</label
+            >
             <select
               id="sort-select"
               class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
@@ -207,7 +241,11 @@ const pageType = "SearchResultsPage";
         </div>
 
         <!-- Paginación -->
-        <nav class="flex items-center justify-center space-x-2 mt-8" id="pagination" style="display: none;">
+        <nav
+          class="flex items-center justify-center space-x-2 mt-8"
+          id="pagination"
+          style="display: none;"
+        >
           <!-- Se llenará dinámicamente -->
         </nav>
       </main>
