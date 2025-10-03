@@ -24,5 +24,11 @@
   "meta": {
     "title": "Ignia - Potenciando tu Viaje Digital",
     "description": "Ignia es un proveedor líder de soluciones tecnológicas, ofreciendo productos y servicios innovadores para ayudar a las empresas a prosperar en la era digital."
+  },
+  "footer": {
+    "Suscribe-to-our-newsletter": "Suscríbete a nuestro boletín",
+    "Get the latest news and updates right in your inbox.": "Recibe las últimas noticias y actualizaciones directamente en tu bandeja de entrada.",
+    "Subscribe": "Suscribirse",
+    "Copyright": "© 2024 Ignia. Todos los derechos reservados."
   }
 }

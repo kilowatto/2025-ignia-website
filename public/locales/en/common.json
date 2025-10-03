@@ -24,5 +24,11 @@
   "meta": {
     "title": "Ignia - Empowering Your Digital Journey",
     "description": "Ignia is a leading technology solutions provider, offering innovative products and services to help businesses thrive in the digital age."
+  },
+  "footer": {
+    "Suscribe-to-our-newsletter": "Subscribe to our newsletter",
+    "Get the latest news and updates right in your inbox.": "Get the latest news and updates right in your inbox.",
+    "Subscribe": "Subscribe",
+    "Copyright": "© 2024 Ignia. All rights reserved."
   }
 }

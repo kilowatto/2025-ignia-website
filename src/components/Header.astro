@@ -1,545 +1,977 @@
 ---
-const locale = Astro.currentLocale || "en";
-
-// Importamos las traducciones usando import estático
-import enTranslations from "../../public/locales/en/common.json";
-import esTranslations from "../../public/locales/es/common.json";
-import frTranslations from "../../public/locales/fr/common.json";
-
-// Importamos el componente del selector de idiomas
+// LangSelect renders the language switcher used in both desktop and mobile menus.
 import LangSelect from "./langSelect.astro";
+// SearchBox provides the command-palette style search modal.
 import SearchBox from "./SearchBox.astro";
 
-// Mapa de traducciones
-const translations = {
-  en: enTranslations,
-  es: esTranslations,
-  fr: frTranslations,
-};
+// Normalize the locale coming from Astro so every helper can rely on an allowed value.
+const rawLocale = Astro.currentLocale || "es";
+const supportedLocales = ["en", "es", "fr"] as const;
+type Locale = (typeof supportedLocales)[number];
+const locale = supportedLocales.includes(rawLocale as Locale)
+  ? (rawLocale as Locale)
+  : "es";
 
-// Función simple de traducción
-const t = (key: string): string => {
-  const keys = key.split(".");
-  let value: any = translations[locale as keyof typeof translations];
-
-  for (const k of keys) {
-    value = value?.[k];
+// Prefix internal links with the current locale (except for English which lives at the root).
+const ensureLocalePath = (href: string) => {
+  if (!href.startsWith("/")) return href;
+  const trimmed = href.replace(/^\/+/u, "");
+  if (locale === "en") {
+    return `/${trimmed}`;
   }
-
-  return value || key;
+  return `/${locale}/${trimmed}`;
 };
 
-// 1. Reemplazamos los textos por claves de traducción
-const links = [
-  { href: "/soluciones/", tKey: "nav.solutions" },
-  { href: "/productos/", tKey: "nav.products" },
-  { href: "/servicios/", tKey: "nav.services" },
-  { href: "/IA/", tKey: "nav.AI" },
-  { href: "/soporte/", tKey: "nav.support" },
+// Convenience type used across the navigation config to keep localized labels together.
+type LocalizedCopy = Record<Locale, string>;
+
+type NavItem = {
+  href: string;
+  title: LocalizedCopy;
+  description: LocalizedCopy;
+};
+
+type NavSection = {
+  id: string;
+  href: string;
+  label: LocalizedCopy;
+  summary: LocalizedCopy;
+  items: NavItem[];
+};
+
+// Helper to pick the string in the active locale, defaulting to Spanish if missing.
+const localize = (value: LocalizedCopy) => value[locale] ?? value.es;
+
+// Mega-menu definition for the desktop experience; each section becomes a hoverable column.
+const navSections: NavSection[] = [
+  {
+    id: "solutions",
+    href: "/soluciones/",
+    label: {
+      en: "Solutions",
+      es: "Soluciones",
+      fr: "Solutions",
+    },
+    summary: {
+      en: "Bundles that solve specific needs",
+      es: "Combos que resuelven necesidades concretas",
+      fr: "Forfaits qui résolvent des besoins concrets",
+    },
+    items: [
+      {
+        href: "/soluciones/nocaas/",
+        title: { en: "NOCaaS", es: "NOCaaS", fr: "NOCaaS" },
+        description: {
+          en: "24/7 monitoring and operations with managed patching and updates.",
+          es: "Monitoreo y operación 24/7, parches y actualizaciones gestionadas.",
+          fr: "Supervision 24/7 et opérations avec correctifs et mises à jour gérés.",
+        },
+      },
+      {
+        href: "/soluciones/private-cloud-as-a-service/",
+        title: {
+          en: "Private Cloud as a Service",
+          es: "Private Cloud as a Service",
+          fr: "Private Cloud as a Service",
+        },
+        description: {
+          en: "Elastic, isolated private cloud ready to scale.",
+          es: "Nube privada elástica y aislada lista para escalar.",
+          fr: "Cloud privé élastique et isolé, prêt à évoluer.",
+        },
+      },
+      {
+        href: "/soluciones/private-cloud-on-premise/",
+        title: {
+          en: "Private Cloud On-Premise",
+          es: "Private Cloud On-Premise",
+          fr: "Private Cloud On-Premise",
+        },
+        description: {
+          en: "Private cloud deployed and operated directly on-site.",
+          es: "Nube privada desplegada y administrada en sitio.",
+          fr: "Cloud privé déployé et géré sur site.",
+        },
+      },
+      {
+        href: "/soluciones/bcp-draas/",
+        title: { en: "BCP/DRaaS", es: "BCP/DRaaS", fr: "BCP/DRaaS" },
+        description: {
+          en: "Business continuity and disaster recovery with replicas and failover.",
+          es: "Continuidad y recuperación con réplicas y failover.",
+          fr: "Continuité et reprise avec réplication et bascule.",
+        },
+      },
+      {
+        href: "/soluciones/kubernetes-devops-platform/",
+        title: {
+          en: "Kubernetes DevOps Platform",
+          es: "Kubernetes DevOps Platform",
+          fr: "Plateforme DevOps Kubernetes",
+        },
+        description: {
+          en: "Managed Kubernetes with CI/CD pipelines and observability.",
+          es: "Kubernetes gestionado con CI/CD y observabilidad.",
+          fr: "Kubernetes géré avec CI/CD et observabilité.",
+        },
+      },
+      {
+        href: "/soluciones/secure-workload-hosting/",
+        title: {
+          en: "Secure Workload Hosting",
+          es: "Secure Workload Hosting",
+          fr: "Secure Workload Hosting",
+        },
+        description: {
+          en: "Secure hosting for critical workloads with load balancing and management.",
+          es: "Hosting seguro para cargas críticas con balanceo y gestión.",
+          fr: "Hébergement sécurisé pour charges critiques avec répartition et gestion.",
+        },
+      },
+      {
+        href: "/soluciones/compliance-cloud/",
+        title: {
+          en: "Compliance Cloud for Fintechs",
+          es: "Compliance Cloud for Fintechs",
+          fr: "Compliance Cloud pour Fintechs",
+        },
+        description: {
+          en: "WORM logs, metrics and CNBV/ISO/PCI reporting.",
+          es: "Logs WORM, métricas y reportes CNBV/ISO/PCI.",
+          fr: "Logs WORM, métriques et rapports CNBV/ISO/PCI.",
+        },
+      },
+      {
+        href: "/soluciones/regulatory-backup-archival/",
+        title: {
+          en: "Regulatory Backup & Archival",
+          es: "Regulatory Backup & Archival",
+          fr: "Archivage & sauvegarde réglementaire",
+        },
+        description: {
+          en: "Encrypted backups with 5–10 year retention policies.",
+          es: "Backups cifrados con retención de 5 a 10 años.",
+          fr: "Sauvegardes chiffrées avec rétention de 5 à 10 ans.",
+        },
+      },
+    ],
+  },
+  {
+    id: "products",
+    href: "/productos/",
+    label: {
+      en: "Products",
+      es: "Productos",
+      fr: "Produits",
+    },
+    summary: {
+      en: "Modular services you can compose",
+      es: "Servicios modulares",
+      fr: "Services modulaires",
+    },
+    items: [
+      {
+        href: "/productos/virtual-machines/",
+        title: {
+          en: "Virtual Machines",
+          es: "Virtual Machines",
+          fr: "Machines virtuelles",
+        },
+        description: {
+          en: "High-performance virtual servers for demanding workloads.",
+          es: "Servidores virtuales de alto rendimiento para cargas exigentes.",
+          fr: "Serveurs virtuels haute performance pour charges exigeantes.",
+        },
+      },
+      {
+        href: "/productos/kubernetes-as-a-service/",
+        title: {
+          en: "Kubernetes as a Service",
+          es: "Kubernetes as a Service",
+          fr: "Kubernetes as a Service",
+        },
+        description: {
+          en: "Production-ready Kubernetes clusters with managed lifecycle.",
+          es: "Clústeres Kubernetes listos para producción y gestionados.",
+          fr: "Clusters Kubernetes prêts pour la production et gérés.",
+        },
+      },
+      {
+        href: "/productos/block-storage/",
+        title: {
+          en: "Block Storage",
+          es: "Almacenamiento por bloques",
+          fr: "Stockage par blocs",
+        },
+        description: {
+          en: "High IOPS storage tailored for databases and critical apps.",
+          es: "Alto IOPS para bases de datos y aplicaciones críticas.",
+          fr: "Stockage à IOPS élevé pour bases de données et applications critiques.",
+        },
+      },
+      {
+        href: "/productos/object-storage/",
+        title: {
+          en: "Object Storage",
+          es: "Almacenamiento por objetos",
+          fr: "Stockage objet",
+        },
+        description: {
+          en: "Massively scalable storage for files and backups.",
+          es: "Escala masiva para archivos y respaldos.",
+          fr: "Échelle massive pour fichiers et sauvegardes.",
+        },
+      },
+    ],
+  },
+  {
+    id: "ai",
+    href: "/IA/",
+    label: {
+      en: "AI & LLMs",
+      es: "IA y LLMs",
+      fr: "IA et LLM",
+    },
+    summary: {
+      en: "Run your LLMs on Ignia Cloud with managed GPUs, data pipelines, and copilots.",
+      es: "Ejecuta tus LLMs en Ignia Cloud con GPUs gestionadas, pipelines de datos y copilots.",
+      fr: "Faites tourner vos LLM sur Ignia Cloud avec GPU gérés, pipelines de données et copilotes.",
+    },
+    items: [
+      {
+        href: "/IA/llm-hosting/",
+        title: {
+          en: "LLM Hosting",
+          es: "LLM Hosting",
+          fr: "LLM Hosting",
+        },
+        description: {
+          en: "Deploy open or custom LLMs with isolated clusters, GPUs, and autoscaling.",
+          es: "Despliega LLMs abiertos o propios con clústeres aislados, GPUs y autoescalado.",
+          fr: "Déployez des LLM ouverts ou privés avec clusters isolés, GPU et autoscaling.",
+        },
+      },
+      {
+        href: "/IA/rag-blueprints/",
+        title: {
+          en: "RAG Blueprints",
+          es: "Blueprints RAG",
+          fr: "Blueprints RAG",
+        },
+        description: {
+          en: "Ingest, vectorize, and ground LLMs with managed retrieval pipelines.",
+          es: "Ingiere, vectoriza y contextualiza LLMs con pipelines de retrieval gestionados.",
+          fr: "Ingestion, vectorisation et contextualisation des LLM avec pipelines gérés.",
+        },
+      },
+      {
+        href: "/IA/copilots/",
+        title: {
+          en: "Copilot Studio",
+          es: "Copilot Studio",
+          fr: "Copilot Studio",
+        },
+        description: {
+          en: "Design branded copilots with guardrails, analytics, and omni-channel delivery.",
+          es: "Diseña copilots con guardas, analítica y entrega multicanal.",
+          fr: "Concevez des copilotes avec garde-fous, analytics et diffusion omnicanale.",
+        },
+      },
+      {
+        href: "/IA/mlops/",
+        title: {
+          en: "MLOps & Monitoring",
+          es: "MLOps y Monitoreo",
+          fr: "MLOps et monitoring",
+        },
+        description: {
+          en: "Operate AI workloads with experiment tracking, drift alerts, and governance.",
+          es: "Opera cargas de IA con tracking de experiments, alertas de drift y gobernanza.",
+          fr: "Opérez vos charges IA avec suivi d'expériences, alertes de dérive et gouvernance.",
+        },
+      },
+    ],
+  },
+  {
+    id: "services",
+    href: "/servicios/",
+    label: {
+      en: "Services",
+      es: "Servicios",
+      fr: "Services",
+    },
+    summary: {
+      en: "Experts who operate, secure, and evolve your stack",
+      es: "Expertos que operan, protegen y evolucionan tu plataforma",
+      fr: "Des experts pour opérer, sécuriser et faire évoluer votre stack",
+    },
+    items: [
+      {
+        href: "/Managed-IT/",
+        title: {
+          en: "Managed IT",
+          es: "IT Gestionado",
+          fr: "IT géré",
+        },
+        description: {
+          en: "24/7 management with SLAs, monitoring, and incident response.",
+          es: "Gestión 24/7 con SLAs, monitoreo y respuesta a incidentes.",
+          fr: "Gestion 24/7 avec SLA, monitoring et réponse aux incidents.",
+        },
+      },
+      {
+        href: "/servicios/consultoria-cloud/",
+        title: {
+          en: "Cloud Consulting",
+          es: "Consultoría Cloud",
+          fr: "Conseil Cloud",
+        },
+        description: {
+          en: "Migrations, assessments, and architecture guidance led by experts.",
+          es: "Migraciones, assessments y guía de arquitectura liderada por expertos.",
+          fr: "Migrations, évaluations et conseil en architecture par des experts.",
+        },
+      },
+      {
+        href: "/soporte/",
+        title: {
+          en: "Support Center",
+          es: "Centro de soporte",
+          fr: "Centre de support",
+        },
+        description: {
+          en: "Help desk, knowledge base, and proactive care for your teams.",
+          es: "Mesa de ayuda, base de conocimiento y soporte proactivo para tu equipo.",
+          fr: "Support, base de connaissances et assistance proactive pour vos équipes.",
+        },
+      },
+    ],
+  },
 ];
-const base = locale === "en" ? "" : `/${locale}`;
+
+// ARIA labels localized for the desktop navigation landmark.
+const navAriaLabel = localize({
+  en: "Main navigation",
+  es: "Navegación principal",
+  fr: "Navigation principale",
+});
+
+// ARIA label for the mobile navigation region.
+const mobileAriaLabel = localize({
+  en: "Mobile navigation",
+  es: "Navegación móvil",
+  fr: "Navigation mobile",
+});
+
+// Skip-link text so screen readers get meaningful instructions.
+const skipToContentLabel = localize({
+  en: "Skip to main content",
+  es: "Saltar al contenido",
+  fr: "Aller au contenu",
+});
+
+// Accessible label for the hamburger button.
+const toggleMenuLabel = localize({
+  en: "Toggle navigation",
+  es: "Abrir menú",
+  fr: "Ouvrir le menu",
+});
+
+type MobileLink = {
+  href: string;
+  label: string;
+};
+
+// Mobile menu uses a flattened list of top-level destinations plus key utility pages.
+const mobileLinks: MobileLink[] = [
+  ...navSections.map((section) => ({
+    href: ensureLocalePath(section.href),
+    label: localize(section.label),
+  })),
+  {
+    href: ensureLocalePath("/blog/"),
+    label: localize({
+      en: "Insights & Blog",
+      es: "Blog e insights",
+      fr: "Blog & insights",
+    }),
+  },
+  {
+    href: ensureLocalePath("/contacto/"),
+    label: localize({
+      en: "Contact",
+      es: "Contacto",
+      fr: "Contact",
+    }),
+  },
+];
+
+// Helper used by the template when linking into nested locale-specific pages.
+const localeHref = (href: string) => ensureLocalePath(href);
 ---
 
+<!-- Header: main site navigation with locale-aware links; Tailwind utilities handle spacing, blur, and shadows -->
+ <!-- el header tiene sombra color #f36b1c -->
 <header
-  class="w-full bg-white shadow-[0_4px_7px_0_var(--color-primary)] relative"
+  class="relative z-50 w-full border-b border-slate-100 bg-white/85 shadow-md shadow-[#f36b1c] backdrop-blur supports-[backdrop-filter]:bg-white/70"
 >
-  <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-    <!-- Header principal -->
-    <div class="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-24">
-      <!-- Logo -->
-      <div class="flex-shrink-0">
-        <a href={locale === "en" ? "/" : `/${locale}/`} class="block">
-          <img
-            class="h-10 sm:h-12 md:h-14 lg:h-16 w-auto transition-all duration-200 hover:scale-105"
-            src="/logo.svg"
-            alt="Ignia Cloud Logo"
-          />
-        </a>
-      </div>
-
-      <!-- Desktop Navigation (Pantallas grandes) -->
-      <div class="hidden xl:flex items-center space-x-8 2xl:space-x-12">
-        <nav id="main-nav" class="transition-all duration-300 ease-in-out">
-          <div
-            id="magic-nav-container"
-            class="relative flex items-center space-x-6 2xl:space-x-8"
-          >
+  <!-- Accessibility skip link so keyboard users can jump to page content -->
+  <a href="#contenido" class="nav-ignia__skip">{skipToContentLabel}</a>
+  <!-- Wrapper: aligns logo, desktop navigation, and utility actions -->
+  <div class="mx-auto flex max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between gap-4 lg:gap-6">
+      <!-- Logo lockup: routes to locale-aware home page -->
+      <a
+        href={locale === "en" ? "/" : `/${locale}/`}
+        class="block shrink-0"
+        aria-label="Ignia Cloud"
+      >
+        <img
+          src="/logo.svg"
+          alt="Ignia Cloud Logo"
+          class="h-10 w-auto"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <!-- Desktop mega-menu: only visible from extra-large breakpoints (≥1280px) -->
+      <div class="hidden flex-1 items-center justify-center xl:flex">
+        <nav class="nav-ignia" aria-label={navAriaLabel}>
+          <span class="nav-ignia__magic-line" aria-hidden="true"></span>
+          <ul class="nav-ignia__list" role="menubar">
             {
-              links.map((link) => (
-                <a
-                  aria-label={t(link.tKey)}
-                  href={locale === "en" ? link.href : `/${locale}${link.href}`}
-                  class="nav-link text-secondary font-medium text-base lg:text-lg 2xl:text-xl py-2 px-1 hover:text-primary transition-colors duration-200 whitespace-nowrap"
-                >
-                  {t(link.tKey)}
-                </a>
+              navSections.map((section) => (
+                <li class="nav-ignia__item" role="none">
+                  <!-- Trigger button: opens corresponding panel on hover/click -->
+                  <button
+                    type="button"
+                    class="nav-ignia__trigger "
+                    data-nav-trigger
+                    data-nav-id={section.id}
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-controls={`nav-panel-${section.id}`}
+                    role="menuitem"
+                  >
+                    {localize(section.label)}
+                    <svg
+                      class="nav-ignia__trigger-icon"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.22 5.22a.75.75 0 0 1 1.06 0L8 8.94l3.72-3.72a.75.75 0 0 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L3.22 6.28a.75.75 0 0 1 0-1.06z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </button>
+                  <!-- Mega panel: summary block plus deep links per section -->
+                  <div
+                    id={`nav-panel-${section.id}`}
+                    class="nav-ignia__panel"
+                    data-nav-panel
+                    data-nav-id={section.id}
+                    role="menu"
+                    aria-hidden="true"
+                    hidden
+                  >
+                    <div class="nav-ignia__summary">
+                      <h3 class="nav-ignia__summary-title">
+                        {localize(section.label)}
+                      </h3>
+                      <p class="nav-ignia__summary-text">
+                        {localize(section.summary)}
+                      </p>
+                      <a
+                        href={localeHref(section.href)}
+                        class="nav-ignia__summary-link"
+                      >
+                        {localize({
+                          en: "Explore all",
+                          es: "Ver todas",
+                          fr: "Tout explorer",
+                        })}
+                      </a>
+                    </div>
+                    <ul class="nav-ignia__panel-list" role="none">
+                      {section.items.map((item) => (
+                        <li class="nav-ignia__panel-item" role="none">
+                          <a
+                            href={localeHref(item.href)}
+                            class="nav-ignia__panel-link"
+                            role="menuitem"
+                          >
+                            <span class="nav-ignia__panel-title">
+                              {localize(item.title)}
+                            </span>
+                            <span class="nav-ignia__panel-description">
+                              {localize(item.description)}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
               ))
             }
-            <span
-              id="magic-line"
-              class="absolute bottom-0 bg-primary rounded-full shadow-lg magic-line-debug"
-              style="opacity: 0; width: 0px; height: 6px; transform: translateX(0px); background-color: #f36b1c !important; z-index: 100; transition: all 0.3s ease;"
-            ></span>
-          </div>
+          </ul>
         </nav>
       </div>
-
-      <!-- Right side items -->
-      <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
-        <!-- Búsqueda - siempre visible -->
-        <SearchBox />
-
-        <!-- Language selector -->
-        <div class="hidden sm:block">
+      <!-- Utility bar: search shortcut, language selector, and social icons -->
+      <div class="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+        <!-- Desktop search shortcut: hidden on small screens -->
+        <div class="hidden w-56 lg:block lg:flex-shrink-0">
+          <SearchBox />
+        </div>
+        <!-- Desktop language selector: mobile version lives inside the flyout -->
+        <div class="hidden lg:block lg:flex-shrink-0">
           <LangSelect />
         </div>
-
-        <!-- Mobile menu button -->
+        <!-- Social icons: persistent access to LinkedIn and WhatsApp -->
+        <div
+          class="nav-ignia__social nav-ignia__social--header"
+          aria-label="Ignia social links"
+        >
+          <a
+            href="https://www.linkedin.com/company/ignia-cloud/"
+            class="nav-ignia__social-link nav-ignia__social-link--linkedin"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="sr-only">LinkedIn</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M20.45 20.45h-3.4v-5.34c0-1.27-.02-2.91-1.77-2.91-1.77 0-2.04 1.38-2.04 2.81v5.44h-3.39V9h3.25v1.56h.05c.45-.85 1.56-1.74 3.21-1.74 3.43 0 4.06 2.26 4.06 5.19v6.44ZM5.34 7.43a1.97 1.97 0 1 1 0-3.94 1.97 1.97 0 0 1 0 3.94ZM7.05 20.45H3.62V9h3.43v11.45Z"
+                fill="currentColor"></path>
+            </svg>
+          </a>
+          <a
+            href="https://wa.me/525569527498"
+            class="nav-ignia__social-link nav-ignia__social-link--whatsapp"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="sr-only">WhatsApp</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2a9.94 9.94 0 0 0-8.51 15.3L2 22l4.83-1.45A9.94 9.94 0 1 0 12 2Zm0 17.8a7.8 7.8 0 0 1-3.98-1.1l-.28-.17-2.86.86.92-2.77-.18-.29A7.8 7.8 0 1 1 12 19.8Zm4.47-5.55c-.25-.12-1.46-.72-1.68-.8-.22-.08-.38-.12-.54.12-.16.23-.62.77-.76.92-.14.16-.28.18-.53.06-.25-.12-1.06-.39-2.01-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.26-.02-.4.1-.52.11-.11.25-.28.37-.42.12-.14.16-.23.24-.38.08-.15.04-.29-.02-.41-.06-.12-.54-1.28-.74-1.76-.2-.48-.4-.41-.54-.42h-.46c-.16 0-.41.06-.63.3-.22.23-.83.81-.83 1.98 0 1.17.85 2.3.97 2.46.12.16 1.66 2.53 4.02 3.55.56.24 1 .38 1.34.49.56.18 1.07.15 1.47.09.45-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3Z"
+                fill="currentColor"></path>
+            </svg>
+          </a>
+        </div>
+        <!-- Mobile toggle button: reveals compact menu and utilities on smaller screens -->
         <button
           id="mobile-menu-button"
-          class="xl:hidden inline-flex items-center justify-center p-2 rounded-md text-secondary hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-all duration-200"
-          aria-controls="mobile-menu"
+          type="button"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-orange-300 hover:text-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 xl:hidden"
           aria-expanded="false"
+          aria-controls="mobile-menu"
         >
-          <span class="sr-only">Abrir menú principal</span>
-          <!-- Hamburger icon -->
+          <span class="sr-only">{toggleMenuLabel}</span>
           <svg
-            class="block h-6 w-6"
-            fill="none"
+            class="h-6 w-6"
             viewBox="0 0 24 24"
-            stroke-width="2"
+            fill="none"
             stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            data-icon="open"
             aria-hidden="true"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"></path>
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
-          <!-- Close icon (hidden by default) -->
           <svg
             class="hidden h-6 w-6"
-            fill="none"
             viewBox="0 0 24 24"
-            stroke-width="2"
+            fill="none"
             stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            data-icon="close"
             aria-hidden="true"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"></path>
+            <path d="M6 6l12 12M18 6l-12 12"></path>
           </svg>
         </button>
       </div>
     </div>
-
-    <!-- Mobile menu (hidden by default) -->
-    <div class="xl:hidden" id="mobile-menu" style="display: none;">
-      <div
-        class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200 shadow-lg"
-      >
+  </div>
+  <!-- Mobile flyout menu: toggled via hamburger button -->
+  <div id="mobile-menu" class="nav-ignia__mobile-menu" hidden>
+    <!-- Mobile primary navigation links -->
+    <nav aria-label={mobileAriaLabel}>
+      <ul class="nav-ignia__mobile-list">
         {
-          links.map((link) => (
-            <a
-              href={locale === "en" ? link.href : `/${locale}${link.href}`}
-              class="mobile-nav-link block px-3 py-3 rounded-md text-base font-medium text-secondary hover:text-primary hover:bg-gray-50 transition-all duration-200"
-            >
-              {t(link.tKey)}
-            </a>
+          mobileLinks.map((link) => (
+            <li>
+              <a href={link.href} class="nav-ignia__mobile-link">
+                {link.label}
+              </a>
+            </li>
           ))
         }
-
-        <!-- Language selector en móvil -->
-        <div class="sm:hidden pt-2 border-t border-gray-100 mt-2">
-          <div class="px-3 py-2">
-            <LangSelect />
-          </div>
-        </div>
-      </div>
+      </ul>
+    </nav>
+    <div class="nav-ignia__mobile-search">
+      <SearchBox />
     </div>
-  </div>
+    <div class="nav-ignia__mobile-lang">
+      <LangSelect />
+    </div>
+    <div class="nav-ignia__mobile-social" aria-label="Ignia social links">
+      <a
+        href="https://www.linkedin.com/company/ignia-cloud/"
+        class="nav-ignia__social-link nav-ignia__social-link--linkedin"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="sr-only">LinkedIn</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M20.45 20.45h-3.4v-5.34c0-1.27-.02-2.91-1.77-2.91-1.77 0-2.04 1.38-2.04 2.81v5.44h-3.39V9h3.25v1.56h.05c.45-.85 1.56-1.74 3.21-1.74 3.43 0 4.06 2.26 4.06 5.19v6.44ZM5.34 7.43a1.97 1.97 0 1 1 0-3.94 1.97 1.97 0 0 1 0 3.94ZM7.05 20.45H3.62V9h3.43v11.45Z"
+            fill="currentColor"></path>
+        </svg>
+      </a>
+      <a
+        href="https://wa.me/525569527498"
+        class="nav-ignia__social-link nav-ignia__social-link--whatsapp"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="sr-only">WhatsApp</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 2a9.94 9.94 0 0 0-8.51 15.3L2 22l4.83-1.45A9.94 9.94 0 1 0 12 2Zm0 17.8a7.8 7.8 0 0 1-3.98-1.1l-.28-.17-2.86.86.92-2.77-.18-.29A7.8 7.8 0 1 1 12 19.8Zm4.47-5.55c-.25-.12-1.46-.72-1.68-.8-.22-.08-.38-.12-.54.12-.16.23-.62.77-.76.92-.14.16-.28.18-.53.06-.25-.12-1.06-.39-2.01-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.26-.02-.4.1-.52.11-.11.25-.28.37-.42.12-.14.16-.23.24-.38.08-.15.04-.29-.02-.41-.06-.12-.54-1.28-.74-1.76-.2-.48-.4-.41-.54-.42h-.46c-.16 0-.41.06-.63.3-.22.23-.83.81-.83 1.98 0 1.17.85 2.3.97 2.46.12.16 1.66 2.53 4.02 3.55.56.24 1 .38 1.34.49.56.18 1.07.15 1.47.09.45-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3Z"
+            fill="currentColor"></path>
+        </svg>
+      </a>
+    </div>
+</div>
 </header>
 
-{/* Estilos responsivos */}
-<style>
-  /* Magic Line Styles */
-  #magic-line {
-    transition:
-      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      opacity 0.3s ease-in-out !important;
-    z-index: 100 !important;
-    pointer-events: none !important;
-    background-color: #f36b1c !important;
-    height: 6px !important;
-    border-radius: 9999px !important;
-    box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
-  }
+<!-- Desktop navigation interactivity: controls mega-menu hover states -->
+<script type="module">
+  // Disable strict typing since this imperative block pokes the DOM directly.
+  // @ts-nocheck
+  // Only run the desktop interactions when the viewport meets the XL breakpoint.
+  const NAV_MEDIA_QUERY = "(min-width: 1280px)";
+  const navRoot = document.querySelector(".nav-ignia");
+  const media = window.matchMedia(NAV_MEDIA_QUERY);
 
-  .magic-line-debug {
-    background: #f36b1c !important;
-    display: block !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    height: 6px !important;
-    border-radius: 9999px !important;
-    z-index: 9999 !important;
-    box-shadow: 0 4px 6px -1px rgba(243, 107, 28, 0.5) !important;
-  }
+  if (navRoot) {
+    // Collect top-level buttons so we can wire focus/hover behavior.
+    const triggers = Array.from(navRoot.querySelectorAll("[data-nav-trigger]"));
+    // Map trigger IDs to their corresponding dropdown panels for quick lookup.
+    const panelMap = new Map(
+      triggers.map((trigger) => {
+        const id = trigger.dataset.navId || "";
+        const panel = navRoot.querySelector(
+          `[data-nav-panel][data-nav-id="${id}"]`
+        );
+        return [id, panel];
+      })
+    );
+    const magicLine = navRoot.querySelector(".nav-ignia__magic-line");
+    let openId = null;
 
-  #magic-nav-container {
-    position: relative !important;
-  }
+    // Reset the highlight bar that animates under active triggers.
+    const hideMagicLine = () => {
+      if (!magicLine) return;
+      magicLine.style.opacity = "0";
+      magicLine.style.transform = "translateX(0)";
+      magicLine.style.width = "0";
+    };
 
-  .nav-link {
-    position: relative !important;
-    z-index: 5 !important;
-    /* Eliminar cualquier borde o efecto adicional que cause doble barra */
-    border-bottom: none !important;
-    border: none !important;
-  }
+    // Position the highlight bar beneath the hovered/focused trigger.
+    const updateMagicLine = (trigger) => {
+      if (!magicLine || !trigger || !media.matches) return;
+      const triggerRect = trigger.getBoundingClientRect();
+      const containerRect = navRoot.getBoundingClientRect();
+      magicLine.style.width = `${triggerRect.width}px`;
+      magicLine.style.transform = `translateX(${triggerRect.left - containerRect.left}px)`;
+      magicLine.style.opacity = "1";
+    };
 
-  /* Eliminar pseudo-elementos que puedan crear bordes adicionales */
-  .nav-link::before,
-  .nav-link::after {
-    display: none !important;
-  }
+    // Close a single mega panel and optionally return focus to its trigger.
+    const closePanel = (id, focusTrigger = false) => {
+      if (!id) return;
+      const trigger = triggers.find((btn) => btn.dataset.navId === id);
+      const panel = panelMap.get(id);
+      if (!trigger || !panel) return;
+      panel.hidden = true;
+      panel.setAttribute("aria-hidden", "true");
+      panel.removeAttribute("data-open");
+      trigger.setAttribute("aria-expanded", "false");
+      if (focusTrigger) {
+        trigger.focus();
+      }
+      if (openId === id) {
+        openId = null;
+        hideMagicLine();
+      }
+    };
 
-  /* Mobile menu animations */
-  #mobile-menu.show {
-    display: block !important;
-    animation: slideDown 0.3s ease-out forwards;
-  }
+    // Convenience helper for shutting everything when we leave the nav.
+    const closeAll = () => {
+      triggers.forEach((trigger) => {
+        closePanel(trigger.dataset.navId || "");
+      });
+    };
 
-  #mobile-menu.hide {
-    animation: slideUp 0.3s ease-in forwards;
-  }
+    // Show a panel, hiding the previously open one so only one stays visible.
+    const openPanel = (id) => {
+      if (!id || !media.matches) return;
+      if (openId && openId !== id) {
+        closePanel(openId);
+      }
+      const trigger = triggers.find((btn) => btn.dataset.navId === id);
+      const panel = panelMap.get(id);
+      if (!trigger || !panel) return;
+      panel.hidden = false;
+      panel.setAttribute("aria-hidden", "false");
+      panel.dataset.open = "true";
+      trigger.setAttribute("aria-expanded", "true");
+      updateMagicLine(trigger);
+      openId = id;
+    };
 
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+    // Keyboard support: move focus inside the mega panel when using arrows.
+    const focusItem = (panel, index) => {
+      if (!panel) return;
+      const items = Array.from(panel.querySelectorAll("[role='menuitem']"));
+      if (!items.length) return;
+      const clampedIndex = Math.max(0, Math.min(index, items.length - 1));
+      items[clampedIndex].focus();
+    };
 
-  @keyframes slideUp {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-  }
+    triggers.forEach((trigger, triggerIndex) => {
+      const id = trigger.dataset.navId || "";
 
-  /* Responsive Breakpoints */
+      // Hovering with a mouse should open the corresponding panel.
+      trigger.addEventListener("mouseenter", () => {
+        if (!media.matches) return;
+        if (id) {
+          openPanel(id);
+        }
+      });
 
-  /* Pantallas muy pequeñas (teléfonos plegables cerrados: 280px-320px) */
-  @media (max-width: 320px) {
-    .max-w-8xl {
-      padding-left: 0.75rem;
-      padding-right: 0.75rem;
-    }
+      // Keyboard focus mirrors the hover behavior for accessibility.
+      trigger.addEventListener("focus", () => {
+        if (!media.matches) return;
+        if (id) {
+          openPanel(id);
+        }
+      });
 
-    .mobile-nav-link {
-      font-size: 0.9rem;
-      padding: 0.75rem;
-    }
-  }
+      // When leaving the trigger, hide the highlight unless the menu stays open.
+      trigger.addEventListener("mouseleave", () => {
+        if (!media.matches) return;
+        if (openId !== id) {
+          const expanded = trigger.getAttribute("aria-expanded");
+          if (expanded !== "true") {
+            hideMagicLine();
+          }
+        }
+      });
 
-  /* Teléfonos estándar (321px-480px) */
-  @media (min-width: 321px) and (max-width: 480px) {
-    header {
-      min-height: 4rem;
-    }
-  }
+      // If focus moves away, collapse the panel after a short delay.
+      trigger.addEventListener("blur", () => {
+        if (!media.matches) return;
+        if (openId !== id) {
+          const expanded = trigger.getAttribute("aria-expanded");
+          if (expanded !== "true") {
+            hideMagicLine();
+          }
+        }
+      });
 
-  /* Teléfonos plegables abiertos y pantallas pequeñas (481px-640px) */
-  @media (min-width: 481px) and (max-width: 640px) {
-    .mobile-nav-link {
-      font-size: 1rem;
-      padding: 0.875rem 1rem;
-    }
-  }
+      trigger.addEventListener("click", (event) => {
+        if (!media.matches) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (openId === id) {
+          closePanel(id);
+        } else {
+          openPanel(id);
+        }
+      });
 
-  /* Tablets pequeñas (641px-768px) */
-  @media (min-width: 641px) and (max-width: 768px) {
-    header {
-      min-height: 4.5rem;
-    }
-
-    .mobile-nav-link {
-      display: inline-block;
-      width: auto;
-      margin-right: 1rem;
-    }
-
-    #mobile-menu .space-y-1 {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-  }
-
-  /* Tablets grandes (769px-1024px) */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    header {
-      min-height: 5rem;
-    }
-  }
-
-  /* Laptops (1025px-1280px) */
-  @media (min-width: 1025px) and (max-width: 1280px) {
-    header {
-      min-height: 5.5rem;
-    }
-  }
-
-  /* Pantallas grandes (1281px-1536px) */
-  @media (min-width: 1281px) and (max-width: 1536px) {
-    .max-w-8xl {
-      max-width: 88rem;
-    }
-  }
-
-  /* Pantallas extra grandes 27"+ (1537px-2560px) */
-  @media (min-width: 1537px) and (max-width: 2560px) {
-    .max-w-8xl {
-      max-width: 100rem;
-    }
-
-    .nav-link {
-      font-size: 1.25rem;
-      padding: 0.75rem 1rem;
-    }
-  }
-
-  /* Pantallas ultra-wide y 32"+ (2561px+) */
-  @media (min-width: 2561px) {
-    .max-w-8xl {
-      max-width: 120rem;
-    }
-
-    header {
-      min-height: 7rem;
-    }
-
-    .nav-link {
-      font-size: 1.375rem;
-      padding: 1rem 1.25rem;
-    }
-  }
-
-  /* Mobile menu animations */
-  #mobile-menu {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: top;
-  }
-
-  #mobile-menu.show {
-    display: block !important;
-    animation: slideDown 0.3s ease-out;
-  }
-
-  #mobile-menu.hide {
-    animation: slideUp 0.3s ease-in;
-  }
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: scaleY(0.95) translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: scaleY(1) translateY(0);
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 1;
-      transform: scaleY(1) translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: scaleY(0.95) translateY(-10px);
-    }
-  }
-
-  /* Hover effects para pantallas grandes - ELIMINADO PARA EVITAR CONFLICTOS */
-  /* Los hover effects serán manejados solo por el magic line JavaScript */
-
-  /* Focus states for accessibility */
-  .nav-link:focus,
-  .mobile-nav-link:focus,
-  #mobile-menu-button:focus {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  /* High contrast mode support */
-  @media (prefers-contrast: high) {
-    .nav-link,
-    .mobile-nav-link {
-      font-weight: 600;
-    }
-
-    #magic-line {
-      height: 4px !important;
-    }
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    #magic-line,
-    .nav-link,
-    .mobile-nav-link,
-    #mobile-menu {
-      transition: none !important;
-      animation: none !important;
-    }
-  }
-</style>
-<script>
-  console.log("🚀 Starting Header script...");
-
-  // Magic Line para desktop
-  function setupMagicLine() {
-    console.log("🎯 Setting up Magic Line");
-    const navContainer = document.querySelector(
-      "#magic-nav-container"
-    ) as HTMLElement;
-    const magicLine = document.querySelector("#magic-line") as HTMLElement;
-    const navLinks = document.querySelectorAll(
-      ".nav-link"
-    ) as NodeListOf<HTMLElement>;
-
-    if (!navContainer || !magicLine || !navLinks.length) {
-      console.log("❌ Magic Line elements not found, retrying...");
-      setTimeout(setupMagicLine, 100);
-      return;
-    }
-
-    console.log("✅ Magic Line elements found:", {
-      container: !!navContainer,
-      line: !!magicLine,
-      links: navLinks.length,
-    });
-
-    navLinks.forEach((link) => {
-      link.addEventListener("mouseenter", () => {
-        if (window.innerWidth >= 1280) {
-          const rect = link.getBoundingClientRect();
-          const containerRect = navContainer.getBoundingClientRect();
-          const linkWidth = rect.width;
-          const linkLeft = rect.left - containerRect.left;
-
-          magicLine.style.width = `${linkWidth}px`;
-          magicLine.style.transform = `translateX(${linkLeft}px)`;
-          magicLine.style.opacity = "1";
+      trigger.addEventListener("keydown", (event) => {
+        if (!media.matches) return;
+        switch (event.key) {
+          case "ArrowRight": {
+            event.preventDefault();
+            triggers[(triggerIndex + 1) % triggers.length].focus();
+            break;
+          }
+          case "ArrowLeft": {
+            event.preventDefault();
+            triggers[
+              (triggerIndex - 1 + triggers.length) % triggers.length
+            ].focus();
+            break;
+          }
+          case "ArrowDown": {
+            event.preventDefault();
+            openPanel(id);
+            focusItem(panelMap.get(id), 0);
+            break;
+          }
+          case "ArrowUp": {
+            event.preventDefault();
+            openPanel(id);
+            const panel = panelMap.get(id);
+            if (panel) {
+              const items = panel.querySelectorAll("[role='menuitem']");
+              focusItem(panel, items.length - 1);
+            }
+            break;
+          }
+          case "Escape": {
+            event.preventDefault();
+            closePanel(id, true);
+            break;
+          }
         }
       });
     });
 
-    navContainer.addEventListener("mouseleave", () => {
-      setTimeout(() => {
-        magicLine.style.opacity = "0";
-      }, 300);
+    panelMap.forEach((panel, id) => {
+      if (!panel) return;
+
+      // Keep the underline synced when hovering the panel content.
+      panel.addEventListener("mouseenter", () => {
+        if (!media.matches) return;
+        const trigger = triggers.find((btn) => btn.dataset.navId === id);
+        if (trigger) {
+          updateMagicLine(trigger);
+        }
+      });
+
+      // Keyboard navigation within the panel body.
+      panel.addEventListener("keydown", (event) => {
+        const items = Array.from(panel.querySelectorAll("[role='menuitem']"));
+        if (!items.length) return;
+        const currentIndex = items.indexOf(document.activeElement);
+        switch (event.key) {
+          case "ArrowDown": {
+            event.preventDefault();
+            const nextIndex = (currentIndex + 1 + items.length) % items.length;
+            items[nextIndex].focus();
+            break;
+          }
+          case "ArrowUp": {
+            event.preventDefault();
+            const prevIndex = (currentIndex - 1 + items.length) % items.length;
+            items[prevIndex].focus();
+            break;
+          }
+          case "Home": {
+            event.preventDefault();
+            items[0].focus();
+            break;
+          }
+          case "End": {
+            event.preventDefault();
+            items[items.length - 1].focus();
+            break;
+          }
+          case "Escape": {
+            event.preventDefault();
+            closePanel(id, true);
+            break;
+          }
+          case "ArrowLeft":
+          case "ArrowRight": {
+            event.preventDefault();
+            closePanel(id);
+            const currentTrigger = triggers.find(
+              (btn) => btn.dataset.navId === id
+            );
+            if (!currentTrigger) return;
+            const currentTriggerIndex = triggers.indexOf(currentTrigger);
+            const direction = event.key === "ArrowRight" ? 1 : -1;
+            const targetIndex =
+              (currentTriggerIndex + direction + triggers.length) %
+              triggers.length;
+            triggers[targetIndex].focus();
+            break;
+          }
+        }
+      });
+
+      // Close the panel when focus leaves the submenu entirely.
+      panel.addEventListener("focusout", (event) => {
+        const relatedTarget = event.relatedTarget;
+        if (!panel.contains(relatedTarget)) {
+          closePanel(id);
+        }
+      });
     });
-  }
 
-  // Menú móvil SIMPLIFICADO
-  function setupMobileMenu() {
-    console.log("📱 Setting up Mobile Menu");
-    const button = document.getElementById(
-      "mobile-menu-button"
-    ) as HTMLButtonElement;
-    const menu = document.getElementById("mobile-menu") as HTMLElement;
-
-    if (!button || !menu) {
-      console.log("❌ Mobile menu elements not found, retrying...");
-      setTimeout(setupMobileMenu, 100);
-      return;
-    }
-
-    console.log("✅ Mobile menu elements found");
-
-    let isOpen = false;
-
-    button.addEventListener("click", () => {
-      console.log("🔄 Button clicked! Current state:", isOpen);
-
-      isOpen = !isOpen;
-
-      if (isOpen) {
-        console.log("📱 Opening menu...");
-        menu.style.display = "block";
-        menu.classList.add("show");
-        button.setAttribute("aria-expanded", "true");
-
-        // Cambiar iconos
-        const hamburger = button.querySelector("svg:first-child") as SVGElement;
-        const close = button.querySelector("svg:last-child") as SVGElement;
-        if (hamburger && close) {
-          hamburger.classList.add("hidden");
-          close.classList.remove("hidden");
-        }
-      } else {
-        console.log("📱 Closing menu...");
-        menu.classList.remove("show");
-        menu.classList.add("hide");
-        button.setAttribute("aria-expanded", "false");
-
-        // Cambiar iconos
-        const hamburger = button.querySelector("svg:first-child") as SVGElement;
-        const close = button.querySelector("svg:last-child") as SVGElement;
-        if (hamburger && close) {
-          hamburger.classList.remove("hidden");
-          close.classList.add("hidden");
-        }
-
-        setTimeout(() => {
-          menu.style.display = "none";
-          menu.classList.remove("hide");
-        }, 300);
+    // Clicks outside the nav close any open panels.
+    document.addEventListener("click", (event) => {
+      if (!navRoot.contains(event.target)) {
+        closeAll();
       }
     });
 
-    // Cerrar al hacer clic en enlaces
-    const links = menu.querySelectorAll(
-      ".mobile-nav-link"
-    ) as NodeListOf<HTMLElement>;
-    links.forEach((link) => {
-      link.addEventListener("click", () => {
-        if (isOpen) {
-          button.click(); // Simular click del botón para cerrar
-        }
-      });
+    // Moving the pointer away should hide the highlight if nothing is open.
+    navRoot.addEventListener("mouseleave", () => {
+      if (!openId) {
+        hideMagicLine();
+      }
+    });
+
+    // Reset state whenever the responsive breakpoint toggles.
+    media.addEventListener("change", () => {
+      closeAll();
+      hideMagicLine();
     });
   }
 
-  // Inicializar todo
-  function init() {
-    console.log("🚀 Initializing header...");
-    setupMagicLine();
-    setupMobileMenu();
-  }
+  // Mobile menu toggle wiring: swap icons and control visibility.
+  const mobileToggle = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
 
-  // Múltiples puntos de inicialización
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  if (mobileToggle && mobileMenu) {
+    const iconOpen = mobileToggle.querySelector("[data-icon='open']");
+    const iconClose = mobileToggle.querySelector("[data-icon='close']");
+    let isOpen = false;
 
-  // Fallbacks
-  setTimeout(init, 100);
-  setTimeout(init, 500);
+    const setMobileState = (state) => {
+      isOpen = state;
+      mobileToggle.setAttribute("aria-expanded", state ? "true" : "false");
+      mobileMenu.hidden = !state;
+      mobileMenu.classList.toggle("nav-ignia__mobile-menu--open", state);
+      if (iconOpen && iconClose) {
+        if (state) {
+          iconOpen.classList.add("hidden");
+          iconClose.classList.remove("hidden");
+        } else {
+          iconOpen.classList.remove("hidden");
+          iconClose.classList.add("hidden");
+        }
+      }
+    };
+
+    // Ensure we start in a closed state on load.
+    setMobileState(false);
+
+    // Toggle open/close whenever the hamburger button is clicked.
+    mobileToggle.addEventListener("click", () => {
+      setMobileState(!isOpen);
+    });
+
+    // Collapse the menu after following any link inside the flyout.
+    mobileMenu.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target && target.closest("a")) {
+        setMobileState(false);
+      }
+    });
+  }
 </script>

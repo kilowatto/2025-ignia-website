@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+const locale = Astro.currentLocale || "en";
+
+import enTranslations from "../../public/locales/en/common.json";
+import esTranslations from "../../public/locales/es/common.json";
+import frTranslations from "../../public/locales/fr/common.json";
+const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+};
+const t = (key: string): string => {
+  const dictionary = translations[locale as keyof typeof translations];
+  if (!dictionary) return key;
+
+  return (
+    key
+      .split(".")
+      .reduce((value: any, segment) => value?.[segment], dictionary) ?? key
+  );
+};
+export const prerender = false;
+---
+
+<footer
+  class="mt-auto w-full min-h-[250px] bg-[var(--color-secondary)]"
+  role="contentinfo"
+  aria-labelledby="footer-heading"
+>
+  <img
+    src="/Ignia-blanco.png"
+    alt="Ignia Cloud Logo"
+    class="h-24 mx-auto pt-8 mb-4"
+  />
+
+  <nav class="flex justify-center space-x-6 mb-6" aria-label="Footer">
+    <h2 id="footer-heading" class="sr-only">Footer</h2>
+  </nav>
+  <div class="text-center text-white mb-4">
+    <p>{t("footer.Suscribe-to-our-newsletter")}</p>
+  </div>
+  <p class="text-center text-white mb-4">
+    {t("footer.Copyright")}
+  </p>
+</footer>

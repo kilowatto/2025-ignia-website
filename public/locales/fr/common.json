@@ -24,5 +24,11 @@
   "meta": {
     "title": "Ignia - Votre partenaire technologique de confiance",
     "description": "Chez Ignia, nous offrons des solutions technologiques innovantes pour propulser votre entreprise vers l'avenir. Découvrez nos produits et services de pointe."
+  },
+  "footer": {
+    "Suscribe-to-our-newsletter": "Abonnez-vous à notre newsletter",
+    "Get the latest news and updates right in your inbox.": "Recevez les dernières nouvelles et mises à jour directement dans votre boîte de réception.",
+    "Subscribe": "S'abonner",
+    "Copyright": "© 2024 Ignia. Tous droits réservés."
   }
 }

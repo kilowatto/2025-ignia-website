@@ -3,9 +3,9 @@ export const supportedLanguages = ['en', 'es', 'fr'] as const;
 export type SupportedLanguage = typeof supportedLanguages[number];
 
 export const languageNames = {
-    en: { native: 'English', english: 'English', flag: '🇺🇸' },
-    es: { native: 'Español', english: 'Spanish', flag: '🇪🇸' },
-    fr: { native: 'Français', english: 'French', flag: '🇫🇷' }
+    en: { native: 'English', english: 'English', flag: '🇺🇸', icon: '/icons/flags/en.svg' },
+    es: { native: 'Español', english: 'Spanish', flag: '🇪🇸', icon: '/icons/flags/es.svg' },
+    fr: { native: 'Français', english: 'French', flag: '🇫🇷', icon: '/icons/flags/fr.svg' }
 } as const;
 
 export const countryToLanguage: Record<string, SupportedLanguage> = {
@@ -77,7 +77,16 @@ export function getCurrentLanguage(): SupportedLanguage {
 // Generar URL para cambio de idioma
 export function generateLanguageUrl(targetLang: SupportedLanguage, currentPath?: string): string {
     const path = currentPath || (typeof window !== 'undefined' ? window.location.pathname : '/');
-    const currentLang = getCurrentLanguage();
+
+    // Determine current language using client detection when available; otherwise infer from path.
+    let currentLang: SupportedLanguage;
+    if (typeof window !== 'undefined') {
+        currentLang = getCurrentLanguage();
+    } else {
+        const pathSegments = path.split('/').filter(Boolean);
+        const inferred = pathSegments[0] as SupportedLanguage;
+        currentLang = supportedLanguages.includes(inferred) ? inferred : 'en';
+    }
 
     // Si el idioma actual es inglés (sin prefijo)
     if (currentLang === 'en') {

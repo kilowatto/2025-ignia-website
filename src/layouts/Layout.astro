@@ -3,6 +3,7 @@
 import Header from "../components/Header.astro";
 import LanguageDetection from "../components/LanguageDetection.astro";
 import "../styles/global.css";
+import Footer from "../components/Footer.astro";
 
 // Props expandidas para datos estructurados
 const {
@@ -56,6 +57,57 @@ const siteNames = {
 };
 const siteName =
   siteNames[currentLocale as keyof typeof siteNames] || siteNames.en;
+
+type LocaleCode = "en" | "es" | "fr";
+const localeForNav = ["en", "es", "fr"].includes(currentLocale)
+  ? (currentLocale as LocaleCode)
+  : "es";
+
+const localizedPath = (path: string) =>
+  currentLocale === "en" ? path : `/${currentLocale}${path}`;
+
+const navBaseLinks: Array<{
+  path: string;
+  labels: Record<LocaleCode, string>;
+}> = [
+  {
+    path: "/soluciones/",
+    labels: {
+      en: "Solutions",
+      es: "Soluciones",
+      fr: "Solutions",
+    },
+  },
+  {
+    path: "/productos/",
+    labels: {
+      en: "Products",
+      es: "Productos",
+      fr: "Produits",
+    },
+  },
+  {
+    path: "/IA/",
+    labels: {
+      en: "Artificial Intelligence",
+      es: "Inteligencia Artificial",
+      fr: "Intelligence artificielle",
+    },
+  },
+  {
+    path: "/soporte/",
+    labels: {
+      en: "Support",
+      es: "Soporte",
+      fr: "Support",
+    },
+  },
+];
+
+const siteNavigationLinks = navBaseLinks.map((link) => ({
+  name: link.labels[localeForNav],
+  url: `${baseUrl}${localizedPath(link.path)}`,
+}));
 
 // Función para generar breadcrumbs automáticos
 function generateAutoBreadcrumbs() {
@@ -257,6 +309,16 @@ const pageStructuredData = generatePageStructuredData();
       })}
     />
 
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "SiteNavigationElement",
+        name: siteNavigationLinks.map((link) => link.name),
+        url: siteNavigationLinks.map((link) => link.url),
+      })}
+    />
+
     <!-- Datos Estructurados: Página Específica -->
     <script
       type="application/ld+json"
@@ -277,12 +339,17 @@ const pageStructuredData = generatePageStructuredData();
       )
     }
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col">
     <LanguageDetection />
     <Header />
 
-    <main>
+    <main id="contenido" tabindex="-1" class="flex-1">
       <slot />
     </main>
+    <!-- Footer debe estar hasta abajo del viewport si es que el main no llena la la pagina pero si lo llena que se comporte normalmente -->
+    <Footer class="w-full" />
   </body>
 </html>
+
+
+

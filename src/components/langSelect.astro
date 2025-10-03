@@ -1,12 +1,16 @@
 ---
-const currentLocale = Astro.currentLocale || "en";
-
 // Importamos las utilidades de detección
 import {
   languageNames,
   generateLanguageUrl,
+  supportedLanguages,
   type SupportedLanguage,
 } from "../utils/languageDetection";
+
+const rawLocale = Astro.currentLocale || "en";
+const baseLocale = rawLocale.split("-")[0] as SupportedLanguage;
+const locale = supportedLanguages.includes(baseLocale) ? baseLocale : "en";
+const currentPath = Astro.url?.pathname ?? "/";
 
 // Importamos las traducciones para los nombres de los idiomas
 import enTranslations from "../../public/locales/en/common.json";
@@ -21,7 +25,7 @@ const translations = {
 
 const t = (key: string): string => {
   const keys = key.split(".");
-  let value: any = translations[currentLocale as keyof typeof translations];
+  let value: any = translations[locale];
 
   for (const k of keys) {
     value = value?.[k];
@@ -34,14 +38,58 @@ const t = (key: string): string => {
 const languages = Object.entries(languageNames).map(([code, info]) => ({
   code: code as SupportedLanguage,
   name: info.english,
-  flag: info.flag,
+  flagEmoji: info.flag,
+  flagIcon: info.icon,
   nativeName: info.native,
+  url: generateLanguageUrl(code as SupportedLanguage, currentPath),
 }));
 
-const currentLanguage = languages.find((lang) => lang.code === currentLocale);
+const currentLanguage =
+  languages.find((lang) => lang.code === locale) ?? languages[0];
 ---
 
-<div class="relative inline-block text-left" id="language-selector">
+<div class="space-y-3 sm:space-y-0" id="language-selector">
+  <div class="relative block sm:hidden">
+    <label class="sr-only" for="language-select-mobile">
+      {t("lang.languageSwitcher") ?? "Select language"}
+    </label>
+    <span
+      id="language-flag-mobile"
+      class={`language-flag language-flag--mobile ${
+        currentLanguage?.flagIcon ? "" : "language-flag--emoji"
+      }`}
+      style={
+        currentLanguage?.flagIcon
+          ? `background-image: url('${currentLanguage.flagIcon}')`
+          : undefined
+      }
+      aria-hidden="true"
+      data-default-emoji={currentLanguage?.flagEmoji || ""}
+    >
+      {!currentLanguage?.flagIcon && currentLanguage?.flagEmoji}
+    </span>
+    <select
+      id="language-select-mobile"
+      class="w-full appearance-none rounded-md border border-gray-300 bg-white pl-12 pr-10 py-2 text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      aria-label={t("lang.languageSwitcher") ?? "Select language"}
+    >
+      {
+        languages.map((language) => (
+          <option
+            value={language.code}
+            data-url={language.url}
+            data-icon={language.flagIcon || ""}
+            data-emoji={language.flagEmoji}
+            selected={locale === language.code ? true : undefined}
+          >
+            {language.nativeName}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  <div class="relative hidden text-left sm:inline-block">
   <!-- Botón del selector -->
   <button
     type="button"
@@ -50,7 +98,18 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
     aria-expanded="false"
     aria-haspopup="true"
   >
-    <span class="text-lg">{currentLanguage?.flag}</span>
+    {currentLanguage?.flagIcon ? (
+      <img
+        src={currentLanguage.flagIcon}
+        alt=""
+        class="language-flag-icon"
+        aria-hidden="true"
+      />
+    ) : (
+      <span class="text-lg font-emoji" role="img" aria-hidden="true">
+        {currentLanguage?.flagEmoji}
+      </span>
+    )}
     <span class="hidden sm:inline">{currentLanguage?.nativeName}</span>
     <span class="sm:hidden">{currentLanguage?.code.toUpperCase()}</span>
     <!-- Icono de flecha -->
@@ -81,11 +140,11 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
       {
         languages.map((language) => (
           <a
-            href={generateLanguageUrl(language.code)}
+            href={language.url}
             class={`
             flex items-center gap-3 px-4 py-2 text-sm transition-colors
             ${
-              currentLocale === language.code
+              locale === language.code
                 ? "bg-primary/10 text-primary font-medium"
                 : "text-gray-700 hover:bg-gray-100"
             }
@@ -93,12 +152,23 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
             role="menuitem"
             data-lang-switch={language.code}
           >
-            <span class="text-lg">{language.flag}</span>
+            {language.flagIcon ? (
+              <img
+                src={language.flagIcon}
+                alt=""
+                class="language-flag-icon"
+                aria-hidden="true"
+              />
+            ) : (
+              <span class="text-lg font-emoji" role="img" aria-hidden="true">
+                {language.flagEmoji}
+              </span>
+            )}
             <div class="flex flex-col">
               <span class="font-medium">{language.nativeName}</span>
               <span class="text-xs text-gray-500">{language.name}</span>
             </div>
-            {currentLocale === language.code && (
+            {locale === language.code && (
               <svg
                 class="w-4 h-4 ml-auto text-primary"
                 fill="currentColor"
@@ -119,6 +189,40 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
 </div>
 
 <style>
+  #language-selector select {
+    background-image: none;
+  }
+
+  #language-selector .language-flag-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
+  }
+
+  #language-selector .language-flag {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background-size: cover;
+    background-position: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    pointer-events: none;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
+  }
+
+  #language-selector .language-flag.language-flag--emoji {
+    background-color: rgba(241, 245, 249, 0.8);
+  }
+
   #language-menu.show {
     opacity: 1;
     visibility: visible;
@@ -135,6 +239,61 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
     const button = document.getElementById("language-button");
     const menu = document.getElementById("language-menu");
     const arrow = document.getElementById("language-arrow");
+    const mobileSelect = document.getElementById(
+      "language-select-mobile"
+    ) as HTMLSelectElement | null;
+    const mobileFlag = document.getElementById(
+      "language-flag-mobile"
+    ) as HTMLElement | null;
+
+    const resetLanguageSuggestionState = () => {
+      try {
+        localStorage.removeItem("language-suggestion-dismissed");
+        localStorage.removeItem("language-suggestion-accepted");
+      } catch (error) {
+        console.warn("Unable to reset language suggestion flags", error);
+      }
+    };
+
+    if (mobileSelect) {
+      const syncMobileFlag = () => {
+        if (!mobileFlag) return;
+        const selectedOption = mobileSelect.selectedOptions[0];
+        const targetIcon = selectedOption?.dataset.icon;
+        const targetEmoji = selectedOption?.dataset.emoji;
+
+        if (targetIcon) {
+          mobileFlag.style.backgroundImage = `url('${targetIcon}')`;
+          mobileFlag.textContent = "";
+          mobileFlag.classList.remove("language-flag--emoji");
+        } else {
+          mobileFlag.style.backgroundImage = "";
+          mobileFlag.classList.add("language-flag--emoji");
+          mobileFlag.textContent = targetEmoji || mobileFlag.dataset.defaultEmoji || "";
+        }
+      };
+
+      syncMobileFlag();
+
+      mobileSelect.addEventListener("change", (event) => {
+        const target = event.currentTarget as HTMLSelectElement;
+        const selectedOption = target.selectedOptions[0];
+        const targetLang = selectedOption?.value;
+        const targetUrl = selectedOption?.dataset.url;
+
+        syncMobileFlag();
+
+        if (targetLang) {
+          resetLanguageSuggestionState();
+          localStorage.setItem("preferred-language", targetLang);
+          document.cookie = `preferred-language=${targetLang}; max-age=31536000; path=/; sameSite=lax`;
+        }
+
+        if (targetUrl) {
+          window.location.href = targetUrl;
+        }
+      });
+    }
 
     if (!button || !menu || !arrow) return;
 
@@ -189,10 +348,11 @@ const currentLanguage = languages.find((lang) => lang.code === currentLocale);
     // Guardar preferencia cuando usuario cambia idioma
     document.querySelectorAll("[data-lang-switch]").forEach((link) => {
       link.addEventListener("click", (e) => {
-        const targetLang = (e.target as HTMLElement).getAttribute(
+        const targetLang = (e.currentTarget as HTMLElement).getAttribute(
           "data-lang-switch"
         );
         if (targetLang) {
+          resetLanguageSuggestionState();
           // Guardar en localStorage
           localStorage.setItem("preferred-language", targetLang);
 
