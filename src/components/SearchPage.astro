@@ -1,40 +1,100 @@
 ---
-// src/pages/es/search.astro
-import Layout from "../../layouts/Layout.astro";
-export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import { t } from 'astro-i18n';
+import { getSearchDataByLocale } from "../data/searchData";
 
-// Obtener el query de búsqueda de la URL
+export interface Props {
+  locale?: 'en' | 'es' | 'fr';
+}
+
 const url = Astro.url;
-const searchQuery = url.searchParams.get("q") || "";
-const category = url.searchParams.get("category") || "";
-const type = url.searchParams.get("type") || "";
-const page = parseInt(url.searchParams.get("page") || "1");
+const initialQuery = url.searchParams.get('q') ?? '';
+const initialCategory = url.searchParams.get('category') ?? '';
+const initialType = url.searchParams.get('type') ?? '';
+const initialPage = parseInt(url.searchParams.get('page') ?? '1');
 
-// Importamos las traducciones desde src/i18n/ (ubicación correcta según arquitecture.md)
-import esTranslations from "../../i18n/es.json";
+const supportedLocales = ['en', 'es', 'fr'] as const;
+const requestedLocale = (Astro.locals?.locale ?? (Astro.props as Props).locale ?? 'en') as string;
+const locale = (supportedLocales as readonly string[]).includes(requestedLocale)
+  ? (requestedLocale as 'en' | 'es' | 'fr')
+  : 'en';
 
-const t = (key: string): string => {
-  const keys = key.split(".");
-  let value: any = esTranslations;
+const translate = (key: string) => t(key, undefined, { locale });
 
-  for (const k of keys) {
-    value = value?.[k];
-  }
+const pageType = 'SearchResultsPage';
+const layoutTitle = initialQuery
+  ? `${translate('search.results_for')} "${initialQuery}" - Ignia`
+  : `${translate('search.results_title')} - Ignia`;
+const layoutDescription = translate('search.meta_description');
+const searchPath = locale === 'en' ? '/search' : `/${locale}/search`;
 
-  return value || key;
+const filters = {
+  category: {
+    all: translate('search.filters.category.all'),
+    service: translate('search.filters.category.service'),
+    product: translate('search.filters.category.product'),
+    article: translate('search.filters.category.article'),
+  },
+  type: {
+    all: translate('search.filters.type.all'),
+  },
+  clear: translate('search.filters.clear'),
+  sort: {
+    label: translate('search.filters.sort.label'),
+    options: {
+      relevance: translate('search.filters.sort.options.relevance'),
+      title: translate('search.filters.sort.options.title'),
+      category: translate('search.filters.sort.options.category'),
+    },
+  },
 };
 
-// Configurar página para SEO
-const pageType = "SearchResultsPage";
+const statsLabels = {
+  title: translate('search.stats.title'),
+  total: translate('search.stats.total'),
+  time: translate('search.stats.time'),
+  page: translate('search.stats.page'),
+};
+
+const i18nPayload = {
+  locale,
+  filters,
+  stats: statsLabels,
+  relatedTitle: translate('search.related_title'),
+  loading: translate('search.loading'),
+  empty: translate('search.empty'),
+  noResults: {
+    title: translate('search.no_results.title'),
+    message: translate('search.no_results.message'),
+    tipsIntro: translate('search.no_results.tips.intro'),
+    tipsItems: {
+      general: translate('search.no_results.tips.items.general'),
+      spelling: translate('search.no_results.tips.items.spelling'),
+      combinations: translate('search.no_results.tips.items.combinations'),
+      filters: translate('search.no_results.tips.items.filters'),
+    },
+  },
+  error: {
+    title: translate('search.error_title'),
+    message: translate('search.error_message'),
+  },
+  resultsDescription: translate('search.results_description'),
+  pagination: {
+    previous: translate('search.pagination.previous'),
+    next: translate('search.pagination.next'),
+  },
+  suggestionsLabel: translate('search.suggestions'),
+  resultsTitle: translate('search.results_title'),
+  resultsFor: translate('search.results_for'),
+};
+
+const searchDataLocale = getSearchDataByLocale(locale);
+const i18nJson = JSON.stringify(i18nPayload);
 ---
 
 <Layout
-  title={searchQuery
-    ? `${t("search.results_for")} "${searchQuery}" - Ignia`
-    : `${t("search.results_title")} - Ignia`}
-  Content_Description={searchQuery
-    ? `${t("search.results_for")} "${searchQuery}" en el sitio web de Ignia`
-    : "Resultados de búsqueda en el sitio web de Ignia"}
+  title={layoutTitle}
+  Content_Description={layoutDescription}
   pageType={pageType}
 >
   <div class="max-w-6xl mx-auto px-4 py-8">
@@ -42,19 +102,19 @@ const pageType = "SearchResultsPage";
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-4">
         {
-          searchQuery
-            ? `${t("search.results_for")} "${searchQuery}"`
+          initialQuery
+            ? `${t("search.results_for")} "${initialQuery}"`
             : t("search.results_title")
         }
       </h1>
 
       <!-- Formulario de búsqueda mejorado -->
-      <form action="/es/search" method="GET" class="max-w-3xl mb-6">
+      <form action="/search" method="GET" class="max-w-3xl mb-6">
         <div class="relative">
           <input
             type="search"
             name="q"
-            value={searchQuery}
+            value={initialQuery}
             placeholder={t("search.placeholder")}
             class="w-full pl-12 pr-20 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-white shadow-sm text-lg"
             autocomplete="off"
@@ -80,7 +140,7 @@ const pageType = "SearchResultsPage";
             type="submit"
             class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-all duration-200 font-medium shadow-sm"
           >
-            Buscar
+            {t("search.button")}
           </button>
         </div>
       </form>
@@ -94,10 +154,10 @@ const pageType = "SearchResultsPage";
             id="category-filter"
             class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           >
-            <option value="">Todas las Categorías</option>
-            <option value="service">Servicios</option>
-            <option value="product">Productos</option>
-            <option value="article">Artículos</option>
+            <option value="">All Categories</option>
+            <option value="service">Services</option>
+            <option value="product">Products</option>
+            <option value="article">Articles</option>
           </select>
           <div
             class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
@@ -124,7 +184,7 @@ const pageType = "SearchResultsPage";
             id="type-filter"
             class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           >
-            <option value="">Todos los Tipos</option>
+            <option value="">All Types</option>
           </select>
           <div
             class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
@@ -150,7 +210,7 @@ const pageType = "SearchResultsPage";
           id="clear-filters"
           class="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
         >
-          Limpiar Filtros
+          Clear Filters
         </button>
       </div>
     </div>
@@ -162,20 +222,18 @@ const pageType = "SearchResultsPage";
         <div
           class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6"
         >
-          <h3 class="font-semibold text-gray-900 mb-4">
-            Estadísticas de Búsqueda
-          </h3>
+          <h3 class="font-semibold text-gray-900 mb-4">Search Statistics</h3>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Total de Resultados:</span>
+              <span class="text-gray-600">Total Results:</span>
               <span class="font-medium" id="total-results">0</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Tiempo de Búsqueda:</span>
+              <span class="text-gray-600">Search Time:</span>
               <span class="font-medium" id="search-time">0ms</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Página Actual:</span>
+              <span class="text-gray-600">Current Page:</span>
               <span class="font-medium" id="current-page">1</span>
             </div>
           </div>
@@ -187,9 +245,7 @@ const pageType = "SearchResultsPage";
           id="related-suggestions"
           style="display: none;"
         >
-          <h3 class="font-semibold text-gray-900 mb-4">
-            Búsquedas Relacionadas
-          </h3>
+          <h3 class="font-semibold text-gray-900 mb-4">Related Searches</h3>
           <div class="space-y-2" id="suggestions-list">
             <!-- Las sugerencias se llenarán dinámicamente -->
           </div>
@@ -211,15 +267,15 @@ const pageType = "SearchResultsPage";
           <!-- Ordenamiento -->
           <div class="flex items-center gap-2">
             <label for="sort-select" class="text-sm text-gray-600"
-              >Ordenar por:</label
+              >Sort by:</label
             >
             <select
               id="sort-select"
               class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             >
-              <option value="relevance">Relevancia</option>
-              <option value="title">Título A-Z</option>
-              <option value="category">Categoría</option>
+              <option value="relevance">Relevance</option>
+              <option value="title">Title A-Z</option>
+              <option value="category">Category</option>
             </select>
           </div>
         </div>
@@ -240,11 +296,7 @@ const pageType = "SearchResultsPage";
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             <p class="text-gray-500 text-lg" id="loading-text">
-              {
-                searchQuery
-                  ? "Buscando..."
-                  : "Ingresa un término de búsqueda para comenzar"
-              }
+              {initialQuery ? "Searching..." : "Enter a search term to begin"}
             </p>
           </div>
         </div>
@@ -264,11 +316,12 @@ const pageType = "SearchResultsPage";
 
 <script>
   import MiniSearch from "minisearch";
-  import { getSearchDataByLocale } from "../../data/searchData.ts";
+  import { getSearchDataByLocale } from "../data/searchData.ts";
   import {
+    createSearchIndex,
     performSearch,
     getSearchSuggestions,
-  } from "../../utils/searchConfig.ts";
+  } from "../utils/searchConfig.ts";
 
   // Configuración de paginación
   const RESULTS_PER_PAGE = 6;
@@ -294,7 +347,7 @@ const pageType = "SearchResultsPage";
 
     // Obtener parámetros de URL
     const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = urlParams.get("q") || "";
+    const initialQuery = urlParams.get("q") || "";
     const categoryFilter = urlParams.get("category") || "";
     const typeFilter = urlParams.get("type") || "";
     currentPage = parseInt(urlParams.get("page") || "1");
@@ -314,8 +367,8 @@ const pageType = "SearchResultsPage";
     if (categorySelect) categorySelect.value = categoryFilter;
     if (typeSelect) typeSelect.value = typeFilter;
 
-    // Obtener datos de búsqueda para el idioma español (es)
-    const searchData = getSearchDataByLocale("es");
+    // Obtener datos de búsqueda para el idioma inglés (en)
+    const searchData = getSearchDataByLocale("en");
 
     // Poblar filtros dinámicamente
     populateFilters(searchData);
@@ -325,7 +378,7 @@ const pageType = "SearchResultsPage";
       const types = [...new Set(data.map((item) => item.type))];
 
       if (typeSelect) {
-        typeSelect.innerHTML = '<option value="">Todos los Tipos</option>';
+        typeSelect.innerHTML = '<option value="">All Types</option>';
         types.forEach((type) => {
           const option = document.createElement("option");
           option.value = type;
@@ -355,7 +408,7 @@ const pageType = "SearchResultsPage";
         // Usar la función de búsqueda de searchConfig.ts
         const results = performSearch({
           query,
-          locale: "es",
+          locale: "en",
           filters: {
             type: filters.type ? [filters.type] : undefined,
             category: filters.category ? [filters.category] : undefined,
@@ -393,7 +446,7 @@ const pageType = "SearchResultsPage";
       }
     }
 
-    // Resto de funciones exactamente iguales a la versión en inglés pero con textos en español
+    // Función para mostrar resultados
     function displayResults(results: any[], query: string) {
       if (results.length === 0) {
         showNoResultsState(query);
@@ -413,7 +466,7 @@ const pageType = "SearchResultsPage";
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                     ${result.type}
                   </span>
-                  ${result.score ? `<span class="text-xs text-gray-400">Puntuación: ${Math.round(result.score * 100) / 100}</span>` : ""}
+                  ${result.score ? `<span class="text-xs text-gray-400">Score: ${Math.round(result.score * 100) / 100}</span>` : ""}
                 </div>
                 
                 <h2 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors">
@@ -449,7 +502,7 @@ const pageType = "SearchResultsPage";
                     href="${result.url}" 
                     class="inline-flex items-center text-primary hover:text-secondary transition-colors font-medium group"
                   >
-                    Leer más
+                    Read more
                     <svg class="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -459,7 +512,7 @@ const pageType = "SearchResultsPage";
                     result.lastUpdated
                       ? `
                   <span class="text-xs text-gray-400">
-                    Actualizado: ${new Date(result.lastUpdated).toLocaleDateString()}
+                    Updated: ${new Date(result.lastUpdated).toLocaleDateString()}
                   </span>
                   `
                       : ""
@@ -474,13 +527,16 @@ const pageType = "SearchResultsPage";
 
       resultsContainer!.innerHTML = resultsHTML;
       resultsHeader!.style.display = "flex";
-      resultsInfo!.textContent = `Mostrando ${(currentPage - 1) * RESULTS_PER_PAGE + 1}-${Math.min(currentPage * RESULTS_PER_PAGE, totalResults)} de ${totalResults} resultados para "${query}"`;
+      resultsInfo!.textContent = `Showing ${(currentPage - 1) * RESULTS_PER_PAGE + 1}-${Math.min(currentPage * RESULTS_PER_PAGE, totalResults)} of ${totalResults} results for "${query}"`;
     }
 
+    // Función para resaltar coincidencias
     function highlightMatch(text: string, query: string): string {
       if (!query || !text) return text;
+
       const words = query.split(/\s+/).filter((word) => word.length > 2);
       let highlightedText = text;
+
       words.forEach((word) => {
         const regex = new RegExp(`(${word})`, "gi");
         highlightedText = highlightedText.replace(
@@ -488,27 +544,38 @@ const pageType = "SearchResultsPage";
           '<mark class="bg-yellow-200/70 text-yellow-900 font-medium px-1 rounded">$1</mark>'
         );
       });
+
       return highlightedText;
     }
 
+    // Función para actualizar estadísticas
     function updateStatistics(total: number, time: number, page: number) {
       if (totalResultsSpan) totalResultsSpan.textContent = total.toString();
       if (searchTimeSpan) searchTimeSpan.textContent = `${Math.round(time)}ms`;
       if (currentPageSpan) currentPageSpan.textContent = page.toString();
     }
 
+    // Función para actualizar paginación
     function updatePagination(page: number, totalPages: number) {
       if (totalPages <= 1) {
         paginationContainer!.style.display = "none";
         return;
       }
+
       paginationContainer!.style.display = "flex";
 
       let paginationHTML = "";
+
+      // Botón anterior
       if (page > 1) {
-        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page - 1}">Anterior</button>`;
+        paginationHTML += `
+          <button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page - 1}">
+            Previous
+          </button>
+        `;
       }
 
+      // Números de página
       const startPage = Math.max(1, page - 2);
       const endPage = Math.min(totalPages, page + 2);
 
@@ -521,7 +588,15 @@ const pageType = "SearchResultsPage";
 
       for (let i = startPage; i <= endPage; i++) {
         const isActive = i === page;
-        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium border ${isActive ? "text-primary bg-primary/10 border-primary" : "text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700"} transition-colors" data-page="${i}">${i}</button>`;
+        paginationHTML += `
+          <button class="pagination-btn px-3 py-2 text-sm font-medium border ${
+            isActive
+              ? "text-primary bg-primary/10 border-primary"
+              : "text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+          } transition-colors" data-page="${i}">
+            ${i}
+          </button>
+        `;
       }
 
       if (endPage < totalPages) {
@@ -531,12 +606,18 @@ const pageType = "SearchResultsPage";
         paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${totalPages}">${totalPages}</button>`;
       }
 
+      // Botón siguiente
       if (page < totalPages) {
-        paginationHTML += `<button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page + 1}">Siguiente</button>`;
+        paginationHTML += `
+          <button class="pagination-btn px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-700 transition-colors" data-page="${page + 1}">
+            Next
+          </button>
+        `;
       }
 
       paginationContainer!.innerHTML = paginationHTML;
 
+      // Agregar event listeners a los botones de paginación
       document.querySelectorAll(".pagination-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           const newPage = parseInt(
@@ -549,22 +630,31 @@ const pageType = "SearchResultsPage";
       });
     }
 
+    // Función para mostrar sugerencias relacionadas
     function displayRelatedSuggestions(query: string) {
       if (!query) {
         relatedSuggestions!.style.display = "none";
         return;
       }
+
       try {
-        const suggestions = getSearchSuggestions(query, "es", 5);
+        const suggestions = getSearchSuggestions(query, "en", 5);
+
         if (suggestions.length > 0) {
           const suggestionsHTML = suggestions
             .map(
-              (suggestion) =>
-                `<button class="suggestion-btn w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">${suggestion}</button>`
+              (suggestion) => `
+              <button class="suggestion-btn w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                ${suggestion}
+              </button>
+            `
             )
             .join("");
+
           suggestionsListsContainer!.innerHTML = suggestionsHTML;
           relatedSuggestions!.style.display = "block";
+
+          // Event listeners para sugerencias
           document.querySelectorAll(".suggestion-btn").forEach((btn) => {
             btn.addEventListener("click", (e) => {
               const suggestion = (e.target as HTMLElement).textContent || "";
@@ -587,6 +677,7 @@ const pageType = "SearchResultsPage";
       }
     }
 
+    // Función para obtener filtros actuales
     function getFilters() {
       return {
         category: categorySelect?.value || "",
@@ -594,37 +685,77 @@ const pageType = "SearchResultsPage";
       };
     }
 
+    // Función para actualizar URL sin recargar
     function updateURL() {
       const params = new URLSearchParams();
       if (lastQuery) params.set("q", lastQuery);
-      if (lastFilters.category) params.set("category", lastFilters.category);
+      if (lastFilters.initialCategory) params.set("category", lastFilters.initialCategory);
       if (lastFilters.type) params.set("type", lastFilters.type);
       if (currentPage > 1) params.set("page", currentPage.toString());
+
       const newUrl = `${window.location.pathname}?${params.toString()}`;
       window.history.pushState({}, "", newUrl);
     }
 
+    // Estados de la interfaz
     function showLoadingState() {
-      resultsContainer!.innerHTML = `<div class="text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div><p class="text-gray-500 text-lg">Buscando...</p></div>`;
+      resultsContainer!.innerHTML = `
+        <div class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+          <p class="text-gray-500 text-lg">Searching...</p>
+        </div>
+      `;
       resultsHeader!.style.display = "none";
       paginationContainer!.style.display = "none";
     }
 
     function showEmptyState() {
-      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><p class="text-gray-500 text-lg">Ingresa un término de búsqueda para comenzar</p></div>`;
+      resultsContainer!.innerHTML = `
+        <div class="text-center py-12">
+          <svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <p class="text-gray-500 text-lg">Enter a search term to begin</p>
+        </div>
+      `;
       resultsHeader!.style.display = "none";
       paginationContainer!.style.display = "none";
       relatedSuggestions!.style.display = "none";
     }
 
     function showNoResultsState(query: string) {
-      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.462-.793-6.172-2.172M6.828 6.828A9.966 9.966 0 0012 3c2.34 0 4.462.793 6.172 2.172M12 21a9.966 9.966 0 01-6.172-2.172"></path></svg><h3 class="text-xl font-medium text-gray-900 mb-2">No se encontraron resultados</h3><p class="text-gray-500 mb-4">Intenta buscar con palabras clave diferentes o verifica la ortografía.</p><div class="text-sm text-gray-400"><p>Consejos de búsqueda:</p><ul class="list-disc list-inside mt-2 space-y-1"><li>Usa palabras clave más generales</li><li>Verifica la ortografía</li><li>Intenta diferentes combinaciones de palabras</li><li>Elimina filtros para ver más resultados</li></ul></div></div>`;
+      resultsContainer!.innerHTML = `
+        <div class="text-center py-12">
+          <svg class="w-20 h-20 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.462-.793-6.172-2.172M6.828 6.828A9.966 9.966 0 0012 3c2.34 0 4.462.793 6.172 2.172M12 21a9.966 9.966 0 01-6.172-2.172"></path>
+          </svg>
+          <h3 class="text-xl font-medium text-gray-900 mb-2">No results found</h3>
+          <p class="text-gray-500 mb-4">Try searching with different keywords or check your spelling.</p>
+          <div class="text-sm text-gray-400">
+            <p>Search tips:</p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+              <li>Use more general keywords</li>
+              <li>Check your spelling</li>
+              <li>Try different word combinations</li>
+              <li>Remove filters to see more results</li>
+            </ul>
+          </div>
+        </div>
+      `;
       resultsHeader!.style.display = "none";
       paginationContainer!.style.display = "none";
     }
 
     function showErrorState() {
-      resultsContainer!.innerHTML = `<div class="text-center py-12"><svg class="w-20 h-20 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h3 class="text-xl font-medium text-gray-900 mb-2">Error de Búsqueda</h3><p class="text-gray-500">Hubo un error al realizar la búsqueda. Por favor, inténtalo de nuevo.</p></div>`;
+      resultsContainer!.innerHTML = `
+        <div class="text-center py-12">
+          <svg class="w-20 h-20 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-xl font-medium text-gray-900 mb-2">Search Error</h3>
+          <p class="text-gray-500">There was an error performing the search. Please try again.</p>
+        </div>
+      `;
       resultsHeader!.style.display = "none";
       paginationContainer!.style.display = "none";
     }
@@ -640,6 +771,7 @@ const pageType = "SearchResultsPage";
       updateURL();
     });
 
+    // Filtros
     categorySelect?.addEventListener("change", () => {
       currentPage = 1;
       executeSearch(lastQuery, getFilters(), lastSort, currentPage);
@@ -652,6 +784,7 @@ const pageType = "SearchResultsPage";
       updateURL();
     });
 
+    // Ordenamiento
     sortSelect?.addEventListener("change", (e) => {
       lastSort = (e.target as HTMLSelectElement).value;
       currentPage = 1;
@@ -659,6 +792,7 @@ const pageType = "SearchResultsPage";
       updateURL();
     });
 
+    // Limpiar filtros
     clearFiltersBtn?.addEventListener("click", () => {
       if (categorySelect) categorySelect.value = "";
       if (typeSelect) typeSelect.value = "";
@@ -670,9 +804,10 @@ const pageType = "SearchResultsPage";
       }
     });
 
-    if (searchQuery) {
+    // Búsqueda inicial
+    if (initialQuery) {
       lastFilters = getFilters();
-      executeSearch(searchQuery, lastFilters, lastSort, currentPage);
+      executeSearch(initialQuery, lastFilters, lastSort, currentPage);
     } else {
       showEmptyState();
     }

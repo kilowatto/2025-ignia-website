@@ -1,0 +1,98 @@
+---
+/**
+ * BaseLayout.astro
+ *
+ * Layout base del sitio que contiene la estructura HTML común.
+ * Incluye Header, Footer y el SearchModal a nivel root.
+ *
+ * Patrón Portal: SearchModal se renderiza aquí (fuera del Header)
+ * para asegurar que position:fixed cubra toda la pantalla.
+ *
+ * @see src/components/SearchModal.astro - Modal renderizado a nivel root
+ * @see src/components/SearchBox.astro - Botón que dispara el modal
+ */
+
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SearchModal from "../components/SearchModal.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  pageType?: string;
+  structuredData?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogImage,
+  pageType = "WebPage",
+  structuredData = [],
+} = Astro.props as Props;
+
+// Obtener locale actual usando Astro.currentLocale (API correcta)
+const rawLocale = Astro.currentLocale || "en";
+const locale = rawLocale.split("-")[0];
+const baseUrl = "https://ignia.cloud";
+const currentPath = Astro.url.pathname;
+const currentUrl = canonicalUrl || `${baseUrl}${currentPath}`;
+---
+
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/icons/favicon.ico" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={pageType} />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:locale" content={locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    {
+      structuredData.map((schema) => (
+        <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      ))
+    }
+  </head>
+  <body class="min-h-screen bg-white text-gray-900">
+    <!-- Skip to content link para accesibilidad -->
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-brand-blue focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"
+    >
+      Skip to content
+    </a>
+
+    <!-- Header con SearchBox (solo botón) -->
+    <Header />
+
+    <!-- Contenido principal de la página -->
+    <main id="main" class="min-h-[60vh]">
+      <slot />
+    </main>
+
+    <!-- Footer del sitio -->
+    <Footer />
+
+    <!-- 
+      SearchModal - Patrón Portal
+      Renderizado aquí (fuera del header) para que position:fixed 
+      cubra toda la pantalla sin restricciones del header
+    -->
+    <SearchModal />
+  </body>
+</html>

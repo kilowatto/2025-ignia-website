@@ -1,4 +1,8 @@
-@import "tailwindcss";
+/* Directivas de Tailwind CSS - procesadas por @astrojs/tailwind */
+/* postcss-custom-syntax: @tailwind es una directiva válida de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -106,30 +110,22 @@
     gap: var(--space-2, 0.5rem);
     font-size: 1.05rem;
     font-weight: 500;
-    color: var(--color-text-secondary,#0b6ab0);
+    color: var(--color-text-secondary, #0b6ab0);
     padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-    border-radius: var(--radius-sm, 0.5rem);
-    border: 1px solid transparent;
-    background: rgba(241, 245, 249, 0.4);
+    background: transparent;
+    border: none;
     cursor: pointer;
-    transition: color 150ms ease, background 150ms ease, border-color 150ms ease,
-      box-shadow 150ms ease;
+    transition: color 150ms ease;
   }
 
   .nav-ignia__trigger:hover,
   .nav-ignia__trigger:focus-visible {
     color: var(--color-primary, #f36b1c);
-    background: rgba(243, 107, 28, 0.12);
-    border-color: rgba(243, 107, 28, 0.3);
-    box-shadow: 0 4px 14px rgba(243, 107, 28, 0.15);
     outline: none;
   }
 
   .nav-ignia__trigger[aria-expanded="true"] {
     color: var(--color-primary, #f36b1c);
-    background: rgba(243, 107, 28, 0.16);
-    border-color: rgba(243, 107, 28, 0.45);
-    box-shadow: 0 6px 18px rgba(243, 107, 28, 0.18);
   }
 
   .nav-ignia__trigger-icon {
@@ -422,6 +418,81 @@
     .nav-ignia__mobile-link {
       transition: none !important;
       animation: none !important;
+    }
+  }
+
+  /* Search Modal - Centered, Responsive, Minimalista */
+  .search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(4px); /* Safari 9+, iOS Safari 9+ */
+    backdrop-filter: blur(4px);
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .search-modal[hidden] {
+    display: none;
+  }
+
+  .search-modal.show {
+    display: flex !important;
+    animation: searchModalFadeIn 0.2s ease;
+  }
+
+  .search-modal__content {
+    position: relative;
+    width: 100%;
+    max-width: 42rem;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+    margin: auto;
+    animation: searchModalZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes searchModalFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes searchModalZoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-modal,
+    .search-modal__content {
+      animation: none !important;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .search-modal {
+      padding: 0.5rem;
+      align-items: flex-start;
+      padding-top: 2rem;
+    }
+
+    .search-modal__content {
+      border-radius: 0.75rem;
     }
   }
 }

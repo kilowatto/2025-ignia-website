@@ -1,15 +1,20 @@
 ---
-// src/pages/index.astro
-import Layout from "../../layouts/Layout.astro"; // Solo importas el Layout
-export const prerender = false;
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import { t } from 'astro-i18n';
+
+const locale = Astro.locals?.locale ?? 'es';
 ---
 
-<Layout
-  title="Ignia Cloud"
-  Content_Description="La mejor solución en la nube para tu empresa"
+<MarketingLayout
+  titleKey="home.meta.title"
+  descriptionKey="home.meta.description"
 >
-  <h1 class="text-4xl font-bold text-center mt-10">
-    ¡Bienvenido a mi sitio web!
-  </h1>
-  <p class="text-center mt-4">Este es el contenido de la página de inicio.</p>
-</Layout>
+  <section class="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-16 text-center">
+    <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">
+      {t('home.hero.heading', undefined, { locale })}
+    </h1>
+    <p class="text-lg text-gray-600">
+      {t('home.hero.subheading', undefined, { locale })}
+    </p>
+  </section>
+</MarketingLayout>

@@ -65,33 +65,7 @@ export const searchDataEN: SearchItem[] = [
         locale: 'en',
         priority: 8
     },
-    // Artículos/Blog
-    {
-        id: 'article-ai-trends-2024',
-        title: 'AI Trends Transforming Businesses in 2024',
-        description: 'Discover how artificial intelligence is revolutionizing enterprise operations',
-        content: 'Artificial intelligence continues to reshape business landscapes. From predictive analytics to automated customer service, explore the key AI trends driving digital transformation in 2024.',
-        url: '/blog/ai-trends-2024/',
-        type: 'article',
-        category: 'AI Insights',
-        tags: ['AI trends', '2024', 'digital transformation', 'predictive analytics', 'automation'],
-        locale: 'en',
-        dateCreated: '2024-01-15',
-        priority: 7
-    },
-    {
-        id: 'article-cloud-security',
-        title: 'Essential Cloud Security Best Practices',
-        description: 'Comprehensive guide to securing your cloud infrastructure',
-        content: 'Cloud security is paramount for modern businesses. Learn essential practices including identity management, encryption, network security, and compliance frameworks.',
-        url: '/blog/cloud-security-guide/',
-        type: 'article',
-        category: 'Security',
-        tags: ['cloud security', 'best practices', 'encryption', 'compliance', 'identity management'],
-        locale: 'en',
-        dateCreated: '2024-02-01',
-        priority: 8
-    }
+
 ];
 
 export const searchDataES: SearchItem[] = [
@@ -132,20 +106,7 @@ export const searchDataES: SearchItem[] = [
         locale: 'es',
         priority: 8
     },
-    // Artículos
-    {
-        id: 'article-ai-trends-2024-es',
-        title: 'Tendencias de IA que Transforman Empresas en 2024',
-        description: 'Descubre cómo la inteligencia artificial está revolucionando las operaciones empresariales',
-        content: 'La inteligencia artificial continúa transformando el panorama empresarial. Desde analítica predictiva hasta atención al cliente automatizada, explora las tendencias clave de IA que impulsan la transformación digital en 2024.',
-        url: '/es/blog/tendencias-ia-2024/',
-        type: 'article',
-        category: 'Perspectivas IA',
-        tags: ['tendencias IA', '2024', 'transformación digital', 'analítica predictiva', 'automatización'],
-        locale: 'es',
-        dateCreated: '2024-01-15',
-        priority: 7
-    }
+
 ];
 
 

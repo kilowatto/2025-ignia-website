@@ -1,26 +1,15 @@
 ---
+/**
+ * Footer.astro
+ * Componente de pie de página con newsletter y copyright
+ * Usa traducciones centralizadas desde src/i18n/ según arquitecture.md
+ */
 import "../styles/global.css";
-const locale = Astro.currentLocale || "en";
+import { t } from 'astro-i18n';
 
-import enTranslations from "../../public/locales/en/common.json";
-import esTranslations from "../../public/locales/es/common.json";
-import frTranslations from "../../public/locales/fr/common.json";
-const translations = {
-  en: enTranslations,
-  es: esTranslations,
-  fr: frTranslations,
-};
-const t = (key: string): string => {
-  const dictionary = translations[locale as keyof typeof translations];
-  if (!dictionary) return key;
-
-  return (
-    key
-      .split(".")
-      .reduce((value: any, segment) => value?.[segment], dictionary) ?? key
-  );
-};
-export const prerender = false;
+// Obtener el locale actual desde Astro (normalizado)
+const rawLocale = Astro.currentLocale || "en";
+const locale = rawLocale.split("-")[0];
 ---
 
 <footer
@@ -37,10 +26,19 @@ export const prerender = false;
   <nav class="flex justify-center space-x-6 mb-6" aria-label="Footer">
     <h2 id="footer-heading" class="sr-only">Footer</h2>
   </nav>
+  
+  <!-- Sección de Newsletter -->
   <div class="text-center text-white mb-4">
-    <p>{t("footer.Suscribe-to-our-newsletter")}</p>
+    <p class="text-lg font-semibold mb-2">
+      {t("footer.newsletter.cta", undefined, { locale })}
+    </p>
+    <p class="text-sm opacity-90">
+      {t("footer.newsletter.description", undefined, { locale })}
+    </p>
   </div>
-  <p class="text-center text-white mb-4">
-    {t("footer.Copyright")}
+  
+  <!-- Copyright -->
+  <p class="text-center text-white text-sm mb-4">
+    {t("footer.legal.copyright", undefined, { locale })}
   </p>
 </footer>

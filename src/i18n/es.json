@@ -1,0 +1,262 @@
+{
+  "footer": {
+    "legal": {
+      "copyright": "© 2024 Ignia. Todos los derechos reservados."
+    },
+    "newsletter": {
+      "button": "Suscribirme",
+      "cta": "Suscríbete a nuestro boletín",
+      "description": "Recibe las últimas noticias y actualizaciones directamente en tu bandeja de entrada."
+    }
+  },
+  "header": {
+    "logo_alt": "Logotipo de Ignia Cloud",
+    "nav": {
+      "aria": {
+        "desktop": "Navegación principal",
+        "mobile": "Navegación móvil",
+        "social": "Redes sociales de Ignia"
+      },
+      "mobile": {
+        "blog": "Blog e insights",
+        "contact": "Contacto"
+      },
+      "social": {
+        "linkedin": "LinkedIn",
+        "whatsapp": "WhatsApp"
+      },
+      "toggle": "Abrir menú"
+    },
+    "sections": {
+      "explore_all": "Ver todas",
+      "ai": {
+        "items": {
+          "copilotStudio": {
+            "description": "Diseña copilotos con guardas, analítica y entrega multicanal.",
+            "title": "Copilot Studio"
+          },
+          "llmHosting": {
+            "description": "Despliega LLMs abiertos o propios con clústeres aislados, GPUs y autoescalado.",
+            "title": "LLM Hosting"
+          },
+          "mlopsMonitoring": {
+            "description": "Opera cargas de IA con tracking de experimentos, alertas de drift y gobernanza.",
+            "title": "MLOps y Monitoreo"
+          },
+          "ragBlueprints": {
+            "description": "Ingiere, vectoriza y contextualiza LLMs con pipelines de retrieval gestionados.",
+            "title": "Blueprints RAG"
+          }
+        },
+        "label": "IA y LLMs",
+        "summary": "Ejecuta tus LLMs en Ignia Cloud con GPUs gestionadas, pipelines de datos y copilots."
+      },
+      "products": {
+        "items": {
+          "blockStorage": {
+            "description": "Alto IOPS para bases de datos y aplicaciones críticas.",
+            "title": "Almacenamiento por bloques"
+          },
+          "cloudBackup": {
+            "description": "Backups en la nube con políticas cifradas y retención controlada.",
+            "title": "Cloud Backup"
+          },
+          "cloudFirewall": {
+            "description": "Firewalls gestionados con IPS/IDS, WAF y microsegmentación.",
+            "title": "Cloud Firewall"
+          },
+          "dns": {
+            "description": "DNS resiliente con georouting, failover y analítica.",
+            "title": "DNS Gestionado"
+          },
+          "kubernetesService": {
+            "description": "Clústeres Kubernetes listos para producción y gestionados.",
+            "title": "Kubernetes as a Service"
+          },
+          "loadBalancer": {
+            "description": "Balanceadores elásticos con health checks y ruteo global.",
+            "title": "Load Balancer"
+          },
+          "objectStorage": {
+            "description": "Escala masiva para archivos y respaldos.",
+            "title": "Almacenamiento por objetos"
+          },
+          "virtualMachines": {
+            "description": "Servidores virtuales de alto rendimiento para cargas exigentes.",
+            "title": "Virtual Machines"
+          }
+        },
+        "label": "Productos",
+        "summary": "Servicios modulares que puedes combinar"
+      },
+      "services": {
+        "items": {
+          "cloudConsulting": {
+            "description": "Migraciones, assessments y guía de arquitectura liderada por expertos.",
+            "title": "Consultoría Cloud"
+          },
+          "managedIt": {
+            "description": "Gestión 24/7 con SLAs, monitoreo y respuesta a incidentes.",
+            "title": "IT Gestionado"
+          },
+          "supportCenter": {
+            "description": "Mesa de ayuda, base de conocimiento y soporte proactivo para tu equipo.",
+            "title": "Centro de soporte"
+          }
+        },
+        "label": "Servicios",
+        "summary": "Expertos que operan, protegen y evolucionan tu plataforma"
+      },
+      "solutions": {
+        "items": {
+          "bcpDraas": {
+            "description": "Continuidad y recuperación con réplicas y failover.",
+            "title": "BCP/DRaaS"
+          },
+          "complianceCloud": {
+            "description": "Logs WORM, métricas y reportes CNBV/ISO/PCI.",
+            "title": "Compliance Cloud for Fintechs"
+          },
+          "kubernetesDevops": {
+            "description": "Kubernetes gestionado con CI/CD y observabilidad.",
+            "title": "Kubernetes DevOps Platform"
+          },
+          "nocaas": {
+            "description": "Monitoreo y operación 24/7, parches y actualizaciones gestionadas.",
+            "title": "NOCaaS"
+          },
+          "privateCloudOnPremise": {
+            "description": "Nube privada desplegada y administrada en sitio.",
+            "title": "Private Cloud On-Premise"
+          },
+          "privateCloudService": {
+            "description": "Nube privada elástica y aislada lista para escalar.",
+            "title": "Private Cloud as a Service"
+          },
+          "regulatoryBackupArchival": {
+            "description": "Backups cifrados con retención de 5 a 10 años.",
+            "title": "Regulatory Backup & Archival"
+          },
+          "secureWorkloadHosting": {
+            "description": "Hosting seguro para cargas críticas con balanceo y gestión.",
+            "title": "Secure Workload Hosting"
+          }
+        },
+        "label": "Soluciones",
+        "summary": "Combos que resuelven necesidades concretas"
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "heading": "¡Bienvenido a Ignia Cloud!",
+      "subheading": "Soluciones cloud empresariales de nueva generación."
+    },
+    "meta": {
+      "description": "Transforma tu empresa con Ignia Cloud. Infraestructura en la nube, servicios de IA y TI gestionada para operaciones resilientes.",
+      "title": "Ignia Cloud — Soluciones Cloud Empresariales"
+    }
+  },
+  "language": {
+    "banner": {
+      "aria": {
+        "banner": "Sugerencia de cambio de idioma",
+        "group": "Acciones de idioma"
+      },
+      "change": "Cambiar idioma",
+      "description": "Detectamos que tu navegador está configurado en español",
+      "dismiss": "Descartar sugerencia de idioma",
+      "prompt": "¿Prefieres ver el sitio en español?"
+    },
+    "switcher": {
+      "label": "Selecciona el idioma",
+      "languages": {
+        "en": {
+          "english": "Inglés",
+          "native": "English",
+          "short": "EN"
+        },
+        "es": {
+          "english": "Español",
+          "native": "Español",
+          "short": "ES"
+        },
+        "fr": {
+          "english": "Francés",
+          "native": "Français",
+          "short": "FR"
+        }
+      }
+    }
+  },
+  "layout": {
+    "skip_link": "Saltar al contenido principal"
+  },
+  "meta": {
+    "description": "Ignia es un proveedor líder de soluciones tecnológicas, ofreciendo productos y servicios innovadores para ayudar a las empresas a prosperar en la era digital.",
+    "title": "Ignia - Potenciando tu Viaje Digital"
+  },
+  "search": {
+    "aria_label": "Buscar en el sitio web",
+    "button": "Buscar",
+    "empty": "Ingresa un término de búsqueda para comenzar",
+    "error_message": "Ocurrió un error al realizar la búsqueda. Inténtalo de nuevo.",
+    "error_title": "Error de búsqueda",
+    "filters": {
+      "category": {
+        "all": "Todas las categorías",
+        "article": "Artículos",
+        "product": "Productos",
+        "service": "Servicios"
+      },
+      "clear": "Limpiar filtros",
+      "sort": {
+        "label": "Ordenar por",
+        "options": {
+          "category": "Categoría",
+          "relevance": "Relevancia",
+          "title": "Título A-Z"
+        }
+      },
+      "type": {
+        "all": "Todos los tipos"
+      }
+    },
+    "keyboard_shortcuts": "Atajos de teclado",
+    "loading": "Buscando...",
+    "meta_description": "Resultados de búsqueda en el sitio web de Ignia",
+    "modal_title": "Buscar",
+    "no_results": {
+      "message": "Intenta con palabras clave diferentes o revisa tu ortografía.",
+      "tips": {
+        "intro": "Sugerencias de búsqueda:",
+        "items": {
+          "general": "Utiliza palabras clave más generales",
+          "spelling": "Revisa tu ortografía",
+          "combinations": "Prueba con diferentes combinaciones de palabras",
+          "filters": "Quita filtros para ver más resultados"
+        }
+      },
+      "title": "No se encontraron resultados"
+    },
+    "placeholder": "Buscar...",
+    "related_title": "Búsquedas relacionadas",
+    "results_description": "Mostrando {{from}}-{{to}} de {{total}} resultados para \"{{query}}\"",
+    "results_for": "Resultados para",
+    "results_title": "Resultados de búsqueda",
+    "search_button": "Buscar",
+    "suggestions": "Sugerencias rápidas:",
+    "stats": {
+      "page": "Página actual:",
+      "time": "Tiempo de búsqueda:",
+      "title": "Estadísticas de búsqueda",
+      "total": "Resultados totales:"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "to_close": "para cerrar",
+    "to_search": "para buscar"
+  }
+}

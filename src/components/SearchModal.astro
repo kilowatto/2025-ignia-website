@@ -1,0 +1,298 @@
+---
+/**
+ * SearchModal.astro
+ *
+ * Modal de búsqueda que se renderiza a nivel root del body (fuera del header)
+ * para cubrir toda la pantalla sin restricciones de z-index o position.
+ *
+ * Patrón: Portal Pattern - El modal vive fuera de la jerarquía del header
+ * para asegurar que position:fixed cubra toda la ventana del navegador.
+ *
+ * Comunicación: Escucha el evento personalizado 'open-search-modal'
+ * disparado por el botón SearchBox.
+ *
+ * Arquitectura: Minimalista, sin JS innecesario, siguiendo arquitecture.md
+ * @see src/components/SearchBox.astro - Botón que dispara este modal
+ */
+
+import { t } from "astro-i18n";
+
+// Obtener locale actual de forma robusta (igual que otros componentes)
+const rawLocale = Astro.currentLocale || "en";
+const locale = rawLocale.split("-")[0];
+
+// URL de la página de resultados según el idioma detectado
+const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
+---
+
+<!-- 
+  Modal de búsqueda - Portal Pattern
+  Este div vive a nivel root del body, NO dentro del header
+  Esto permite que position:fixed cubra toda la pantalla
+-->
+<div
+  id="search-modal"
+  class="search-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="search-title"
+  hidden
+>
+  <!-- Contenedor central del modal con max-width responsive -->
+  <div class="search-modal__content">
+    <!-- Header del modal con título y botón cerrar -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+      <h2 id="search-title" class="text-xl font-semibold text-gray-900">
+        {t("search.modal_title", undefined, { locale })}
+      </h2>
+      <!-- Botón cerrar (X) -->
+      <button
+        id="close-search"
+        class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+        aria-label={t("search.close", undefined, { locale })}
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Contenido principal: formulario de búsqueda -->
+    <div class="p-6">
+      <!-- Formulario GET hacia /search o /{locale}/search -->
+      <form action={searchUrl} method="GET" id="search-form">
+        <div class="relative">
+          <!-- Icono de lupa dentro del input -->
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <svg
+              class="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <!-- Input de búsqueda principal -->
+          <input
+            type="search"
+            name="q"
+            id="search-input"
+            placeholder={t("search.placeholder", undefined, { locale })}
+            class="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-gray-50 focus:bg-white"
+            autocomplete="off"
+            spellcheck="false"
+            autofocus
+          />
+        </div>
+
+        <!-- Botón de submit para ejecutar búsqueda -->
+        <button
+          type="submit"
+          class="mt-4 w-full bg-primary text-white py-3 px-6 rounded-xl font-medium hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          {t("search.search_button", undefined, { locale })}
+        </button>
+      </form>
+
+      <!-- Sugerencias rápidas - Tags clickeables para búsquedas comunes -->
+      <div class="mt-6">
+        <p class="text-sm text-gray-500 mb-3">
+          {t("search.suggestions", undefined, { locale })}
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <!-- Cada tag rellena el input con su texto al hacer click -->
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.solutions", undefined, { locale })}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.products", undefined, { locale })}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.AI", undefined, { locale })}
+          </button>
+          <button
+            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+          >
+            {t("nav.support", undefined, { locale })}
+          </button>
+        </div>
+      </div>
+
+      <!-- Atajos de teclado - Información visual de teclas disponibles -->
+      <div class="mt-6 pt-4 border-t border-gray-100">
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <span>{t("search.keyboard_shortcuts", undefined, { locale })}</span>
+          <div class="flex items-center gap-4">
+            <!-- Enter para buscar -->
+            <span class="flex items-center gap-1">
+              <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">↵</kbd>
+              {t("search.to_search", undefined, { locale })}
+            </span>
+            <!-- Escape para cerrar -->
+            <span class="flex items-center gap-1">
+              <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd>
+              {t("search.to_close", undefined, { locale })}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /**
+   * Script del SearchModal
+   *
+   * Funcionalidad:
+   * 1. Escucha el evento personalizado 'open-search-modal' desde SearchBox
+   * 2. Gestiona apertura/cierre del modal
+   * 3. Previene scroll del body cuando modal está abierto
+   * 4. Maneja interacciones: click en backdrop, Escape, sugerencias
+   *
+   * Arquitectura: JS mínimo, solo lo esencial para UX
+   */
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Referencias a elementos del DOM
+    const searchModal = document.getElementById("search-modal");
+    const closeSearch = document.getElementById("close-search");
+    const searchInput = document.getElementById(
+      "search-input"
+    ) as HTMLInputElement;
+    const suggestionTags = document.querySelectorAll(".suggestion-tag");
+
+    // Validación de elementos críticos
+    if (!searchModal || !closeSearch || !searchInput) {
+      console.error("❌ SearchModal: elementos críticos no encontrados");
+      return;
+    }
+
+    console.log("✅ SearchModal inicializado correctamente");
+
+    /**
+     * Función: abrir modal
+     * - Remueve atributo hidden
+     * - Agrega clase 'show' para animación
+     * - Previene scroll del body
+     * - Enfoca el input después de animación (200ms)
+     */
+    function openModal() {
+      searchModal!.removeAttribute("hidden");
+      searchModal!.classList.add("show");
+      document.body.style.overflow = "hidden"; // Previene scroll de fondo
+
+      // Focus en input después de animación de entrada
+      setTimeout(() => {
+        searchInput.focus();
+      }, 200);
+
+      console.log("🔍 SearchModal abierto");
+    }
+
+    /**
+     * Función: cerrar modal
+     * - Remueve clase 'show' (animación de salida)
+     * - Agrega atributo hidden
+     * - Restaura scroll del body
+     * - Limpia contenido del input
+     */
+    function closeModal() {
+      searchModal!.classList.remove("show");
+      searchModal!.setAttribute("hidden", "");
+      document.body.style.overflow = ""; // Restaura scroll
+      searchInput!.value = ""; // Limpia búsqueda
+
+      console.log("🔍 SearchModal cerrado");
+    }
+
+    /**
+     * Event Listener: Evento personalizado 'open-search-modal'
+     * Disparado por SearchBox cuando usuario click en la lupa
+     * Este es el patrón Portal: comunicación entre componentes vía eventos
+     */
+    document.addEventListener("open-search-modal", () => {
+      console.log("📡 Evento 'open-search-modal' recibido");
+      openModal();
+    });
+
+    /**
+     * Event Listener: Click en botón cerrar (X)
+     */
+    closeSearch.addEventListener("click", closeModal);
+
+    /**
+     * Event Listener: Click en backdrop (fondo oscuro)
+     * Si el click es exactamente en el modal (no en su contenido), cerrar
+     */
+    searchModal.addEventListener("click", (e) => {
+      if (e.target === searchModal) {
+        console.log("🔍 Click en backdrop detectado");
+        closeModal();
+      }
+    });
+
+    /**
+     * Event Listener: Tecla Escape
+     * Cierra el modal si está abierto (verificando atributo hidden)
+     */
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !searchModal.hasAttribute("hidden")) {
+        console.log("⌨️ Escape presionado - cerrando modal");
+        closeModal();
+      }
+    });
+
+    /**
+     * Event Listeners: Tags de sugerencias
+     * Al hacer click en un tag, rellena el input con ese texto
+     * y enfoca el input para que usuario pueda editar/buscar
+     */
+    suggestionTags.forEach((tag) => {
+      tag.addEventListener("click", () => {
+        const suggestionText = tag.textContent?.trim() || "";
+        searchInput.value = suggestionText;
+        searchInput.focus();
+        console.log(`💡 Sugerencia clickeada: "${suggestionText}"`);
+      });
+    });
+
+    /**
+     * Event Listener: Enter en input de búsqueda
+     * Submit del formulario cuando hay contenido válido
+     */
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && searchInput.value.trim()) {
+        const form = searchInput.closest("form") as HTMLFormElement;
+        if (form) {
+          console.log(`🔍 Búsqueda enviada: "${searchInput.value}"`);
+          form.submit();
+        }
+      }
+    });
+
+    console.log("🔍 Todos los event listeners del SearchModal configurados");
+  });
+</script>

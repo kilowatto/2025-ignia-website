@@ -6,33 +6,16 @@ import {
   supportedLanguages,
   type SupportedLanguage,
 } from "../utils/languageDetection";
+import { t } from "astro-i18n";
 
+// Obtener el locale actual de Astro de forma más robusta
 const rawLocale = Astro.currentLocale || "en";
 const baseLocale = rawLocale.split("-")[0] as SupportedLanguage;
 const locale = supportedLanguages.includes(baseLocale) ? baseLocale : "en";
 const currentPath = Astro.url?.pathname ?? "/";
 
-// Importamos las traducciones para los nombres de los idiomas
-import enTranslations from "../../public/locales/en/common.json";
-import esTranslations from "../../public/locales/es/common.json";
-import frTranslations from "../../public/locales/fr/common.json";
-
-const translations = {
-  en: enTranslations,
-  es: esTranslations,
-  fr: frTranslations,
-};
-
-const t = (key: string): string => {
-  const keys = key.split(".");
-  let value: any = translations[locale];
-
-  for (const k of keys) {
-    value = value?.[k];
-  }
-
-  return value || key;
-};
+// Helper para traducir con el locale correcto
+const translate = (key: string) => t(key, undefined, { locale });
 
 // Configuración de idiomas usando las utilidades
 const languages = Object.entries(languageNames).map(([code, info]) => ({
@@ -51,18 +34,16 @@ const currentLanguage =
 <div class="space-y-3 sm:space-y-0" id="language-selector">
   <div class="relative block sm:hidden">
     <label class="sr-only" for="language-select-mobile">
-      {t("lang.languageSwitcher") ?? "Select language"}
+      {translate("language.switcher.label")}
     </label>
     <span
       id="language-flag-mobile"
       class={`language-flag language-flag--mobile ${
         currentLanguage?.flagIcon ? "" : "language-flag--emoji"
       }`}
-      style={
-        currentLanguage?.flagIcon
-          ? `background-image: url('${currentLanguage.flagIcon}')`
-          : undefined
-      }
+      style={currentLanguage?.flagIcon
+        ? `background-image: url('${currentLanguage.flagIcon}')`
+        : undefined}
       aria-hidden="true"
       data-default-emoji={currentLanguage?.flagEmoji || ""}
     >
@@ -71,7 +52,7 @@ const currentLanguage =
     <select
       id="language-select-mobile"
       class="w-full appearance-none rounded-md border border-gray-300 bg-white pl-12 pr-10 py-2 text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-      aria-label={t("lang.languageSwitcher") ?? "Select language"}
+      aria-label={translate("language.switcher.label")}
     >
       {
         languages.map((language) => (
@@ -90,58 +71,60 @@ const currentLanguage =
   </div>
 
   <div class="relative hidden text-left sm:inline-block">
-  <!-- Botón del selector -->
-  <button
-    type="button"
-    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-    id="language-button"
-    aria-expanded="false"
-    aria-haspopup="true"
-  >
-    {currentLanguage?.flagIcon ? (
-      <img
-        src={currentLanguage.flagIcon}
-        alt=""
-        class="language-flag-icon"
-        aria-hidden="true"
-      />
-    ) : (
-      <span class="text-lg font-emoji" role="img" aria-hidden="true">
-        {currentLanguage?.flagEmoji}
-      </span>
-    )}
-    <span class="hidden sm:inline">{currentLanguage?.nativeName}</span>
-    <span class="sm:hidden">{currentLanguage?.code.toUpperCase()}</span>
-    <!-- Icono de flecha -->
-    <svg
-      class="w-4 h-4 transition-transform"
-      id="language-arrow"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
+    <!-- Botón del selector -->
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+      id="language-button"
+      aria-expanded="false"
+      aria-haspopup="true"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M19 9l-7 7-7-7"></path>
-    </svg>
-  </button>
-
-  <!-- Dropdown menu -->
-  <div
-    class="absolute right-0 z-50 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible transform scale-95 transition-all duration-200 ease-out"
-    id="language-menu"
-    role="menu"
-    aria-orientation="vertical"
-    aria-labelledby="language-button"
-  >
-    <div class="py-1" role="none">
       {
-        languages.map((language) => (
-          <a
-            href={language.url}
-            class={`
+        currentLanguage?.flagIcon ? (
+          <img
+            src={currentLanguage.flagIcon}
+            alt=""
+            class="language-flag-icon"
+            aria-hidden="true"
+          />
+        ) : (
+          <span class="text-lg font-emoji" role="img" aria-hidden="true">
+            {currentLanguage?.flagEmoji}
+          </span>
+        )
+      }
+      <span class="hidden sm:inline">{currentLanguage?.nativeName}</span>
+      <span class="sm:hidden">{currentLanguage?.code.toUpperCase()}</span>
+      <!-- Icono de flecha -->
+      <svg
+        class="w-4 h-4 transition-transform"
+        id="language-arrow"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </button>
+
+    <!-- Dropdown menu -->
+    <div
+      class="absolute right-0 z-50 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible transform scale-95 transition-all duration-200 ease-out"
+      id="language-menu"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="language-button"
+    >
+      <div class="py-1" role="none">
+        {
+          languages.map((language) => (
+            <a
+              href={language.url}
+              class={`
             flex items-center gap-3 px-4 py-2 text-sm transition-colors
             ${
               locale === language.code
@@ -149,217 +132,219 @@ const currentLanguage =
                 : "text-gray-700 hover:bg-gray-100"
             }
           `}
-            role="menuitem"
-            data-lang-switch={language.code}
-          >
-            {language.flagIcon ? (
-              <img
-                src={language.flagIcon}
-                alt=""
-                class="language-flag-icon"
-                aria-hidden="true"
-              />
-            ) : (
-              <span class="text-lg font-emoji" role="img" aria-hidden="true">
-                {language.flagEmoji}
-              </span>
-            )}
-            <div class="flex flex-col">
-              <span class="font-medium">{language.nativeName}</span>
-              <span class="text-xs text-gray-500">{language.name}</span>
-            </div>
-            {locale === language.code && (
-              <svg
-                class="w-4 h-4 ml-auto text-primary"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
+              role="menuitem"
+              data-lang-switch={language.code}
+            >
+              {language.flagIcon ? (
+                <img
+                  src={language.flagIcon}
+                  alt=""
+                  class="language-flag-icon"
+                  aria-hidden="true"
                 />
-              </svg>
-            )}
-          </a>
-        ))
-      }
+              ) : (
+                <span class="text-lg font-emoji" role="img" aria-hidden="true">
+                  {language.flagEmoji}
+                </span>
+              )}
+              <div class="flex flex-col">
+                <span class="font-medium">{language.nativeName}</span>
+                <span class="text-xs text-gray-500">{language.name}</span>
+              </div>
+              {locale === language.code && (
+                <svg
+                  class="w-4 h-4 ml-auto text-primary"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              )}
+            </a>
+          ))
+        }
+      </div>
     </div>
   </div>
-</div>
 
-<style>
-  #language-selector select {
-    background-image: none;
-  }
+  <style>
+    #language-selector select {
+      background-image: none;
+    }
 
-  #language-selector .language-flag-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 9999px;
-    object-fit: cover;
-    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
-  }
+    #language-selector .language-flag-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
+    }
 
-  #language-selector .language-flag {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 9999px;
-    background-size: cover;
-    background-position: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    pointer-events: none;
-    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
-  }
+    #language-selector .language-flag {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+      background-size: cover;
+      background-position: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      pointer-events: none;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
+    }
 
-  #language-selector .language-flag.language-flag--emoji {
-    background-color: rgba(241, 245, 249, 0.8);
-  }
+    #language-selector .language-flag.language-flag--emoji {
+      background-color: rgba(241, 245, 249, 0.8);
+    }
 
-  #language-menu.show {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-  }
+    #language-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
 
-  #language-arrow.rotate {
-    transform: rotate(180deg);
-  }
-</style>
+    #language-arrow.rotate {
+      transform: rotate(180deg);
+    }
+  </style>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const button = document.getElementById("language-button");
-    const menu = document.getElementById("language-menu");
-    const arrow = document.getElementById("language-arrow");
-    const mobileSelect = document.getElementById(
-      "language-select-mobile"
-    ) as HTMLSelectElement | null;
-    const mobileFlag = document.getElementById(
-      "language-flag-mobile"
-    ) as HTMLElement | null;
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const button = document.getElementById("language-button");
+      const menu = document.getElementById("language-menu");
+      const arrow = document.getElementById("language-arrow");
+      const mobileSelect = document.getElementById(
+        "language-select-mobile"
+      ) as HTMLSelectElement | null;
+      const mobileFlag = document.getElementById(
+        "language-flag-mobile"
+      ) as HTMLElement | null;
 
-    const resetLanguageSuggestionState = () => {
-      try {
-        localStorage.removeItem("language-suggestion-dismissed");
-        localStorage.removeItem("language-suggestion-accepted");
-      } catch (error) {
-        console.warn("Unable to reset language suggestion flags", error);
-      }
-    };
-
-    if (mobileSelect) {
-      const syncMobileFlag = () => {
-        if (!mobileFlag) return;
-        const selectedOption = mobileSelect.selectedOptions[0];
-        const targetIcon = selectedOption?.dataset.icon;
-        const targetEmoji = selectedOption?.dataset.emoji;
-
-        if (targetIcon) {
-          mobileFlag.style.backgroundImage = `url('${targetIcon}')`;
-          mobileFlag.textContent = "";
-          mobileFlag.classList.remove("language-flag--emoji");
-        } else {
-          mobileFlag.style.backgroundImage = "";
-          mobileFlag.classList.add("language-flag--emoji");
-          mobileFlag.textContent = targetEmoji || mobileFlag.dataset.defaultEmoji || "";
+      const resetLanguageSuggestionState = () => {
+        try {
+          localStorage.removeItem("language-suggestion-dismissed");
+          localStorage.removeItem("language-suggestion-accepted");
+        } catch (error) {
+          console.warn("Unable to reset language suggestion flags", error);
         }
       };
 
-      syncMobileFlag();
+      if (mobileSelect) {
+        const syncMobileFlag = () => {
+          if (!mobileFlag) return;
+          const selectedOption = mobileSelect.selectedOptions[0];
+          const targetIcon = selectedOption?.dataset.icon;
+          const targetEmoji = selectedOption?.dataset.emoji;
 
-      mobileSelect.addEventListener("change", (event) => {
-        const target = event.currentTarget as HTMLSelectElement;
-        const selectedOption = target.selectedOptions[0];
-        const targetLang = selectedOption?.value;
-        const targetUrl = selectedOption?.dataset.url;
+          if (targetIcon) {
+            mobileFlag.style.backgroundImage = `url('${targetIcon}')`;
+            mobileFlag.textContent = "";
+            mobileFlag.classList.remove("language-flag--emoji");
+          } else {
+            mobileFlag.style.backgroundImage = "";
+            mobileFlag.classList.add("language-flag--emoji");
+            mobileFlag.textContent =
+              targetEmoji || mobileFlag.dataset.defaultEmoji || "";
+          }
+        };
 
         syncMobileFlag();
 
-        if (targetLang) {
-          resetLanguageSuggestionState();
-          localStorage.setItem("preferred-language", targetLang);
-          document.cookie = `preferred-language=${targetLang}; max-age=31536000; path=/; sameSite=lax`;
-        }
+        mobileSelect.addEventListener("change", (event) => {
+          const target = event.currentTarget as HTMLSelectElement;
+          const selectedOption = target.selectedOptions[0];
+          const targetLang = selectedOption?.value;
+          const targetUrl = selectedOption?.dataset.url;
 
-        if (targetUrl) {
-          window.location.href = targetUrl;
+          syncMobileFlag();
+
+          if (targetLang) {
+            resetLanguageSuggestionState();
+            localStorage.setItem("preferred-language", targetLang);
+            document.cookie = `preferred-language=${targetLang}; max-age=31536000; path=/; sameSite=lax`;
+          }
+
+          if (targetUrl) {
+            window.location.href = targetUrl;
+          }
+        });
+      }
+
+      if (!button || !menu || !arrow) return;
+
+      let isOpen = false;
+
+      // Toggle del dropdown
+      const toggleDropdown = () => {
+        isOpen = !isOpen;
+
+        if (isOpen) {
+          menu.classList.add("show");
+          arrow.classList.add("rotate");
+          button.setAttribute("aria-expanded", "true");
+        } else {
+          menu.classList.remove("show");
+          arrow.classList.remove("rotate");
+          button.setAttribute("aria-expanded", "false");
+        }
+      };
+
+      // Cerrar dropdown
+      const closeDropdown = () => {
+        if (isOpen) {
+          isOpen = false;
+          menu.classList.remove("show");
+          arrow.classList.remove("rotate");
+          button.setAttribute("aria-expanded", "false");
+        }
+      };
+
+      // Event listeners
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown();
+      });
+
+      // Cerrar al hacer click fuera
+      document.addEventListener("click", closeDropdown);
+
+      // Prevenir cierre al hacer click dentro del menu
+      menu.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      // Cerrar con Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeDropdown();
         }
       });
-    }
 
-    if (!button || !menu || !arrow) return;
+      // Guardar preferencia cuando usuario cambia idioma
+      document.querySelectorAll("[data-lang-switch]").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          const targetLang = (e.currentTarget as HTMLElement).getAttribute(
+            "data-lang-switch"
+          );
+          if (targetLang) {
+            resetLanguageSuggestionState();
+            // Guardar en localStorage
+            localStorage.setItem("preferred-language", targetLang);
 
-    let isOpen = false;
-
-    // Toggle del dropdown
-    const toggleDropdown = () => {
-      isOpen = !isOpen;
-
-      if (isOpen) {
-        menu.classList.add("show");
-        arrow.classList.add("rotate");
-        button.setAttribute("aria-expanded", "true");
-      } else {
-        menu.classList.remove("show");
-        arrow.classList.remove("rotate");
-        button.setAttribute("aria-expanded", "false");
-      }
-    };
-
-    // Cerrar dropdown
-    const closeDropdown = () => {
-      if (isOpen) {
-        isOpen = false;
-        menu.classList.remove("show");
-        arrow.classList.remove("rotate");
-        button.setAttribute("aria-expanded", "false");
-      }
-    };
-
-    // Event listeners
-    button.addEventListener("click", (e) => {
-      e.stopPropagation();
-      toggleDropdown();
-    });
-
-    // Cerrar al hacer click fuera
-    document.addEventListener("click", closeDropdown);
-
-    // Prevenir cierre al hacer click dentro del menu
-    menu.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-
-    // Cerrar con Escape
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        closeDropdown();
-      }
-    });
-
-    // Guardar preferencia cuando usuario cambia idioma
-    document.querySelectorAll("[data-lang-switch]").forEach((link) => {
-      link.addEventListener("click", (e) => {
-        const targetLang = (e.currentTarget as HTMLElement).getAttribute(
-          "data-lang-switch"
-        );
-        if (targetLang) {
-          resetLanguageSuggestionState();
-          // Guardar en localStorage
-          localStorage.setItem("preferred-language", targetLang);
-
-          // Guardar en cookie para el servidor
-          document.cookie = `preferred-language=${targetLang}; max-age=31536000; path=/; sameSite=lax`;
-        }
+            // Guardar en cookie para el servidor
+            document.cookie = `preferred-language=${targetLang}; max-age=31536000; path=/; sameSite=lax`;
+          }
+        });
       });
     });
-  });
-</script>
+  </script>
+</div>

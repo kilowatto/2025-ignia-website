@@ -1,0 +1,262 @@
+{
+  "footer": {
+    "legal": {
+      "copyright": "© 2024 Ignia. Tous droits réservés."
+    },
+    "newsletter": {
+      "button": "S'abonner",
+      "cta": "Abonnez-vous à notre newsletter",
+      "description": "Recevez les dernières nouvelles et mises à jour directement dans votre boîte de réception."
+    }
+  },
+  "header": {
+    "logo_alt": "Logo Ignia Cloud",
+    "nav": {
+      "aria": {
+        "desktop": "Navigation principale",
+        "mobile": "Navigation mobile",
+        "social": "Liens sociaux Ignia"
+      },
+      "mobile": {
+        "blog": "Blog & insights",
+        "contact": "Contact"
+      },
+      "social": {
+        "linkedin": "LinkedIn",
+        "whatsapp": "WhatsApp"
+      },
+      "toggle": "Ouvrir le menu"
+    },
+    "sections": {
+      "explore_all": "Tout explorer",
+      "ai": {
+        "items": {
+          "copilotStudio": {
+            "description": "Concevez des copilotes avec garde-fous, analytics et diffusion omnicanale.",
+            "title": "Copilot Studio"
+          },
+          "llmHosting": {
+            "description": "Déployez des LLM ouverts ou privés avec clusters isolés, GPU et autoscaling.",
+            "title": "LLM Hosting"
+          },
+          "mlopsMonitoring": {
+            "description": "Opérez vos charges IA avec suivi d'expériences, alertes de dérive et gouvernance.",
+            "title": "MLOps et monitoring"
+          },
+          "ragBlueprints": {
+            "description": "Ingestion, vectorisation et contextualisation des LLM avec pipelines gérés.",
+            "title": "Blueprints RAG"
+          }
+        },
+        "label": "IA et LLMs",
+        "summary": "Faites tourner vos LLM sur Ignia Cloud avec GPU gérés, pipelines de données et copilotes."
+      },
+      "products": {
+        "items": {
+          "blockStorage": {
+            "description": "Stockage à IOPS élevé pour bases de données et applications critiques.",
+            "title": "Stockage par blocs"
+          },
+          "cloudBackup": {
+            "description": "Sauvegardes cloud chiffrées avec gestion de la rétention.",
+            "title": "Cloud Backup"
+          },
+          "cloudFirewall": {
+            "description": "Pare-feux managés avec IPS/IDS, WAF et micro-segmentation.",
+            "title": "Cloud Firewall"
+          },
+          "dns": {
+            "description": "DNS résilient avec routage géo, bascule et analytics.",
+            "title": "DNS managé"
+          },
+          "kubernetesService": {
+            "description": "Clusters Kubernetes prêts pour la production et gérés.",
+            "title": "Kubernetes as a Service"
+          },
+          "loadBalancer": {
+            "description": "Répartiteurs de charge élastiques avec health checks et routage global.",
+            "title": "Load Balancer"
+          },
+          "objectStorage": {
+            "description": "Stockage massif pour fichiers et sauvegardes.",
+            "title": "Stockage objet"
+          },
+          "virtualMachines": {
+            "description": "Serveurs virtuels haute performance pour charges exigeantes.",
+            "title": "Machines virtuelles"
+          }
+        },
+        "label": "Produits",
+        "summary": "Services modulaires à composer"
+      },
+      "services": {
+        "items": {
+          "cloudConsulting": {
+            "description": "Migrations, audits et conseil en architecture par des experts.",
+            "title": "Conseil Cloud"
+          },
+          "managedIt": {
+            "description": "Gestion 24/7 avec SLA, monitoring et réponse aux incidents.",
+            "title": "IT géré"
+          },
+          "supportCenter": {
+            "description": "Support, base de connaissances et assistance proactive pour vos équipes.",
+            "title": "Centre de support"
+          }
+        },
+        "label": "Services",
+        "summary": "Des experts pour opérer, sécuriser et faire évoluer votre stack"
+      },
+      "solutions": {
+        "items": {
+          "bcpDraas": {
+            "description": "Continuité et reprise avec réplication et bascule.",
+            "title": "BCP/DRaaS"
+          },
+          "complianceCloud": {
+            "description": "Logs WORM, métriques et rapports CNBV/ISO/PCI.",
+            "title": "Compliance Cloud pour Fintechs"
+          },
+          "kubernetesDevops": {
+            "description": "Kubernetes géré avec CI/CD et observabilité.",
+            "title": "Plateforme DevOps Kubernetes"
+          },
+          "nocaas": {
+            "description": "Supervision 24/7 et opérations avec correctifs et mises à jour gérés.",
+            "title": "NOCaaS"
+          },
+          "privateCloudOnPremise": {
+            "description": "Cloud privé déployé et géré sur site.",
+            "title": "Private Cloud On-Premise"
+          },
+          "privateCloudService": {
+            "description": "Cloud privé élastique et isolé, prêt à évoluer.",
+            "title": "Private Cloud as a Service"
+          },
+          "regulatoryBackupArchival": {
+            "description": "Sauvegardes chiffrées avec rétention de 5 à 10 ans.",
+            "title": "Archivage & sauvegarde réglementaire"
+          },
+          "secureWorkloadHosting": {
+            "description": "Hébergement sécurisé pour charges critiques avec répartition et gestion.",
+            "title": "Secure Workload Hosting"
+          }
+        },
+        "label": "Solutions",
+        "summary": "Offres qui répondent à des besoins concrets"
+      }
+    }
+  },
+  "home": {
+    "hero": {
+      "heading": "Bienvenue chez Ignia Cloud !",
+      "subheading": "Des solutions cloud de nouvelle génération pour les entreprises."
+    },
+    "meta": {
+      "description": "Transformez votre entreprise avec Ignia Cloud. Infrastructure cloud, services d'IA et informatique gérée pour des opérations résilientes.",
+      "title": "Ignia Cloud — Solutions Cloud d'Entreprise"
+    }
+  },
+  "language": {
+    "banner": {
+      "aria": {
+        "banner": "Suggestion de changement de langue",
+        "group": "Actions de langue"
+      },
+      "change": "Changer de langue",
+      "description": "Nous avons détecté que votre navigateur est configuré en français",
+      "dismiss": "Ignorer la suggestion de langue",
+      "prompt": "Préférez-vous voir le site en français ?"
+    },
+    "switcher": {
+      "label": "Choisir la langue",
+      "languages": {
+        "en": {
+          "english": "Anglais",
+          "native": "English",
+          "short": "EN"
+        },
+        "es": {
+          "english": "Espagnol",
+          "native": "Español",
+          "short": "ES"
+        },
+        "fr": {
+          "english": "Français",
+          "native": "Français",
+          "short": "FR"
+        }
+      }
+    }
+  },
+  "layout": {
+    "skip_link": "Aller au contenu principal"
+  },
+  "meta": {
+    "description": "Ignia est un fournisseur de solutions technologiques innovantes qui aide les entreprises à prospérer à l'ère numérique.",
+    "title": "Ignia - Votre partenaire technologique de confiance"
+  },
+  "search": {
+    "aria_label": "Rechercher sur le site web",
+    "button": "Rechercher",
+    "empty": "Saisissez un terme de recherche pour commencer",
+    "error_message": "Une erreur est survenue lors de la recherche. Veuillez réessayer.",
+    "error_title": "Erreur de recherche",
+    "filters": {
+      "category": {
+        "all": "Toutes les catégories",
+        "article": "Articles",
+        "product": "Produits",
+        "service": "Services"
+      },
+      "clear": "Effacer les filtres",
+      "sort": {
+        "label": "Trier par",
+        "options": {
+          "category": "Catégorie",
+          "relevance": "Pertinence",
+          "title": "Titre A-Z"
+        }
+      },
+      "type": {
+        "all": "Tous les types"
+      }
+    },
+    "keyboard_shortcuts": "Raccourcis clavier",
+    "loading": "Recherche en cours...",
+    "meta_description": "Résultats de recherche sur le site Ignia",
+    "modal_title": "Rechercher",
+    "no_results": {
+      "message": "Essayez d'autres mots-clés ou vérifiez votre orthographe.",
+      "tips": {
+        "intro": "Conseils de recherche :",
+        "items": {
+          "general": "Utilisez des mots-clés plus généraux",
+          "spelling": "Vérifiez votre orthographe",
+          "combinations": "Essayez différentes combinaisons de mots",
+          "filters": "Retirez des filtres pour voir plus de résultats"
+        }
+      },
+      "title": "Aucun résultat trouvé"
+    },
+    "placeholder": "Rechercher...",
+    "related_title": "Recherches associées",
+    "results_description": "Affichage de {{from}}-{{to}} sur {{total}} résultats pour \"{{query}}\"",
+    "results_for": "Résultats pour",
+    "results_title": "Résultats de recherche",
+    "search_button": "Rechercher",
+    "suggestions": "Suggestions rapides :",
+    "stats": {
+      "page": "Page actuelle :",
+      "time": "Temps de recherche :",
+      "title": "Statistiques de recherche",
+      "total": "Résultats totaux :"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "to_close": "pour fermer",
+    "to_search": "pour rechercher"
+  }
+}

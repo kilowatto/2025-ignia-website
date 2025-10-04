@@ -10,8 +10,8 @@ const category = url.searchParams.get("category") || "";
 const type = url.searchParams.get("type") || "";
 const page = parseInt(url.searchParams.get("page") || "1");
 
-// Importamos las traducciones
-import enTranslations from "../../public/locales/en/common.json";
+// Importamos las traducciones desde src/i18n/ (ubicación correcta según arquitecture.md)
+import enTranslations from "../i18n/en.json";
 
 const t = (key: string): string => {
   const keys = key.split(".");

@@ -1,24 +1,35 @@
 // tailwind.config.mjs
-import Config  from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  content: ['./src/**/*.{astro,html,ts,tsx}'],
   theme: {
     extend: {
-      // Aquí le decimos a Tailwind sobre nuestros colores personalizados
       colors: {
-        'primary': 'var(--color-primary)',
-        'secondary': 'var(--color-secondary)',
-        'accent1': 'var(--color-accent1)',
-        'accent2': 'var(--color-accent2)',
+        primary: '#f36b1c',      // Naranja principal (Ignia)
+        secondary: '#0b6ab0',    // Azul secundario (Ignia)
+        brand: {
+          orange: '#F36B1C',
+          blue: '#0B6AB0',
+        },
+        comp: {
+          amber: '#F8A337',
+          rust: '#CE4912',
+        },
+        gray: {
+          900: '#434547',
+          700: '#727476',
+          500: '#A4A6A8',
+          100: '#F5F5F5',
+        },
       },
-      // También puedes añadir tus fuentes personalizadas
       fontFamily: {
-        'title': 'var(--font-title)',
-        'subtitle': 'var(--font-subtitle)',
-        'body': 'var(--font-body)',
+        sans: ['Raleway', ...defaultTheme.fontFamily.sans],
+      },
+      borderRadius: {
+        lg: '12px',
       },
     },
   },
   plugins: [],
-}
+};
