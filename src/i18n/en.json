@@ -20,6 +20,41 @@
       "team": "Team",
       "careers": "Careers",
       "partners": "Partners"
+    },
+    "contact_form": {
+      "title": "Get in Touch",
+      "subtitle": "Complete the form and we'll respond soon",
+      "fields": {
+        "name": {
+          "label": "Full Name",
+          "placeholder": "John Doe",
+          "error": "Please enter your full name"
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "+1 (555) 123-4567",
+          "error": "Please enter a valid phone number"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "your@email.com",
+          "error": "Please enter a valid email address"
+        }
+      },
+      "button": {
+        "send": "Send",
+        "sending": "Sending..."
+      },
+      "success": {
+        "title": "Thank you!",
+        "message": "We've received your information. We'll contact you soon.",
+        "check_email": "Check your email"
+      },
+      "already_submitted": {
+        "title": "You already have an active request",
+        "message": "We'll contact you soon."
+      },
+      "error": "An error occurred. Please try again."
     }
   },
   "header": {
@@ -236,7 +271,6 @@
     },
     "common": {
       "home": "/",
-      "blog": "/blog/",
       "contact": "/contact/",
       "about": "/about/"
     },

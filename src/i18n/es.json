@@ -20,6 +20,41 @@
       "team": "Equipo",
       "careers": "Carreras",
       "partners": "Partners"
+    },
+    "contact_form": {
+      "title": "Contáctanos",
+      "subtitle": "Completa el formulario y te responderemos pronto",
+      "fields": {
+        "name": {
+          "label": "Nombre Completo",
+          "placeholder": "Juan Pérez",
+          "error": "Por favor ingresa tu nombre completo"
+        },
+        "phone": {
+          "label": "Teléfono",
+          "placeholder": "+52 55 1234 5678",
+          "error": "Por favor ingresa un teléfono válido"
+        },
+        "email": {
+          "label": "Correo Electrónico",
+          "placeholder": "tu@correo.com",
+          "error": "Por favor ingresa un correo electrónico válido"
+        }
+      },
+      "button": {
+        "send": "Enviar",
+        "sending": "Enviando..."
+      },
+      "success": {
+        "title": "¡Gracias!",
+        "message": "Hemos recibido tu información. Pronto nos pondremos en contacto contigo.",
+        "check_email": "Revisa tu correo electrónico"
+      },
+      "already_submitted": {
+        "title": "Ya tienes una solicitud activa",
+        "message": "Pronto nos pondremos en contacto contigo."
+      },
+      "error": "Ocurrió un error. Por favor intenta de nuevo."
     }
   },
   "header": {
@@ -236,7 +271,6 @@
     },
     "common": {
       "home": "/",
-      "blog": "/blog/",
       "contact": "/contacto/",
       "about": "/acerca-de/"
     },

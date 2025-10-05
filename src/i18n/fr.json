@@ -20,6 +20,41 @@
       "team": "Équipe",
       "careers": "Carrières",
       "partners": "Partenaires"
+    },
+    "contact_form": {
+      "title": "Contactez-nous",
+      "subtitle": "Remplissez le formulaire et nous vous répondrons bientôt",
+      "fields": {
+        "name": {
+          "label": "Nom Complet",
+          "placeholder": "Jean Dupont",
+          "error": "Veuillez entrer votre nom complet"
+        },
+        "phone": {
+          "label": "Téléphone",
+          "placeholder": "+33 1 23 45 67 89",
+          "error": "Veuillez entrer un numéro de téléphone valide"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "votre@email.com",
+          "error": "Veuillez entrer une adresse email valide"
+        }
+      },
+      "button": {
+        "send": "Envoyer",
+        "sending": "Envoi..."
+      },
+      "success": {
+        "title": "Merci!",
+        "message": "Nous avons reçu vos informations. Nous vous contacterons bientôt.",
+        "check_email": "Vérifiez votre email"
+      },
+      "already_submitted": {
+        "title": "Vous avez déjà une demande active",
+        "message": "Nous vous contacterons bientôt."
+      },
+      "error": "Une erreur s'est produite. Veuillez réessayer."
     }
   },
   "header": {

@@ -438,41 +438,5 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
         })
       }
     </nav>
-
-    <!-- 
-      ENLACES ADICIONALES (Blog, Contact)
-      
-      Sección separada con borde superior para distinguirla del sitemap principal
-      Enlaces comunes que no pertenecen a ninguna sección específica
-      
-      Centrados horizontalmente
-      Separados por un pipe "|" visual (aria-hidden para lectores de pantalla)
-      Texto blanco para contraste con fondo azul
-      
-      Margin-top y padding-top responsive
-      Gap responsive entre enlaces: 1rem (móvil) → 1.5rem (tablet+)
-    -->
-    <div class="mt-8 border-t border-white/20 pt-6 sm:mt-10 sm:pt-8">
-      <div class="flex flex-wrap justify-center gap-4 text-sm sm:gap-6 sm:text-base">
-        <!-- Enlace Blog -->
-        <a
-          href={ensureLocalePath(translate('routes.common.blog'))}
-          class="text-white/80 transition-colors hover:text-white"
-        >
-          {translate('header.nav.mobile.blog')}
-        </a>
-
-        <!-- Separador visual (pipe) -->
-        <span class="text-white/30" aria-hidden="true">|</span>
-
-        <!-- Enlace Contact -->
-        <a
-          href={ensureLocalePath(translate('routes.common.contact'))}
-          class="text-white/80 transition-colors hover:text-white"
-        >
-          {translate('header.nav.mobile.contact')}
-        </a>
-      </div>
-    </div>
   </div>
 </section>

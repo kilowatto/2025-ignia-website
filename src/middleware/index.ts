@@ -22,8 +22,8 @@ import config from '../../astro-i18n.config.mjs';
 
 // Declarar tipo global para TypeScript
 declare global {
-  // eslint-disable-next-line no-var
-  var __astroI18nMiddleware: ReturnType<typeof useAstroI18n> | undefined;
+    // eslint-disable-next-line no-var
+    var __astroI18nMiddleware: ReturnType<typeof useAstroI18n> | undefined;
 }
 
 // Crear o reutilizar la instancia de astro-i18n
@@ -31,7 +31,7 @@ const astroI18nMiddleware = globalThis.__astroI18nMiddleware ?? useAstroI18n(con
 
 // Guardar en caché global para reutilizar en hot reloads
 if (!globalThis.__astroI18nMiddleware) {
-  globalThis.__astroI18nMiddleware = astroI18nMiddleware;
+    globalThis.__astroI18nMiddleware = astroI18nMiddleware;
 }
 
 /**
