@@ -1,72 +1,84 @@
 ---
 /**
  * ContactForm.astro
- * 
+ *
  * PROPÓSITO:
  * Componente de formulario de contacto con 4 estados y persistencia localStorage.
  * Integrado en el footer del sitio con validación anti-robots y UX optimizada.
- * 
+ *
  * ESTADOS:
  * 1. IDLE: Formulario vacío listo para completar
  * 2. VALIDATING: Enviando información (spinner visible)
  * 3. SUCCESS: Formulario enviado exitosamente (mensaje de agradecimiento)
  * 4. ALREADY_SUBMITTED: Usuario ya contactó previamente (30 días)
- * 
+ *
  * PROTECCIÓN ANTI-ROBOTS:
  * - Honeypot field (campo oculto con CSS)
  * - Cloudflare Turnstile (managed challenge)
  * - Timestamp validation (mínimo 2 segundos para enviar)
  * - localStorage rate limiting
- * 
+ *
  * PERSISTENCIA:
  * - localStorage.setItem('ignia_contact_submitted', ...)
  * - Duración: 30 días renovables
  * - Email hasheado con SHA-256 para privacidad
- * 
+ *
  * CUMPLIMIENTO arquitecture.md:
  * - §2: Progressive enhancement (funciona sin JS básico)
  * - §5: Traducciones centralizadas (footer.contact_form.*)
  * - §8: Tailwind utilities para estilos
  * - §9: HTML5 semántico + ARIA labels
- * 
+ *
  * @see src/scripts/contact-form.ts - Lógica cliente (estados, validación, localStorage)
  * @see src/i18n/en.json - Traducciones (footer.contact_form.*)
  * @see src/i18n/es.json - Traducciones español
  * @see src/i18n/fr.json - Traducciones francés
  */
-import { t } from 'astro-i18n';
+import { t } from "astro-i18n";
 
 // Detectar idioma actual
-const rawLocale = Astro.currentLocale || 'es';
-const supportedLocales = ['en', 'es', 'fr'] as const;
+const rawLocale = Astro.currentLocale || "es";
+const supportedLocales = ["en", "es", "fr"] as const;
 type Locale = (typeof supportedLocales)[number];
 const locale = supportedLocales.includes(rawLocale as Locale)
   ? (rawLocale as Locale)
-  : 'es';
+  : "es";
 
 // Helper de traducción
 const translate = (key: string) => t(key, undefined, { locale });
 ---
 
-<div 
-  id="contact-form-container"
-  class="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10 lg:py-12"
-  data-locale={locale}
+<!-- 
+  Contenedor principal con fondo para integración visual con SitemapFooter.
+  Usa mismo esquema de colores y espaciado que otros componentes del footer.
+-->
+<section
+  id="contact-form-section"
+  class="w-full bg-white/5 py-12 sm:py-16 lg:py-20"
+  aria-labelledby="contact-form-heading"
 >
-  <!-- Estado: IDLE / VALIDATING (formulario visible) -->
-  <div id="form-wrapper" class="contact-form-state">
-    <h3 class="mb-2 text-center text-2xl font-bold text-white">
-      {translate('footer.contact_form.title')}
-    </h3>
-    <p class="mb-6 text-center text-white/80 text-sm sm:text-base">
-      {translate('footer.contact_form.subtitle')}
-    </p>
+  <div
+    id="contact-form-container"
+    class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8"
+    data-locale={locale}
+  >
+    <!-- Estado: IDLE / VALIDATING (formulario visible) -->
+    <div id="form-wrapper" class="contact-form-state">
+      <h2
+        id="contact-form-heading"
+        class="mb-3 text-center text-3xl sm:text-4xl font-bold text-white"
+      >
+        {translate("footer.contact_form.title")}
+      </h2>
+      <p class="mb-8 text-center text-white/80 text-base sm:text-lg max-w-2xl mx-auto">
+        {translate("footer.contact_form.subtitle")}
+      </p>
 
-    <form 
-      id="contact-form"
-      class="space-y-4"
-      novalidate
-    >
+      <form
+        id="contact-form"
+        class="max-w-2xl mx-auto space-y-5 bg-white/5 p-6 sm:p-8 rounded-2xl border border-white/10"
+        novalidate
+      >
       <!-- Honeypot (campo oculto anti-bot) -->
       <input
         type="text"
@@ -80,11 +92,8 @@ const translate = (key: string) => t(key, undefined, { locale });
 
       <!-- Campo: Nombre -->
       <div>
-        <label 
-          for="name" 
-          class="block mb-1 text-sm font-medium text-white"
-        >
-          {translate('footer.contact_form.fields.name.label')} *
+        <label for="name" class="block mb-2 text-sm font-semibold text-white">
+          {translate("footer.contact_form.fields.name.label")} <span class="text-orange-400">*</span>
         </label>
         <input
           type="text"
@@ -93,21 +102,21 @@ const translate = (key: string) => t(key, undefined, { locale });
           required
           minlength="2"
           maxlength="100"
-          placeholder={translate('footer.contact_form.fields.name.placeholder')}
-          class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+          placeholder={translate("footer.contact_form.fields.name.placeholder")}
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all hover:bg-white/15"
           aria-required="true"
           aria-describedby="name-error"
         />
-        <span id="name-error" class="text-red-400 text-xs mt-1 hidden" role="alert"></span>
+        <span
+          id="name-error"
+          class="text-red-300 text-xs mt-1.5 hidden"
+          role="alert"></span>
       </div>
 
       <!-- Campo: Teléfono -->
       <div>
-        <label 
-          for="phone" 
-          class="block mb-1 text-sm font-medium text-white"
-        >
-          {translate('footer.contact_form.fields.phone.label')} *
+        <label for="phone" class="block mb-2 text-sm font-semibold text-white">
+          {translate("footer.contact_form.fields.phone.label")} <span class="text-orange-400">*</span>
         </label>
         <input
           type="tel"
@@ -115,33 +124,40 @@ const translate = (key: string) => t(key, undefined, { locale });
           name="phone"
           required
           pattern="[+]?[0-9]{1,4}?[-.\s]?[(]?[0-9]{1,3}[)]?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9}"
-          placeholder={translate('footer.contact_form.fields.phone.placeholder')}
-          class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+          placeholder={translate(
+            "footer.contact_form.fields.phone.placeholder"
+          )}
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all hover:bg-white/15"
           aria-required="true"
           aria-describedby="phone-error"
         />
-        <span id="phone-error" class="text-red-400 text-xs mt-1 hidden" role="alert"></span>
+        <span
+          id="phone-error"
+          class="text-red-300 text-xs mt-1.5 hidden"
+          role="alert"></span>
       </div>
 
       <!-- Campo: Email -->
       <div>
-        <label 
-          for="email" 
-          class="block mb-1 text-sm font-medium text-white"
-        >
-          {translate('footer.contact_form.fields.email.label')} *
+        <label for="email" class="block mb-2 text-sm font-semibold text-white">
+          {translate("footer.contact_form.fields.email.label")} <span class="text-orange-400">*</span>
         </label>
         <input
           type="email"
           id="email"
           name="email"
           required
-          placeholder={translate('footer.contact_form.fields.email.placeholder')}
-          class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+          placeholder={translate(
+            "footer.contact_form.fields.email.placeholder"
+          )}
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all hover:bg-white/15"
           aria-required="true"
           aria-describedby="email-error"
         />
-        <span id="email-error" class="text-red-400 text-xs mt-1 hidden" role="alert"></span>
+        <span
+          id="email-error"
+          class="text-red-300 text-xs mt-1.5 hidden"
+          role="alert"></span>
       </div>
 
       <!-- Cloudflare Turnstile (se renderiza dinámicamente via JS) -->
@@ -151,50 +167,73 @@ const translate = (key: string) => t(key, undefined, { locale });
       <button
         type="submit"
         id="submit-button"
-        class="w-full py-3 px-6 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[var(--color-secondary)] disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full py-4 px-6 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-bold text-lg rounded-lg transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-orange-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-orange-600 disabled:hover:to-orange-700"
       >
-        <span id="button-text">{translate('footer.contact_form.button.send')}</span>
+        <span id="button-text"
+          >{translate("footer.contact_form.button.send")}</span
+        >
         <span id="button-spinner" class="hidden">
-          <svg class="animate-spin -ml-1 mr-2 h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <svg
+            class="animate-spin -ml-1 mr-2 h-5 w-5 inline"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
-          {translate('footer.contact_form.button.sending')}
+          {translate("footer.contact_form.button.sending")}
         </span>
       </button>
     </form>
   </div>
 
   <!-- Estado: SUCCESS (mensaje de éxito) -->
-  <div id="success-message" class="hidden text-center space-y-4">
-    <div class="text-green-400 text-6xl mb-4" aria-label="Success">✅</div>
-    <h3 class="text-2xl font-bold text-white">
-      {translate('footer.contact_form.success.title')}
+  <div id="success-message" class="hidden text-center space-y-6 max-w-2xl mx-auto">
+    <div class="text-green-400 text-7xl mb-6 animate-bounce" aria-label="Success">✅</div>
+    <h3 class="text-3xl sm:text-4xl font-bold text-white">
+      {translate("footer.contact_form.success.title")}
     </h3>
-    <p class="text-white/80 text-base">
-      {translate('footer.contact_form.success.message')}
+    <p class="text-white/90 text-lg sm:text-xl leading-relaxed">
+      {translate("footer.contact_form.success.message")}
     </p>
-    <p class="text-sm text-white/60">
-      📧 {translate('footer.contact_form.success.check_email')}
-    </p>
+    <div class="bg-white/10 rounded-lg p-4 border border-white/20">
+      <p class="text-base text-white/70">
+        📧 {translate("footer.contact_form.success.check_email")}
+      </p>
+    </div>
   </div>
 
   <!-- Estado: ALREADY_SUBMITTED (ya contactado previamente) -->
-  <div id="already-submitted-message" class="hidden text-center space-y-4">
-    <div class="text-white text-6xl mb-4" aria-label="Already submitted">✅</div>
-    <h3 class="text-2xl font-bold text-white">
-      {translate('footer.contact_form.already_submitted.title')}
+  <div id="already-submitted-message" class="hidden text-center space-y-6 max-w-2xl mx-auto">
+    <div class="text-white text-7xl mb-6" aria-label="Already submitted">
+      ✅
+    </div>
+    <h3 class="text-3xl sm:text-4xl font-bold text-white">
+      {translate("footer.contact_form.already_submitted.title")}
     </h3>
-    <p class="text-white/80 text-base">
-      {translate('footer.contact_form.already_submitted.message')}
+    <p class="text-white/90 text-lg sm:text-xl leading-relaxed">
+      {translate("footer.contact_form.already_submitted.message")}
     </p>
   </div>
 </div>
+</section>
 
 <!-- Script cliente -->
 <script>
-  import '../scripts/contact-form.ts';
+  import "../scripts/contact-form.ts";
 </script>
 
 <!-- Cloudflare Turnstile Script -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer
+></script>
