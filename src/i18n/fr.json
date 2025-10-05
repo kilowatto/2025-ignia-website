@@ -7,6 +7,10 @@
       "button": "S'abonner",
       "cta": "Abonnez-vous à notre newsletter",
       "description": "Recevez les dernières nouvelles et mises à jour directement dans votre boîte de réception."
+    },
+    "sitemap": {
+      "title": "Plan du Site",
+      "aria_label": "Plan de navigation du site"
     }
   },
   "header": {

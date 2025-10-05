@@ -7,6 +7,10 @@
       "button": "Subscribe",
       "cta": "Subscribe to our newsletter",
       "description": "Get the latest news and updates right in your inbox."
+    },
+    "sitemap": {
+      "title": "Site Map",
+      "aria_label": "Site navigation map"
     }
   },
   "header": {

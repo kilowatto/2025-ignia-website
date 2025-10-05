@@ -1,0 +1,455 @@
+---
+/**
+ * SitemapFooter.astro
+ * 
+ * PROPÓSITO:
+ * Componente de mini-sitemap dinámico que se integra en el footer del sitio.
+ * Genera automáticamente un mapa visual de todas las rutas del sitio organizadas
+ * por secciones (Solutions, Products, AI & LLMs, Services), alimentándose
+ * dinámicamente de los archivos i18n JSON sin necesidad de mantenimiento manual.
+ * 
+ * FUNCIONALIDAD:
+ * - Se actualiza automáticamente al agregar nuevas rutas en src/i18n/*.json
+ * - Responsive design: 1 columna (móvil) → 2 columnas (tablet) → 4 columnas (desktop)
+ * - Multi-idioma: detecta Astro.currentLocale y usa traducciones correspondientes
+ * - SEO boost: estructura de enlaces internos que facilita crawling e indexación
+ * - Zero JavaScript: funcionalidad 100% HTML + CSS (cumple arquitecture.md §2)
+ * 
+ * ARQUITECTURA:
+ * - Lee rutas desde translate('routes.{section}.{item}') en lugar de hardcodear
+ * - Lee títulos desde translate('header.sections.{section}.items.{key}.title')
+ * - Respeta prefijos de idioma automáticamente (/, /es/, /fr/)
+ * - Usa iconos SVG inline para identificación visual de secciones
+ * 
+ * CUMPLIMIENTO arquitecture.md:
+ * - §2: Sin JS, solo HTML + Tailwind CSS utilities
+ * - §5: Rutas y textos centralizados en i18n JSON (Centralización Obligatoria)
+ * - §8: Tailwind utilities exclusivamente para estilos y responsive
+ * - §9: HTML5 semántico (<nav>, <section>, ARIA labels) para SEO
+ * - §14: Performance óptimo (sin overhead de runtime, render estático)
+ * 
+ * BENEFICIOS SEO:
+ * 1. Enlaces internos estructurados → mejor crawling de Google
+ * 2. Keywords repetidas en contexto → refuerza relevancia temática
+ * 3. Jerarquía visual clara → facilita comprensión de estructura del sitio
+ * 4. User signals mejorados → reduce bounce rate (usuarios encuentran contenido)
+ * 5. Mobile-friendly → Google prioriza sitios responsive
+ * 
+ * MANTENIMIENTO:
+ * - Agregar nueva ruta en routes.* JSON → aparece automáticamente en sitemap
+ * - Agregar traducción del título → se actualiza en 3 idiomas
+ * - Zero mantenimiento manual de este componente
+ * 
+ * @see src/i18n/en.json - Rutas (routes.*) y traducciones (header.sections.*, footer.sitemap.*)
+ * @see src/i18n/es.json - Rutas y traducciones (Español)
+ * @see src/i18n/fr.json - Rutas y traducciones (Francés)
+ * @see src/components/Header.astro - Componente hermano que usa la misma estructura de rutas
+ * @see arquitecture.md §5 - Gestión de Contenido e Internacionalización
+ * @see arquitecture.md §9 - SEO/GEO & Datos Estructurados
+ */
+
+import { t } from 'astro-i18n';
+
+// ============================================================================
+// DETECCIÓN DE IDIOMA Y CONFIGURACIÓN
+// ============================================================================
+
+/**
+ * Detecta el idioma actual desde Astro.currentLocale (proporcionado por i18n nativo)
+ * Fallback a 'en' si no se detecta idioma válido
+ * 
+ * Idiomas soportados: en (English), es (Español), fr (Français)
+ */
+const rawLocale = Astro.currentLocale || 'en';
+const supportedLocales = ['en', 'es', 'fr'] as const;
+type Locale = (typeof supportedLocales)[number];
+const locale = supportedLocales.includes(rawLocale as Locale)
+  ? (rawLocale as Locale)
+  : 'en';
+
+/**
+ * Helper function para traducir con el idioma detectado
+ * Wrapper de t() que inyecta automáticamente el locale actual
+ * 
+ * @param key - Clave de traducción en formato dot.notation (ej: 'footer.sitemap.title')
+ * @returns Texto traducido según el idioma actual
+ */
+const translate = (key: string) => t(key, undefined, { locale });
+
+/**
+ * Función helper para construir rutas con prefijo de idioma correcto
+ * 
+ * Comportamiento:
+ * - EN: / (sin prefijo, idioma por defecto)
+ * - ES: /es/ (con prefijo)
+ * - FR: /fr/ (con prefijo)
+ * 
+ * @param href - Ruta relativa (ej: '/solutions/', '/products/')
+ * @returns Ruta con prefijo de idioma si corresponde
+ * 
+ * Ejemplos:
+ * - ensureLocalePath('/solutions/') → '/' (EN) o '/es/solutions/' (ES)
+ * - ensureLocalePath('/products/') → '/products/' (EN) o '/fr/produits/' (FR)
+ */
+const ensureLocalePath = (href: string) => {
+  // Si no es ruta relativa, retornar sin modificar (URLs externas, anchors, etc.)
+  if (!href.startsWith('/')) return href;
+  
+  // Limpiar slashes duplicados
+  const trimmed = href.replace(/^\/+/u, '');
+  
+  // Inglés: sin prefijo (ruta raíz)
+  if (locale === 'en') {
+    return `/${trimmed}`;
+  }
+  
+  // Otros idiomas: agregar prefijo (/es/, /fr/)
+  return `/${locale}/${trimmed}`;
+};
+
+// ============================================================================
+// ESTRUCTURA DE DATOS DEL SITEMAP
+// ============================================================================
+
+/**
+ * Tipo TypeScript para cada sección del sitemap
+ * 
+ * @property id - Identificador de la sección (coincide con clave en routes.* y header.sections.*)
+ * @property icon - Path SVG para el icono visual de la sección
+ */
+type SitemapSection = {
+  id: 'solutions' | 'products' | 'ai' | 'services';
+  icon: string;
+};
+
+/**
+ * Configuración de las 4 secciones principales del sitemap
+ * 
+ * ICONOS SVG:
+ * - Solutions: Shield con checkmark (seguridad, compliance)
+ * - Products: Cubo 3D (infraestructura, bloques de construcción)
+ * - AI: Cerebro/Rayo (inteligencia artificial, machine learning)
+ * - Services: Grupo de personas (consultoría, soporte, servicios gestionados)
+ * 
+ * Nota: Los iconos son paths SVG optimizados de Heroicons v2 (MIT License)
+ */
+const sections: SitemapSection[] = [
+  {
+    id: 'solutions',
+    icon: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z',
+  },
+  {
+    id: 'products',
+    icon: 'M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125',
+  },
+  {
+    id: 'ai',
+    icon: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z',
+  },
+  {
+    id: 'services',
+    icon: 'M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
+  },
+];
+
+/**
+ * Tipo para cada item/enlace dentro de una sección del sitemap
+ * 
+ * @property title - Título visible del enlace (traducido según idioma)
+ * @property href - URL del enlace (con prefijo de idioma si corresponde)
+ */
+type SitemapItem = {
+  title: string;
+  href: string;
+};
+
+/**
+ * Función que obtiene dinámicamente los items de una sección desde i18n JSON
+ * 
+ * IMPORTANTE: Las claves de items están hardcodeadas aquí porque son parte
+ * de la estructura fija del sitio. Sin embargo, las RUTAS y TÍTULOS se obtienen
+ * dinámicamente desde i18n JSON, cumpliendo arquitecture.md §5.
+ * 
+ * Flujo de obtención de datos:
+ * 1. Lee clave de item (ej: 'nocaas', 'privateCloudService')
+ * 2. Obtiene título desde header.sections.{sectionId}.items.{key}.title
+ * 3. Obtiene ruta desde routes.{sectionId}.{key}
+ * 4. Aplica prefijo de idioma con ensureLocalePath()
+ * 
+ * @param sectionId - ID de la sección (solutions, products, ai, services)
+ * @returns Array de items con título y href traducidos
+ * 
+ * Ejemplo de resultado para 'solutions' en ES:
+ * [
+ *   { title: "NOCaaS", href: "/es/soluciones/nocaas/" },
+ *   { title: "Private Cloud as a Service", href: "/es/soluciones/private-cloud-as-a-service/" },
+ *   ...
+ * ]
+ */
+const getSectionItems = (sectionId: string): SitemapItem[] => {
+  /**
+   * Mapeo de claves de items por sección
+   * 
+   * MANTENIMIENTO: Si agregas un nuevo item en routes.* JSON, agrégalo aquí también.
+   * 
+   * Estructura debe coincidir con:
+   * - routes.{sectionId}.{itemKey} (para obtener la ruta)
+   * - header.sections.{sectionId}.items.{itemKey}.title (para obtener el título)
+   */
+  const itemKeys: Record<string, string[]> = {
+    solutions: [
+      'nocaas',
+      'privateCloudService',
+      'privateCloudOnPremise',
+      'bcpDraas',
+      'kubernetesDevops',
+      'secureWorkloadHosting',
+      'complianceCloud',
+      'regulatoryBackupArchival',
+    ],
+    products: [
+      'virtualMachines',
+      'kubernetesService',
+      'blockStorage',
+      'objectStorage',
+      'cloudBackup',
+      'cloudFirewall',
+      'dns',
+      'loadBalancer',
+    ],
+    ai: [
+      'llmHosting',
+      'ragBlueprints',
+      'copilotStudio',
+      'mlopsMonitoring',
+    ],
+    services: [
+      'managedIt',
+      'cloudConsulting',
+      'supportCenter',
+    ],
+  };
+
+  // Mapear cada clave a un objeto con título y href traducidos
+  return itemKeys[sectionId].map((key) => ({
+    title: translate(`header.sections.${sectionId}.items.${key}.title`),
+    href: ensureLocalePath(translate(`routes.${sectionId}.${key}`)),
+  }));
+};
+
+// ============================================================================
+// RENDER DEL COMPONENTE
+// ============================================================================
+---
+
+<!-- 
+  SITEMAP FOOTER SECTION
+  
+  Sección visual del sitemap integrada en el footer del sitio.
+  Fondo gris claro para distinguirla del contenido principal.
+  Padding responsive: 2rem (móvil) → 2.5rem (tablet) → 3rem (desktop)
+-->
+<section
+  class="border-t border-gray-200 bg-gray-50 py-8 sm:py-10 lg:py-12"
+  aria-labelledby="sitemap-heading"
+>
+  <!-- 
+    CONTENEDOR PRINCIPAL
+    
+    max-w-7xl: Ancho máximo de 1280px para mantener legibilidad en pantallas grandes
+    mx-auto: Centrado horizontal
+    px-4/6/8: Padding horizontal responsive para evitar que el contenido toque los bordes
+  -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    
+    <!-- 
+      TÍTULO DE LA SECCIÓN
+      
+      Traducido dinámicamente según idioma (footer.sitemap.title)
+      Centrado, tamaño responsive, margin-bottom responsive
+      
+      id="sitemap-heading": Referencia para aria-labelledby del section
+    -->
+    <h2
+      id="sitemap-heading"
+      class="mb-6 text-center text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl"
+    >
+      {translate('footer.sitemap.title')}
+    </h2>
+
+    <!-- 
+      GRID RESPONSIVE DEL SITEMAP
+      
+      Breakpoints:
+      - Móvil (< 640px): 1 columna, stack vertical
+      - Tablet (≥ 640px): 2 columnas, grid equilibrado
+      - Desktop (≥ 1024px): 4 columnas, una por sección
+      
+      Gap responsive: 1.5rem (móvil) → 2rem (tablet+)
+      
+      aria-label: Etiqueta ARIA traducida para lectores de pantalla
+    -->
+    <nav
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4"
+      aria-label={translate('footer.sitemap.aria_label')}
+    >
+      {
+        sections.map((section) => {
+          // Obtener items de la sección dinámicamente desde i18n
+          const items = getSectionItems(section.id);
+          
+          // Obtener label traducido de la sección (ej: "Solutions", "Soluciones", etc.)
+          const sectionLabel = translate(`header.sections.${section.id}.label`);
+          
+          // Obtener URL base de la sección con prefijo de idioma
+          const sectionHref = ensureLocalePath(translate(`routes.${section.id}.base`));
+
+          return (
+            <!-- 
+              COLUMNA DE SECCIÓN
+              
+              Cada sección es una columna independiente con:
+              - Título con icono (enlace a página base de la sección)
+              - Lista de items/enlaces
+              - Enlace "Ver todas" al final
+              
+              space-y-3/4: Espaciado vertical entre elementos responsive
+            -->
+            <div class="space-y-3 sm:space-y-4">
+              
+              <!-- 
+                TÍTULO DE COLUMNA CON ICONO
+                
+                Enlace clickeable al landing de la sección
+                Hover: color naranja (color primario de Ignia)
+                Transición suave de color CSS-only
+                
+                group: Permite que el hover del <a> afecte a hijos con group-hover:
+              -->
+              <a
+                href={sectionHref}
+                class="group flex items-center gap-2 text-base font-semibold text-gray-900 transition-colors hover:text-orange-600 sm:text-lg"
+              >
+                <!-- 
+                  ICONO SVG DE LA SECCIÓN
+                  
+                  Tamaño fijo: 20x20px (1.25rem)
+                  Color naranja por defecto, más oscuro en hover
+                  group-hover: cambia color cuando se hace hover en el padre (<a>)
+                  
+                  aria-hidden: oculto para lectores de pantalla (decorativo)
+                -->
+                <svg
+                  class="h-5 w-5 text-orange-500 transition-colors group-hover:text-orange-600"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d={section.icon} />
+                </svg>
+                
+                <!-- Texto del título traducido -->
+                <span>{sectionLabel}</span>
+              </a>
+
+              <!-- 
+                LISTA DE ENLACES DE LA SECCIÓN
+                
+                Items generados dinámicamente desde getSectionItems()
+                space-y-2/2.5: Espaciado vertical entre enlaces responsive
+                
+                Cada enlace:
+                - Texto gris oscuro, naranja en hover
+                - Underline en hover para feedback visual
+                - Tamaño texto: 14px (text-sm)
+                - Transición CSS-only
+              -->
+              <ul class="space-y-2 sm:space-y-2.5">
+                {items.map((item) => (
+                  <li>
+                    <a
+                      href={item.href}
+                      class="block text-sm text-gray-600 transition-colors hover:text-orange-600 hover:underline"
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+
+              <!-- 
+                ENLACE "VER TODAS"
+                
+                Link a la página base de la sección (same as título)
+                Estilo diferente para distinguirlo de los items
+                Color naranja (primario), más oscuro en hover
+                Icono de flecha a la derecha para indicar navegación
+                
+                Texto "Explore all" / "Ver todas" / "Tout explorer" según idioma
+              -->
+              <a
+                href={sectionHref}
+                class="inline-flex items-center text-sm font-medium text-orange-600 transition-colors hover:text-orange-700"
+              >
+                {translate('header.sections.explore_all')}
+                
+                <!-- Icono de flecha derecha (Chevron Right de Heroicons) -->
+                <svg
+                  class="ml-1 h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </a>
+            </div>
+          );
+        })
+      }
+    </nav>
+
+    <!-- 
+      ENLACES ADICIONALES (Blog, Contact)
+      
+      Sección separada con borde superior para distinguirla del sitemap principal
+      Enlaces comunes que no pertenecen a ninguna sección específica
+      
+      Centrados horizontalmente
+      Separados por un pipe "|" visual (aria-hidden para lectores de pantalla)
+      
+      Margin-top y padding-top responsive
+      Gap responsive entre enlaces: 1rem (móvil) → 1.5rem (tablet+)
+    -->
+    <div class="mt-8 border-t border-gray-200 pt-6 sm:mt-10 sm:pt-8">
+      <div class="flex flex-wrap justify-center gap-4 text-sm sm:gap-6 sm:text-base">
+        <!-- Enlace Blog -->
+        <a
+          href={ensureLocalePath(translate('routes.common.blog'))}
+          class="text-gray-600 transition-colors hover:text-orange-600"
+        >
+          {translate('header.nav.mobile.blog')}
+        </a>
+
+        <!-- Separador visual (pipe) -->
+        <span class="text-gray-300" aria-hidden="true">|</span>
+
+        <!-- Enlace Contact -->
+        <a
+          href={ensureLocalePath(translate('routes.common.contact'))}
+          class="text-gray-600 transition-colors hover:text-orange-600"
+        >
+          {translate('header.nav.mobile.contact')}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

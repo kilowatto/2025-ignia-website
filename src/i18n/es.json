@@ -7,6 +7,10 @@
       "button": "Suscribirme",
       "cta": "Suscríbete a nuestro boletín",
       "description": "Recibe las últimas noticias y actualizaciones directamente en tu bandeja de entrada."
+    },
+    "sitemap": {
+      "title": "Mapa del Sitio",
+      "aria_label": "Mapa de navegación del sitio"
     }
   },
   "header": {
