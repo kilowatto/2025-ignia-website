@@ -668,7 +668,11 @@ const structuredData = [
 
       try {
         // Obtener sugerencias usando el locale detectado automáticamente
-        const suggestions = getSearchSuggestions(query, locale as "en" | "es" | "fr", 5);
+        const suggestions = getSearchSuggestions(
+          query,
+          locale as "en" | "es" | "fr",
+          5
+        );
 
         if (suggestions.length > 0) {
           const suggestionsHTML = suggestions
