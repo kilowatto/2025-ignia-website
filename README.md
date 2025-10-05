@@ -209,7 +209,7 @@ localStorage.removeItem('language-suggestion-accepted');
 
 #### Banner de Sugerencia Minimalista
 
-**Nuevo diseño (v1.3) - 100% cumplimiento arquitectónico:**
+**Rediseño v1.3 → v1.3.2 - 100% cumplimiento arquitectónico:**
 
 El `LanguageSuggestionBanner.astro` fue completamente rediseñado para cumplir con los lineamientos de `arquitecture.md`:
 
@@ -220,14 +220,61 @@ El `LanguageSuggestionBanner.astro` fue completamente rediseñado para cumplir c
 - ❌ Texto hardcodeado (ternarios)
 - ❌ ~5KB de tamaño
 
-**Ahora (v1.3):**
+**Ahora (v1.3.2):**
 - ✅ Fondo blanco con borde superior accent2 (§1: minimalista)
 - ✅ 0 líneas de CSS custom, 100% Tailwind (§2: estilos Tailwind)
-- ✅ Traducciones con `t()` de astro-i18n (§5: i18n híbrido)
+- ✅ Traducciones por props (not t()) - fix locale correcto (§5: i18n híbrido)
 - ✅ Contraste WCAG AA (gris-800 sobre blanco) (§12: accesibilidad)
 - ✅ ~2KB de tamaño (-60% mejora) (§14: performance)
 
 **Claves i18n:** `language_banner.*` en `src/i18n/{en,es,fr}.json`
+
+**Correcciones v1.3.1 - v1.3.2 (i18n + visibilidad):**
+
+**Problema v1.3.1:** El banner mostraba claves i18n en lugar de texto traducido
+- **Causa:** `t()` de astro-i18n usa `Astro.currentLocale`, no el idioma sugerido
+- **Ejemplo:** Página `/fr/` sugiriendo ES mostraba texto francés (incorrecto)
+- **Solución:** `LanguageDetection` carga JSON directamente y pasa traducciones como props
+
+**Problema v1.3.2:** El banner no era visible a pesar de detección correcta
+- **Causa:** Conflicto de animaciones entre `LanguageDetection` y `LanguageSuggestionBanner`
+- **Diagnóstico:** Console logs mostraban `hidden` removido pero banner off-screen (`-translate-y-full`)
+- **Solución:** Consolidar control de animación en `LanguageDetection.astro`:
+  1. Detecta idioma preferido
+  2. Remueve clase `hidden` del wrapper
+  3. Espera 1.5s (setTimeout)
+  4. Anima banner interno (remove `-translate-y-full`, add `translate-y-0`)
+
+**Arquitectura final:**
+- **LanguageDetection:** Control único de detección + animación (single source of truth)
+- **LanguageSuggestionBanner:** Solo UI + funciones accept/dismiss (presentación pura)
+- **i18n:** Props-based (predictible) en lugar de context-based t() (inconsistente)
+
+**Troubleshooting (console logs):**
+
+Console logs exitosos (banner funcional):
+```
+[LanguageDetection] 🚀 Starting detection...
+[LanguageDetection] 🌍 Current page language: fr
+[LanguageDetection] 🌐 Browser languages: ["es-419"]
+[LanguageDetection] ✅ Browser language detected: es
+[LanguageDetection] ⏱️ Banner will animate in 1.5 seconds...
+[LanguageDetection] 🎬 Starting banner animation...
+[LanguageDetection] 🎉 Banner animated and now visible!
+```
+
+Si el banner NO aparece:
+1. ✅ Verificar: `✅ Browser language detected: XX` (detección funcionando)
+2. ✅ Verificar: `🎬 Starting banner animation...` aparece después de 1.5s
+3. ❌ Si falta `🎬`: Problema con setTimeout o selector querySelector
+4. ❌ Si aparece pero banner invisible: Verificar clases CSS (`-translate-y-full` debería ser removida)
+
+Si el banner muestra claves i18n (`language_banner.message`):
+- ❌ Problema: Props no están siendo pasados correctamente
+- ✅ Verificar: `LanguageDetection` importa JSON (`import en from '@/i18n/en.json'`)
+- ✅ Verificar: Render loop pasa `translations={{...t}}` como props
+- ✅ Verificar: `LanguageSuggestionBanner` usa `props.translations.message` (not `t('message')`)
+
 
 #### Archivos Relacionados
 
