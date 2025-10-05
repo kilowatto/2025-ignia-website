@@ -58,14 +58,15 @@ const MIN_SUBMIT_TIME_MS = 2000;
  */
 const SELECTORS = {
     form: '#contact-form',
-    formContainer: '.contact-form-container',
-    successMessage: '.contact-form-success',
-    alreadySubmittedMessage: '.contact-form-already-submitted',
-    submitButton: '.contact-form-submit',
-    honeypot: '.contact-form-honeypot',
-    nameField: '#contact-name',
-    phoneField: '#contact-phone',
-    emailField: '#contact-email',
+    formContainer: '#contact-form-container',
+    formWrapper: '#form-wrapper',
+    successMessage: '#success-message',
+    alreadySubmittedMessage: '#already-submitted-message',
+    submitButton: '#submit-button',
+    honeypot: '#website-field',
+    nameField: '#name',
+    phoneField: '#phone',
+    emailField: '#email',
 } as const;
 
 /**
@@ -192,43 +193,91 @@ function getElement<T extends HTMLElement>(selector: string): T | null {
 
 /**
  * Muestra el mensaje de éxito y oculta el formulario
- * Animación suave con fade-out del formulario y fade-in del mensaje
  */
 function showSuccessMessage(): void {
-    const formContainer = getElement(SELECTORS.formContainer);
+    const formWrapper = getElement(SELECTORS.formWrapper);
     const successMessage = getElement(SELECTORS.successMessage);
 
-    if (!formContainer || !successMessage) return;
+    if (!formWrapper || !successMessage) return;
 
-    // Fade out formulario
-    formContainer.style.opacity = '0';
-    formContainer.style.transform = 'translateY(-20px)';
-    formContainer.style.transition = 'all 0.4s ease-out';
+    // Ocultar formulario
+    formWrapper.classList.add('hidden');
 
-    setTimeout(() => {
-        formContainer.style.display = 'none';
-        successMessage.style.display = 'block';
+    // Mostrar mensaje de éxito
+    successMessage.classList.remove('hidden');
 
-        // Fade in mensaje de éxito
-        requestAnimationFrame(() => {
-            successMessage.style.opacity = '1';
-            successMessage.style.transform = 'translateY(0)';
-        });
-    }, 400);
+    // Inicializar botón de reset
+    initResetButton();
+}
+
+/**
+ * Resetea el formulario para permitir un nuevo envío
+ * Borra localStorage y vuelve a mostrar el formulario vacío
+ */
+function resetForm(): void {
+    console.log('[ContactForm] Resetting form...');
+
+    // Borrar localStorage
+    localStorage.removeItem(STORAGE_KEY);
+
+    // Ocultar mensaje de éxito
+    const successMessage = getElement(SELECTORS.successMessage);
+    if (successMessage) {
+        successMessage.classList.add('hidden');
+    }
+
+    // Mostrar formulario
+    const formWrapper = getElement(SELECTORS.formWrapper);
+    if (formWrapper) {
+        formWrapper.classList.remove('hidden');
+    }
+
+    // Limpiar campos del formulario (método 1: reset nativo)
+    const form = getElement<HTMLFormElement>(SELECTORS.form);
+    if (form) {
+        form.reset();
+    }
+
+    // Limpiar campos manualmente (método 2: por si reset() no funciona)
+    const nameField = getElement<HTMLInputElement>(SELECTORS.nameField);
+    const phoneField = getElement<HTMLInputElement>(SELECTORS.phoneField);
+    const emailField = getElement<HTMLInputElement>(SELECTORS.emailField);
+
+    if (nameField) nameField.value = '';
+    if (phoneField) phoneField.value = '';
+    if (emailField) emailField.value = '';
+
+    // Ocultar errores previos
+    hideAllErrors();
+
+    console.log('[ContactForm] Form reset successfully, ready for new submission');
+}
+
+/**
+ * Inicializa el listener del botón de reset
+ */
+function initResetButton(): void {
+    const resetButton = document.getElementById('reset-form-button');
+    if (resetButton) {
+        // Remover listener anterior si existe (evitar duplicados)
+        resetButton.removeEventListener('click', resetForm);
+        // Agregar nuevo listener
+        resetButton.addEventListener('click', resetForm);
+        console.log('[ContactForm] Reset button initialized');
+    }
 }
 
 /**
  * Muestra el mensaje de "ya enviado" y oculta el formulario
  */
 function showAlreadySubmittedMessage(): void {
-    const formContainer = getElement(SELECTORS.formContainer);
+    const formWrapper = getElement(SELECTORS.formWrapper);
     const alreadySubmittedMessage = getElement(SELECTORS.alreadySubmittedMessage);
 
-    if (!formContainer || !alreadySubmittedMessage) return;
+    if (!formWrapper || !alreadySubmittedMessage) return;
 
-    formContainer.style.display = 'none';
-    alreadySubmittedMessage.style.display = 'block';
-    alreadySubmittedMessage.style.opacity = '1';
+    formWrapper.classList.add('hidden');
+    alreadySubmittedMessage.classList.remove('hidden');
 }
 
 /**
@@ -342,7 +391,7 @@ function getErrorMessages(): { name: string; phone: string; email: string } {
 function showFieldError(fieldId: string, message: string): void {
     const errorElement = document.getElementById(`${fieldId}-error`);
     if (errorElement) {
-        errorElement.textContent = message;
+        errorElement.innerHTML = `<span class="inline-flex items-center gap-1"><svg class="h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>${message}</span>`;
         errorElement.classList.remove('hidden');
     }
 }
@@ -355,7 +404,7 @@ function hideAllErrors(): void {
         const errorElement = document.getElementById(`${fieldId}-error`);
         if (errorElement) {
             errorElement.classList.add('hidden');
-            errorElement.textContent = '';
+            errorElement.innerHTML = '';
         }
     });
 }

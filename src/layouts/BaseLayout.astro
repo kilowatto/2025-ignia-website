@@ -16,6 +16,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SearchModal from "../components/SearchModal.astro";
+import LanguageDetection from "../components/LanguageDetection.astro";
 import { t } from "astro-i18n";
 import { getSiteUrl, getSiteHost } from "../utils/siteConfig";
 
@@ -117,5 +118,32 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
       cubra toda la pantalla sin restricciones del header
     -->
     <SearchModal />
+
+    <!--
+      LanguageDetection - Detección Automática de Idioma
+      
+      Propósito:
+      Detecta el idioma preferido del usuario y muestra un banner sugiriendo
+      cambiar al idioma detectado si es diferente al idioma actual de la página.
+      
+      Funcionamiento:
+      1. Detecta idioma por navigator.languages (idioma del navegador)
+      2. Fallback a geolocalización por IP si no hay match (ipapi.co)
+      3. Si detecta diferencia, muestra banner dinámico con opción de cambiar
+      4. Respeta localStorage para no molestar al usuario repetidamente
+      
+      Cumplimiento arquitectónico:
+      - §2: JS diferido (script se ejecuta en DOMContentLoaded)
+      - §5: i18n híbrido (usa Astro.currentLocale + astro-i18n)
+      - §12: WCAG 2.2 AA (banner con ARIA labels, accesible por teclado)
+      
+      Estados en localStorage:
+      - 'language-suggestion-dismissed': Usuario rechazó la sugerencia
+      - 'language-suggestion-accepted': Usuario aceptó y cambió de idioma
+      
+      @see src/components/LanguageDetection.astro - Lógica completa de detección
+      @see src/components/LanguageSuggestionBanner.astro - UI del banner (no usado actualmente)
+    -->
+    <LanguageDetection />
   </body>
 </html>

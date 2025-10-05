@@ -47,9 +47,9 @@
         "sending": "Sending..."
       },
       "success": {
-        "title": "Thank you!",
-        "message": "We've received your information. We'll contact you soon.",
-        "check_email": "Check your email"
+        "title": "Message sent successfully!",
+        "message": "Thank you for contacting us. One of our specialists will get in touch with you soon.",
+        "reset_link": "Need to send another message?"
       },
       "already_submitted": {
         "title": "You already have an active request",

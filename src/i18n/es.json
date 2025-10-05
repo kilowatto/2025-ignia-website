@@ -47,9 +47,9 @@
         "sending": "Enviando..."
       },
       "success": {
-        "title": "¡Gracias!",
-        "message": "Hemos recibido tu información. Pronto nos pondremos en contacto contigo.",
-        "check_email": "Revisa tu correo electrónico"
+        "title": "¡Mensaje enviado con éxito!",
+        "message": "Gracias por contactarnos. Uno de nuestros especialistas se pondrá en contacto contigo pronto.",
+        "reset_link": "¿Necesitas enviar otro mensaje?"
       },
       "already_submitted": {
         "title": "Ya tienes una solicitud activa",

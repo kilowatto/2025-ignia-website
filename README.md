@@ -97,6 +97,124 @@ Esta combinación nos dio **los mejores resultados** en términos de:
 
 **Más detalles:** Ver §5 en [`arquitecture.md`](./arquitecture.md)
 
+### 🌍 Detección Automática de Idioma
+
+El sitio incluye un sistema de **detección automática del idioma preferido del usuario** que mejora la experiencia multi-idioma.
+
+#### Funcionamiento
+
+1. **Detección por Navegador (Primaria)**
+   - Lee `navigator.languages` del navegador del usuario
+   - Compara con idiomas soportados (en, es, fr)
+   - Si detecta diferencia con el idioma actual → muestra banner
+
+2. **Detección por Geolocalización (Fallback)**
+   - Si el navegador no tiene preferencia clara, consulta API de geolocalización (ipapi.co)
+   - Mapea código de país a idioma:
+     - 🇪🇸 ES/MX/AR/CO/PE/CL/VE → Español
+     - 🇫🇷 FR/BE/CH/CA/LU → Francés
+     - 🇺🇸 US/GB/AU/NZ/IE/ZA → Inglés
+   - Si detecta diferencia → muestra banner
+
+3. **Banner de Sugerencia**
+   - Aparece después de 1.5 segundos (no bloquea carga inicial)
+   - Ofrece cambiar al idioma detectado con un click
+   - Se puede descartar (no vuelve a aparecer)
+   - Respeta decisión del usuario vía `localStorage`
+
+#### Ejemplo Visual
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 🇪🇸 ¿Prefieres ver el sitio en español?                 │
+│ Detectamos que tu navegador está configurado en español  │
+│                                                           │
+│ [Cambiar idioma]  [✕ Descartar]                         │
+└──────────────────────────────────────────────────────────┘
+```
+
+#### Estados en localStorage
+
+| Key | Valor | Significado |
+|-----|-------|-------------|
+| `language-suggestion-dismissed` | `"true"` | Usuario rechazó sugerencia |
+| `language-suggestion-accepted` | `"true"` | Usuario aceptó y cambió idioma |
+
+**Nota:** Si cualquiera de estas keys existe, el banner no vuelve a mostrarse.
+
+#### Implementación Técnica
+
+**Ubicación:** `src/components/LanguageDetection.astro`
+
+```astro
+<!-- BaseLayout.astro -->
+<body>
+  <Header />
+  <main><slot /></main>
+  <Footer />
+  <SearchModal />
+  <LanguageDetection />  <!-- ← Detección automática -->
+</body>
+```
+
+**Características:**
+- ✅ **JavaScript diferido** (no bloquea Critical Path)
+- ✅ **Progressive enhancement** (sitio funciona sin JS)
+- ✅ **WCAG 2.2 AA compliant** (ARIA labels, navegación por teclado)
+- ✅ **Respeta preferencias** (localStorage, no invasivo)
+- ✅ **Multi-idioma** (mensajes en ES/EN/FR)
+
+#### Cómo Probar
+
+1. **Configurar navegador en español:**
+   - Chrome: `Settings → Languages → Español` (mover arriba)
+   - Firefox: `Preferences → Language → Choose → Español`
+
+2. **Visitar página en francés:**
+   ```bash
+   http://localhost:4321/fr/
+   ```
+
+3. **Esperar 1.5 segundos** → Debería aparecer banner sugiriendo español
+
+4. **Opciones:**
+   - **Cambiar idioma**: Te redirige a `/es/` (español)
+   - **Descartar**: Banner desaparece (no vuelve a mostrarse)
+
+#### Desactivar Temporalmente
+
+Para desarrollo, si el banner molesta:
+
+```javascript
+// En DevTools Console
+localStorage.setItem('language-suggestion-dismissed', 'true');
+```
+
+Para reactivar:
+
+```javascript
+localStorage.removeItem('language-suggestion-dismissed');
+localStorage.removeItem('language-suggestion-accepted');
+```
+
+#### Cumplimiento Arquitectónico
+
+| Requisito (arquitecture.md) | Estado | Implementación |
+|------------------------------|--------|----------------|
+| **§2: JS mínimo o nulo** | ✅ | Script diferido, solo detección (no bloquea render) |
+| **§5: i18n híbrido** | ✅ | Usa `Astro.currentLocale` + traducciones centralizadas |
+| **§6: Detección de Idioma** | ✅ | Accept-Language + geolocalización + localStorage |
+| **§12: WCAG 2.2 AA** | ✅ | Banner con ARIA, teclado, contraste WCAG |
+| **§14: Performance** | ✅ | Script < 2KB gzip, carga diferida, no bloquea LCP |
+
+#### Archivos Relacionados
+
+- **`src/components/LanguageDetection.astro`** - Lógica principal de detección
+- **`src/components/LanguageSuggestionBanner.astro`** - UI alternativa (no usado)
+- **`src/layouts/BaseLayout.astro`** - Integración del componente
+- **`src/utils/languageDetection.ts`** - Utilidades compartidas
+- **`arquitecture.md`** - §6 (Ruteo y SEO Técnico - Detección de Idioma)
+
 ---
 
 ## 📁 Estructura de Directorios

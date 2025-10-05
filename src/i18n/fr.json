@@ -47,9 +47,9 @@
         "sending": "Envoi..."
       },
       "success": {
-        "title": "Merci!",
-        "message": "Nous avons reçu vos informations. Nous vous contacterons bientôt.",
-        "check_email": "Vérifiez votre email"
+        "title": "Message envoyé avec succès!",
+        "message": "Merci de nous avoir contactés. Un de nos spécialistes vous contactera bientôt.",
+        "reset_link": "Besoin d'envoyer un autre message?"
       },
       "already_submitted": {
         "title": "Vous avez déjà une demande active",

@@ -504,7 +504,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                   aria-label={translate('footer.contact_form.fields.name.label')}
                   aria-describedby="name-error"
                 />
-                <p id="name-error" class="text-xs text-red-300 mt-1 hidden" role="alert"></p>
+                <p id="name-error" class="text-sm text-red-100 font-medium mt-1.5 hidden" role="alert"></p>
               </div>
 
               <div>
@@ -519,7 +519,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                   aria-label={translate('footer.contact_form.fields.phone.label')}
                   aria-describedby="phone-error"
                 />
-                <p id="phone-error" class="text-xs text-red-300 mt-1 hidden" role="alert"></p>
+                <p id="phone-error" class="text-sm text-red-100 font-medium mt-1.5 hidden" role="alert"></p>
               </div>
 
               <div>
@@ -533,7 +533,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                   aria-label={translate('footer.contact_form.fields.email.label')}
                   aria-describedby="email-error"
                 />
-                <p id="email-error" class="text-xs text-red-300 mt-1 hidden" role="alert"></p>
+                <p id="email-error" class="text-sm text-red-100 font-medium mt-1.5 hidden" role="alert"></p>
               </div>
 
               <!-- Cloudflare Turnstile (opcional) -->
@@ -578,9 +578,17 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
             <p class="text-xs font-semibold text-white mb-1">
               {translate('footer.contact_form.success.title')}
             </p>
-            <p class="text-xs text-white/70">
+            <p class="text-xs text-white/70 mb-3">
               {translate('footer.contact_form.success.message')}
             </p>
+            <!-- Link para resetear y enviar otro mensaje -->
+            <button 
+              id="reset-form-button"
+              type="button"
+              class="text-xs text-orange-400 hover:text-orange-300 underline transition-colors cursor-pointer"
+            >
+              {translate('footer.contact_form.success.reset_link')}
+            </button>
           </div>
 
           <!-- Estado: ALREADY_SUBMITTED (compacto) -->
