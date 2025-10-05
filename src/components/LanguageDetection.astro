@@ -1,22 +1,27 @@
 ---
 /**
  * LanguageDetection - Sistema de Detección Automática de Idioma (v1.3 Minimalista)
- * 
+ *
  * Propósito:
  * Detecta el idioma preferido del usuario (navegador + geolocalización) y renderiza
  * el banner minimalista LanguageSuggestionBanner.astro cuando hay mismatch.
- * 
+ *
  * Arquitectura (Opción 1 - Híbrida):
  * 1. Renderiza TODOS los banners posibles desde servidor (hidden)
  * 2. JavaScript detecta idioma y muestra el banner correcto
  * 3. Usa componente Astro minimalista (no crea HTML dinámico)
- * 
+ *
+ * Fix i18n (v1.3.1):
+ * - Carga traducciones directamente desde JSON (no usa t())
+ * - Pasa texto pre-traducido como props
+ * - Soluciona problema: t() siempre usa currentLocale, no suggestedLanguage
+ *
  * Cumplimiento arquitectónico:
  * - §2: JS mínimo (solo detección, no crea DOM)
- * - §5: i18n con t() vía LanguageSuggestionBanner
+ * - §5: i18n centralizado (traducciones desde JSON)
  * - §12: WCAG AA garantizado (componente Astro)
  * - §14: Performance (banners hidden, ~6KB total gzip)
- * 
+ *
  * @see src/components/LanguageSuggestionBanner.astro
  * @see arquitecture.md §2, §5, §6, §12, §14
  */
@@ -24,107 +29,254 @@
 const currentLocale = Astro.currentLocale || "en";
 import LanguageSuggestionBanner from "./LanguageSuggestionBanner.astro";
 
+// Cargar traducciones directamente desde JSON
+import enTranslations from "../i18n/en.json";
+import esTranslations from "../i18n/es.json";
+import frTranslations from "../i18n/fr.json";
+
+const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+};
+
 // Idiomas soportados (para renderizar todos los banners)
-const supportedLanguages = ["en", "es", "fr"];
+const supportedLanguages = ["en", "es", "fr"] as const;
+type SupportedLanguage = (typeof supportedLanguages)[number];
 ---
 
 <!-- 
   Renderizar TODOS los banners posibles (hidden por defecto)
   JavaScript mostrará el correcto según detección
--->
-{supportedLanguages.map((suggestedLang) => {
-  if (suggestedLang !== currentLocale) {
-    return (
-      <div 
-        id={`language-banner-${suggestedLang}`} 
-        data-suggested-lang={suggestedLang}
-        data-current-lang={currentLocale}
-        class="hidden"
-      >
-        <LanguageSuggestionBanner 
-          suggestedLanguage={suggestedLang} 
-          currentLanguage={currentLocale} 
-        />
-      </div>
-    );
-  }
-})}
+  
+  CRÍTICO: Pasamos traducciones del idioma SUGERIDO (no current)
+  Ejemplo: En página /fr/, banner sugiere ES, usamos traducciones ES
+-->{
+  supportedLanguages.map((suggestedLang) => {
+    if (suggestedLang !== currentLocale) {
+      const t =
+        translations[suggestedLang as SupportedLanguage].language
+          .language_banner;
+
+      return (
+        <div
+          id={`language-banner-${suggestedLang}`}
+          data-suggested-lang={suggestedLang}
+          data-current-lang={currentLocale}
+          class="hidden"
+        >
+          <LanguageSuggestionBanner
+            suggestedLanguage={suggestedLang}
+            currentLanguage={currentLocale}
+            translations={{
+              aria_label: t.aria_label,
+              flag_aria: t.flag_aria,
+              message: t.message,
+              accept_button: t.accept_button,
+              accept_aria: t.accept_aria,
+              dismiss_aria: t.dismiss_aria,
+              actions_aria: t.actions_aria,
+            }}
+          />
+        </div>
+      );
+    }
+  })
+}
 
 <!-- Script minimalista de detección (solo lógica, no crea DOM) -->
 <script>
   /**
    * Detección automática de idioma - v1.3 Minimalista
-   * 
+   *
    * Cambios vs versión anterior:
    * - NO crea HTML dinámicamente (usa componentes pre-renderizados)
    * - Solo muestra/oculta banners existentes
    * - Reduce código de ~233 líneas a ~80 líneas (-65%)
-   * 
+   *
    * Flujo:
    * 1. Verificar localStorage (dismissed/accepted)
    * 2. Detectar idioma (navegador → geolocalización)
    * 3. Mostrar banner pre-renderizado correspondiente
    */
-  
+
   document.addEventListener("DOMContentLoaded", async () => {
+    console.log("[LanguageDetection] 🚀 Starting detection...");
+
     const supportedLanguages = ["en", "es", "fr"];
     const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+
+    console.log(
+      `[LanguageDetection] 📄 Document lang attribute: ${document.documentElement.lang}`
+    );
+    console.log(`[LanguageDetection] 🌍 Current page language: ${currentLang}`);
+    console.log(
+      `[LanguageDetection] 🌐 Browser languages: ${JSON.stringify(navigator.languages)}`
+    );
 
     // Verificar si ya se mostró/rechazó la sugerencia
     const dismissed = localStorage.getItem("language-suggestion-dismissed");
     const accepted = localStorage.getItem("language-suggestion-accepted");
 
+    console.log(`[LanguageDetection] 💾 localStorage.dismissed: ${dismissed}`);
+    console.log(`[LanguageDetection] 💾 localStorage.accepted: ${accepted}`);
+
     if (dismissed || accepted) {
+      console.log("[LanguageDetection] ⛔ Banner already processed, skipping");
       return; // No mostrar si ya fue procesado
     }
+
+    // Verificar que los banners existen en el DOM
+    const bannerEn = document.getElementById("language-banner-en");
+    const bannerEs = document.getElementById("language-banner-es");
+    const bannerFr = document.getElementById("language-banner-fr");
+    console.log(
+      `[LanguageDetection] 🔍 Banner elements: EN=${!!bannerEn}, ES=${!!bannerEs}, FR=${!!bannerFr}`
+    );
 
     // Detectar idioma preferido
     let suggestedLang: string | null = null;
 
     // 1. Detectar por navegador (primario)
     const browserLangs = navigator.languages || [navigator.language];
+    console.log(
+      `[LanguageDetection] 🔎 Checking ${browserLangs.length} browser languages...`
+    );
+
     for (const lang of browserLangs) {
       const shortLang = lang.split("-")[0].toLowerCase();
+      console.log(`[LanguageDetection]   - Checking: ${lang} → ${shortLang}`);
+
       if (supportedLanguages.includes(shortLang) && shortLang !== currentLang) {
         suggestedLang = shortLang;
-        console.log(`[LanguageDetection] Browser language detected: ${suggestedLang}`);
+        console.log(
+          `[LanguageDetection] ✅ Browser language detected: ${suggestedLang}`
+        );
         break;
+      } else {
+        console.log(
+          `[LanguageDetection]   ❌ Skip (supported=${supportedLanguages.includes(shortLang)}, different=${shortLang !== currentLang})`
+        );
       }
     }
 
     // 2. Fallback: Detectar por geolocalización (secundario)
     if (!suggestedLang) {
+      console.log(
+        "[LanguageDetection] 🌍 No browser match, trying geolocation..."
+      );
       try {
         const response = await fetch("https://ipapi.co/json/");
         if (response.ok) {
           const data = await response.json();
+          console.log(
+            `[LanguageDetection] 📍 Geolocation data: ${JSON.stringify(data)}`
+          );
+
           const countryToLang: Record<string, string> = {
             // Español
-            ES: "es", MX: "es", AR: "es", CO: "es", PE: "es", CL: "es", VE: "es",
+            ES: "es",
+            MX: "es",
+            AR: "es",
+            CO: "es",
+            PE: "es",
+            CL: "es",
+            VE: "es",
             // Francés
-            FR: "fr", BE: "fr", CH: "fr", CA: "fr", LU: "fr",
+            FR: "fr",
+            BE: "fr",
+            CH: "fr",
+            CA: "fr",
+            LU: "fr",
             // Inglés
-            US: "en", GB: "en", AU: "en", NZ: "en", IE: "en", ZA: "en",
+            US: "en",
+            GB: "en",
+            AU: "en",
+            NZ: "en",
+            IE: "en",
+            ZA: "en",
           };
 
           const geoLang = countryToLang[data.country_code];
-          if (geoLang && geoLang !== currentLang && supportedLanguages.includes(geoLang)) {
+          if (
+            geoLang &&
+            geoLang !== currentLang &&
+            supportedLanguages.includes(geoLang)
+          ) {
             suggestedLang = geoLang;
-            console.log(`[LanguageDetection] Geolocation language detected: ${suggestedLang}`);
+            console.log(
+              `[LanguageDetection] ✅ Geolocation language detected: ${suggestedLang}`
+            );
+          } else {
+            console.log(
+              `[LanguageDetection] ❌ No geolocation match (country=${data.country_code}, lang=${geoLang})`
+            );
           }
         }
       } catch (error) {
-        console.log("[LanguageDetection] Geolocation detection failed:", error);
+        console.log(
+          "[LanguageDetection] ⚠️ Geolocation detection failed:",
+          error
+        );
       }
     }
 
     // 3. Mostrar banner pre-renderizado si hay sugerencia
     if (suggestedLang) {
-      const bannerWrapper = document.getElementById(`language-banner-${suggestedLang}`);
+      console.log(
+        `[LanguageDetection] 🎯 Will show banner for language: ${suggestedLang}`
+      );
+
+      const bannerWrapper = document.getElementById(
+        `language-banner-${suggestedLang}`
+      );
+
       if (bannerWrapper) {
+        console.log(
+          `[LanguageDetection] ✅ Banner element found: #language-banner-${suggestedLang}`
+        );
+        console.log(
+          `[LanguageDetection] 📦 Banner wrapper classes before: ${bannerWrapper.className}`
+        );
+
+        // Paso 1: Quitar hidden del wrapper
         bannerWrapper.classList.remove("hidden");
-        console.log(`[LanguageDetection] Showing suggestion banner for: ${suggestedLang}`);
+
+        console.log(
+          `[LanguageDetection] 📦 Banner wrapper classes after: ${bannerWrapper.className}`
+        );
+
+        // Paso 2: Animar el banner interno después de 1.5s
+        setTimeout(() => {
+          const innerBanner = bannerWrapper.querySelector(
+            "#language-suggestion-banner"
+          );
+          if (innerBanner) {
+            console.log(`[LanguageDetection] � Starting banner animation...`);
+            innerBanner.classList.remove("-translate-y-full");
+            innerBanner.classList.add("translate-y-0");
+            console.log(
+              `[LanguageDetection] 🎉 Banner animated and now visible!`
+            );
+          } else {
+            console.error(
+              `[LanguageDetection] ❌ Inner banner #language-suggestion-banner not found!`
+            );
+          }
+        }, 1500);
+
+        console.log(
+          `[LanguageDetection] ⏱️ Banner will animate in 1.5 seconds...`
+        );
+      } else {
+        console.error(
+          `[LanguageDetection] ❌ ERROR: Banner element #language-banner-${suggestedLang} NOT FOUND in DOM!`
+        );
       }
+    } else {
+      console.log(
+        "[LanguageDetection] ℹ️ No language suggestion needed (browser matches page)"
+      );
     }
   });
 </script>

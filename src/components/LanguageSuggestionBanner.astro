@@ -6,10 +6,15 @@
  * Muestra un banner discreto y accesible cuando el idioma del navegador
  * no coincide con el idioma actual de la página.
  *
+ * Fix i18n (v1.3.1):
+ * - Recibe traducciones como props (no usa t())
+ * - Soluciona: t() siempre usa currentLocale, necesitamos suggestedLanguage locale
+ * - Ahora el texto aparece en el idioma SUGERIDO (correcto)
+ *
  * Cumplimiento arquitectónico:
  * - §1: Diseño minimalista con fondo blanco
  * - §2: Sin animaciones complejas, solo Tailwind CSS (0 líneas CSS custom)
- * - §5: i18n con astro-i18n (función t(), elimina hardcodes)
+ * - §5: i18n centralizado (traducciones via props desde JSON)
  * - §12: WCAG 2.2 AA (contraste negro/blanco, keyboard, ARIA)
  * - §14: Performance (~2KB vs 5KB anterior, -60% tamaño)
  *
@@ -25,15 +30,23 @@
  * @see src/i18n/en.json language_banner.*
  */
 
-import { t } from "astro-i18n";
 import { languageNames, generateLanguageUrl } from "../utils/languageDetection";
 
 export interface Props {
   suggestedLanguage: string;
   currentLanguage: string;
+  translations: {
+    aria_label: string;
+    flag_aria: string;
+    message: string;
+    accept_button: string;
+    accept_aria: string;
+    dismiss_aria: string;
+    actions_aria: string;
+  };
 }
 
-const { suggestedLanguage, currentLanguage } = Astro.props;
+const { suggestedLanguage, currentLanguage, translations } = Astro.props;
 const currentLocale = Astro.currentLocale || "en";
 
 const suggestedLangInfo =
@@ -52,7 +65,7 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
   id="language-suggestion-banner"
   class="fixed top-0 left-0 right-0 z-50 bg-white border-t-4 border-accent2 shadow-md transform -translate-y-full transition-transform duration-300 ease-out"
   role="banner"
-  aria-label={t("language_banner.aria_label")}
+  aria-label={translations.aria_label}
   aria-live="polite"
 >
   <div
@@ -68,9 +81,10 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
       <span
         class="text-2xl flex-shrink-0"
         role="img"
-        aria-label={t("language_banner.flag_aria", {
-          language: suggestedLangInfo?.native,
-        })}
+        aria-label={translations.flag_aria.replace(
+          "{{language}}",
+          suggestedLangInfo?.native || ""
+        )}
       >
         {suggestedLangInfo?.flag}
       </span>
@@ -80,7 +94,12 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
         id="banner-message"
         class="text-sm sm:text-base text-gray-800 font-medium"
       >
-        {t("language_banner.message", { language: suggestedLangInfo?.native })}
+        {
+          translations.message.replace(
+            "{{language}}",
+            suggestedLangInfo?.native || ""
+          )
+        }
       </span>
     </div>
 
@@ -88,7 +107,7 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
     <div
       class="flex items-center gap-2 ml-auto"
       role="group"
-      aria-label={t("language_banner.actions_aria")}
+      aria-label={translations.actions_aria}
     >
       <!-- Botón Aceptar (color primary, hover más oscuro) -->
       <a
@@ -96,18 +115,19 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
         class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         onclick="acceptLanguageSuggestion()"
         role="button"
-        aria-label={t("language_banner.accept_aria", {
-          language: suggestedLangInfo?.native,
-        })}
+        aria-label={translations.accept_aria.replace(
+          "{{language}}",
+          suggestedLangInfo?.native || ""
+        )}
       >
-        {t("language_banner.accept_button")}
+        {translations.accept_button}
       </a>
 
       <!-- Botón Descartar (solo icono X, minimalista) -->
       <button
         onclick="dismissLanguageSuggestion()"
         class="inline-flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-        aria-label={t("language_banner.dismiss_aria")}
+        aria-label={translations.dismiss_aria}
         type="button"
       >
         <svg
@@ -130,51 +150,45 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
 
 <script>
   /**
-   * Script minimalista para banner de idioma
+   * Script minimalista para banner de idioma (v1.3.2)
    *
-   * Funcionalidad:
-   * - Muestra/oculta banner con transición CSS (no manipula DOM complejo)
-   * - Respeta localStorage para dismissed/accepted
-   * - NO ajusta body padding (banner fixed no afecta layout)
-   * - Carga diferida (DOMContentLoaded + 1.5s delay)
+   * CAMBIO: Script movido a LanguageDetection.astro
+   * Razón: Múltiples instancias de LanguageSuggestionBanner causan conflictos
+   *        (no pueden compartir mismo ID ni funciones globales)
    *
-   * Cumplimiento:
-   * - §2: JS mínimo (~30 líneas vs ~60 anterior)
-   * - §14: Performance (defer, no bloquea LCP)
+   * Solo dejamos las funciones globales para accept/dismiss
+   * La animación y timing ahora se manejan en LanguageDetection
    */
-
-  function showLanguageSuggestion() {
-    const banner = document.getElementById("language-suggestion-banner");
-    if (banner) {
-      banner.classList.remove("-translate-y-full");
-      banner.classList.add("translate-y-0");
-    }
-  }
-
-  function hideLanguageSuggestion() {
-    const banner = document.getElementById("language-suggestion-banner");
-    if (banner) {
-      banner.classList.add("-translate-y-full");
-      banner.classList.remove("translate-y-0");
-    }
-  }
 
   (window as any).acceptLanguageSuggestion = function () {
     localStorage.setItem("language-suggestion-accepted", "true");
-    hideLanguageSuggestion();
+
+    // Ocultar el banner con animación
+    const banner = document.querySelector(
+      '[id^="language-banner-"]:not(.hidden)'
+    );
+    if (banner) {
+      const innerBanner = banner.querySelector("#language-suggestion-banner");
+      if (innerBanner) {
+        innerBanner.classList.add("-translate-y-full");
+        innerBanner.classList.remove("translate-y-0");
+      }
+    }
   };
 
   (window as any).dismissLanguageSuggestion = function () {
     localStorage.setItem("language-suggestion-dismissed", "true");
-    hideLanguageSuggestion();
-  };
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const dismissed = localStorage.getItem("language-suggestion-dismissed");
-    const accepted = localStorage.getItem("language-suggestion-accepted");
-
-    if (!dismissed && !accepted) {
-      setTimeout(showLanguageSuggestion, 1500);
+    // Ocultar el banner con animación
+    const banner = document.querySelector(
+      '[id^="language-banner-"]:not(.hidden)'
+    );
+    if (banner) {
+      const innerBanner = banner.querySelector("#language-suggestion-banner");
+      if (innerBanner) {
+        innerBanner.classList.add("-translate-y-full");
+        innerBanner.classList.remove("translate-y-0");
+      }
     }
-  });
+  };
 </script>
