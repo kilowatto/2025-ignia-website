@@ -23,22 +23,23 @@
     },
     "contact_form": {
       "title": "Contáctanos",
+      "description": "Únete a la comunidad Ignia y descubre cómo podemos ayudarte",
       "subtitle": "Completa el formulario y te responderemos pronto",
       "fields": {
         "name": {
           "label": "Nombre Completo",
           "placeholder": "Juan Pérez",
-          "error": "Por favor ingresa tu nombre completo"
+          "error": "¡Ups! Necesitamos saber cómo llamarte (no mordemos 😊)"
         },
         "phone": {
           "label": "Teléfono",
           "placeholder": "+52 55 1234 5678",
-          "error": "Por favor ingresa un teléfono válido"
+          "error": "Este teléfono parece de otra dimensión 🌌 ¿Tienes uno terrestre?"
         },
         "email": {
           "label": "Correo Electrónico",
           "placeholder": "tu@correo.com",
-          "error": "Por favor ingresa un correo electrónico válido"
+          "error": "Mmm... este email se ve sospechoso 🕵️ ¿Seguro tiene @ y .com?"
         }
       },
       "button": {

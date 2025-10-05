@@ -6,7 +6,7 @@
  * FUNCIONALIDADES:
  * - Gestión de estados del formulario (idle, validating, success, already_submitted)
  * - Persistencia en localStorage para evitar envíos duplicados
- * - Validaciones HTML5 + JavaScript progresivo
+ * - Validaciones HTML5 + JavaScript progresivo con mensajes cómicos
  * - Protección anti-spam con Turnstile y honeypot
  * - Transiciones suaves entre estados
  * - Expiración automática de 30 días
@@ -22,11 +22,11 @@
  * - §2: Progressive enhancement (funciona sin JS con HTML5 validation)
  * - §14: Performance óptimo con defer loading
  * 
- * USO:
- * Este script se carga automáticamente en ContactForm.astro con atributo defer
- * No requiere inicialización manual.
+ * UBICACIÓN:
+ * Este script se carga automáticamente en SitemapFooter.astro (columna 6 del grid).
+ * El formulario está integrado en el footer como parte del mini-sitemap.
  * 
- * @see src/components/ContactForm.astro - Componente que usa este script
+ * @see src/components/SitemapFooter.astro - Componente que integra el formulario (líneas 434-599)
  * @see arquitecture.md §2 - Principio de JS mínimo o nulo
  */
 
@@ -303,6 +303,64 @@ function isValidPhone(phone: string): boolean {
 }
 
 /**
+ * Obtiene las traducciones del formulario desde el data-locale del contenedor
+ * 
+ * @returns Objeto con las traducciones de error
+ */
+function getErrorMessages(): { name: string; phone: string; email: string } {
+    const container = getElement<HTMLDivElement>(SELECTORS.formContainer);
+    const locale = container?.dataset.locale || 'en';
+
+    // Traducciones hardcodeadas por locale (se podría mejorar leyendo desde data attributes)
+    const translations: Record<string, { name: string; phone: string; email: string }> = {
+        es: {
+            name: '¡Ups! Necesitamos saber cómo llamarte (no mordemos 😊)',
+            phone: 'Este teléfono parece de otra dimensión 🌌 ¿Tienes uno terrestre?',
+            email: 'Mmm... este email se ve sospechoso 🕵️ ¿Seguro tiene @ y .com?',
+        },
+        en: {
+            name: "Oops! We need to know what to call you (we don't bite 😊)",
+            phone: 'This phone looks from another dimension 🌌 Got an Earth one?',
+            email: 'Hmm... this email looks fishy 🕵️ Sure it has @ and .com?',
+        },
+        fr: {
+            name: "Oups! On doit savoir comment vous appeler (on ne mord pas 😊)",
+            phone: "Ce téléphone semble d'une autre dimension 🌌 Vous en avez un terrestre?",
+            email: 'Hmm... cet email est suspect 🕵️ Sûr qu\'il a @ et .com?',
+        },
+    };
+
+    return translations[locale] || translations['en'];
+}
+
+/**
+ * Muestra un mensaje de error debajo de un campo
+ * 
+ * @param fieldId - ID del campo (name, phone, email)
+ * @param message - Mensaje de error a mostrar
+ */
+function showFieldError(fieldId: string, message: string): void {
+    const errorElement = document.getElementById(`${fieldId}-error`);
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.classList.remove('hidden');
+    }
+}
+
+/**
+ * Oculta todos los mensajes de error
+ */
+function hideAllErrors(): void {
+    ['name', 'phone', 'email'].forEach((fieldId) => {
+        const errorElement = document.getElementById(`${fieldId}-error`);
+        if (errorElement) {
+            errorElement.classList.add('hidden');
+            errorElement.textContent = '';
+        }
+    });
+}
+
+/**
  * Extrae y valida datos del formulario
  * 
  * @returns Datos del formulario o null si hay errores
@@ -321,18 +379,26 @@ function getFormData(): ContactFormData | null {
     const phone = phoneField.value.trim();
     const email = emailField.value.trim();
 
-    // Validaciones básicas
+    // Ocultar errores previos
+    hideAllErrors();
+
+    const errors = getErrorMessages();
+
+    // Validaciones básicas con mensajes de error
     if (name.length < 2) {
+        showFieldError('name', errors.name);
         nameField.focus();
         return null;
     }
 
     if (!isValidPhone(phone)) {
+        showFieldError('phone', errors.phone);
         phoneField.focus();
         return null;
     }
 
     if (!isValidEmail(email)) {
+        showFieldError('email', errors.email);
         emailField.focus();
         return null;
     }

@@ -27,12 +27,9 @@ import SearchBox from "./SearchBox.astro";
 import { t } from 'astro-i18n';
 
 // Normalize the locale coming from Astro so every helper can rely on an allowed value.
+// Split on '-' to handle regional variants (es-MX → es, fr-CA → fr)
 const rawLocale = Astro.currentLocale || "es";
-const supportedLocales = ["en", "es", "fr"] as const;
-type Locale = (typeof supportedLocales)[number];
-const locale = supportedLocales.includes(rawLocale as Locale)
-  ? (rawLocale as Locale)
-  : "es";
+const locale = rawLocale.split("-")[0];
 
 // Helper function to translate with locale
 const translate = (key: string) => t(key, undefined, { locale });

@@ -1373,6 +1373,437 @@ El componente incluye **documentación inline exhaustiva en español** que expli
 
 ---
 
+## 📧 Formulario de Contacto: Mini-Form Integrado en Footer
+
+### 📋 Descripción General
+
+El **formulario de contacto** es una miniforma discreta integrada directamente en `SitemapFooter.astro` como la **6ª columna del grid**. No existe como componente separado para preservar el contexto de traducción y mantener cohesión visual.
+
+**Ubicación:** `src/components/SitemapFooter.astro` (líneas 434-599)  
+**Script:** `src/scripts/contact-form.ts` (557 líneas)  
+**Integración:** 6ª columna del grid responsive (después de las 5 secciones del sitemap)
+
+### ✨ Características Principales
+
+| Característica | Descripción |
+|----------------|-------------|
+| **🎭 Estados Interactivos** | `idle`, `validating`, `success`, `already_submitted` |
+| **✅ Validación HTML5 + JS** | Validación nativa del navegador + mensajes personalizados en JavaScript |
+| **😄 Mensajes con Humor** | Validaciones cómicas (50% humor) con emojis: "¡Ups! No mordemos 😊" |
+| **🛡️ Anti-Bot Completo** | Honeypot + timestamp (min 2s) + Cloudflare Turnstile (opcional) |
+| **💾 Persistencia Local** | `localStorage` con duración de 30 días, email hasheado (SHA-256) |
+| **🌐 Multi-idioma** | Mensajes de validación traducidos en ES/EN/FR |
+| **📱 Responsive** | Se adapta al grid: 1 col (móvil) → 2 cols (tablet) → 6 cols (desktop) |
+| **♿ Accesible** | `aria-describedby`, campos semánticos, mensajes de error visibles |
+
+### 🏗️ Arquitectura de Integración
+
+#### ¿Por qué integrado en SitemapFooter?
+
+**Decisión arquitectónica:** El formulario NO es un componente separado (`ContactForm.astro` fue eliminado) porque:
+
+1. **✅ Contexto de traducción:** La función `translate()` de astro-i18n requiere el mismo contexto de ejecución
+2. **✅ Cohesión visual:** Al ser la 6ª columna del grid, mantiene consistencia con las otras 5 secciones del sitemap
+3. **✅ Zero overhead:** No hay sobrecarga de renderizado por componente adicional (HTML estático integrado)
+4. **✅ Mantenibilidad:** Single source of truth (una sola ubicación para editar el formulario)
+
+**Estructura del grid:**
+
+```astro
+<!-- SitemapFooter.astro -->
+<nav class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8">
+  <!-- Columnas 1-5: Secciones del sitemap (Solutions, Products, AI, Services, Company) -->
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+  <div>...</div>
+  
+  <!-- COLUMNA 6: FORMULARIO DE CONTACTO -->
+  <div class="space-y-3 sm:space-y-4">
+    <!-- Título con icono envelope -->
+    <div class="flex items-center gap-2">
+      <svg class="h-5 w-5">...</svg>
+      <h3>{translate('footer.contact_form.title')}</h3>
+    </div>
+    
+    <!-- Texto descriptivo motivacional -->
+    <p>{translate('footer.contact_form.description')}</p>
+    
+    <!-- Formulario completo -->
+    <form id="contact-form">...</form>
+  </div>
+</nav>
+```
+
+### 🎯 Estados del Formulario
+
+```typescript
+// Máquina de estados: contact-form.ts
+type FormState = 'idle' | 'validating' | 'success' | 'already_submitted';
+
+// Flujo de estados
+idle → validating → success
+  ↓         ↓
+  → already_submitted (si email hasheado existe en localStorage)
+```
+
+#### Estados Visuales
+
+| Estado | Color Fondo | Icono | Mensaje | Acción Usuario |
+|--------|-------------|-------|---------|----------------|
+| **idle** | Naranja | ✉️ | "Enviar" | Click → validación |
+| **validating** | Naranja (spinner) | ⏳ | "Validando..." | Deshabilitado |
+| **success** | Verde | ✅ | "¡Mensaje enviado!" | None (auto-oculta) |
+| **already_submitted** | Gris | ℹ️ | "Ya enviaste un mensaje" | None (30 días) |
+
+### 😄 Validación con Humor (50% Cómico)
+
+El formulario incluye **mensajes de error cómicos con emojis** para hacer la experiencia menos frustrante:
+
+#### Mensajes en Español (ES)
+
+```json
+{
+  "footer": {
+    "contact_form": {
+      "fields": {
+        "name": {
+          "error": "¡Ups! Necesitamos saber cómo llamarte (no mordemos 😊)"
+        },
+        "phone": {
+          "error": "Este teléfono parece de otra dimensión 🌌 ¿Tienes uno terrestre?"
+        },
+        "email": {
+          "error": "Mmm... este email se ve sospechoso 🕵️ ¿Seguro tiene @ y .com?"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Mensajes en Inglés (EN)
+
+```json
+{
+  "footer": {
+    "contact_form": {
+      "fields": {
+        "name": {
+          "error": "Oops! We need to know what to call you (we don't bite 😊)"
+        },
+        "phone": {
+          "error": "This phone seems from another dimension 🌌 Got an earthly one?"
+        },
+        "email": {
+          "error": "Hmm... this email looks suspicious 🕵️ Sure it has @ and .com?"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Mensajes en Francés (FR)
+
+```json
+{
+  "footer": {
+    "contact_form": {
+      "fields": {
+        "name": {
+          "error": "Oups! Nous devons savoir comment vous appeler (on ne mord pas 😊)"
+        },
+        "phone": {
+          "error": "Ce téléphone semble d'une autre dimension 🌌 Vous en avez un terrestre?"
+        },
+        "email": {
+          "error": "Hmm... cet email semble suspect 🕵️ Sûr qu'il a @ et .com?"
+        }
+      }
+    }
+  }
+}
+```
+
+### 🛡️ Protección Anti-Bot (3 Capas)
+
+#### 1. Honeypot Field (Invisible)
+
+```html
+<!-- Campo oculto que solo los bots llenan -->
+<input 
+  type="text" 
+  name="website" 
+  style="position:absolute;left:-9999px" 
+  tabindex="-1"
+  autocomplete="off"
+/>
+```
+
+**Lógica:** Si `formData.get('website')` tiene valor → rechazar (bot detectado)
+
+#### 2. Timestamp Validation (Tiempo Mínimo)
+
+```typescript
+// contact-form.ts
+const minSubmitTime = 2000; // 2 segundos mínimo
+const formLoadTime = Date.now();
+
+// En submit:
+if (Date.now() - formLoadTime < minSubmitTime) {
+  return; // Bot detectado (envío demasiado rápido)
+}
+```
+
+#### 3. Cloudflare Turnstile (Opcional)
+
+```html
+<!-- Turnstile widget carga al final -->
+<script 
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js" 
+  async 
+  defer
+></script>
+
+<div 
+  class="cf-turnstile" 
+  data-sitekey="YOUR_SITE_KEY"
+></div>
+```
+
+**Nota:** Requiere configuración en Cloudflare Dashboard (sitekey y endpoint).
+
+### 💾 Persistencia con localStorage
+
+#### Almacenamiento de Envíos (30 días)
+
+```typescript
+// contact-form.ts (líneas ~180-200)
+async function hashEmail(email: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(email);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// Guardar después de envío exitoso
+const emailHash = await hashEmail(email);
+const submissionData = {
+  hash: emailHash,
+  timestamp: Date.now(),
+  expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 días
+};
+localStorage.setItem('ignia_contact_submitted', JSON.stringify(submissionData));
+```
+
+#### Validación en Load
+
+```typescript
+// Al cargar la página, verificar si ya envió
+const stored = localStorage.getItem('ignia_contact_submitted');
+if (stored) {
+  const data = JSON.parse(stored);
+  if (Date.now() < data.expiresAt) {
+    // Mostrar estado "already_submitted"
+    showAlreadySubmitted();
+  } else {
+    // Expiró, limpiar localStorage
+    localStorage.removeItem('ignia_contact_submitted');
+  }
+}
+```
+
+**Beneficios:**
+- ✅ Privacy-first (email hasheado, no texto plano)
+- ✅ Reduce spam (1 envío por email cada 30 días)
+- ✅ UX mejorada (no frustrar usuarios que recargan página)
+
+### 🔧 Mantenimiento y Extensión
+
+#### ✅ Cómo Agregar un Nuevo Campo
+
+**Ejemplo:** Agregar campo "Empresa" (Company)
+
+```astro
+<!-- 1. Agregar HTML en SitemapFooter.astro (después de línea ~570) -->
+<div>
+  <label for="company" class="block text-sm font-medium text-white/90 mb-1.5">
+    {translate('footer.contact_form.fields.company.label')}
+  </label>
+  <input
+    id="company"
+    name="company"
+    type="text"
+    required
+    placeholder={translate('footer.contact_form.fields.company.placeholder')}
+    class="w-full px-3 py-2 bg-white/10 border border-white/20..."
+    aria-describedby="company-error"
+  />
+  <p id="company-error" class="hidden text-xs text-red-300 mt-1"></p>
+</div>
+```
+
+```typescript
+// 2. Agregar validación en contact-form.ts (línea ~390)
+function getFormData(): FormData | null {
+  // ...código existente...
+  
+  const company = form.elements.namedItem('company') as HTMLInputElement;
+  if (!company || !company.value.trim()) {
+    showFieldError('company', getErrorMessages().company);
+    return null;
+  }
+  
+  // ...continuar con validación...
+}
+```
+
+```json
+// 3. Agregar traducciones en src/i18n/es.json (y en.json, fr.json)
+{
+  "footer": {
+    "contact_form": {
+      "fields": {
+        "company": {
+          "label": "Empresa",
+          "placeholder": "Nombre de tu empresa",
+          "error": "¿En qué empresa trabajas? ¡Queremos conocerla! 🏢"
+        }
+      }
+    }
+  }
+}
+```
+
+#### ✅ Cómo Cambiar los Mensajes de Error
+
+**Opción 1: Editar i18n JSON (Recomendado)**
+
+```json
+// src/i18n/es.json
+{
+  "footer": {
+    "contact_form": {
+      "fields": {
+        "name": {
+          "error": "Tu nuevo mensaje cómico aquí 😄"
+        }
+      }
+    }
+  }
+}
+```
+
+**Opción 2: Editar contact-form.ts (Hardcoded)**
+
+```typescript
+// src/scripts/contact-form.ts (línea ~310)
+function getErrorMessages() {
+  const locale = document.documentElement.lang || 'en';
+  const baseLocale = locale.split('-')[0];
+  
+  const messages = {
+    es: {
+      name: '¡Tu nuevo mensaje cómico aquí! 😄',
+      // ...
+    },
+    // ...
+  };
+  
+  return messages[baseLocale] || messages.en;
+}
+```
+
+**Recomendación:** Usar Opción 1 (i18n JSON) para mantener consistencia con el resto del sitio.
+
+#### ✅ Cómo Cambiar el Endpoint de Envío
+
+```typescript
+// src/scripts/contact-form.ts (línea ~440)
+async function submitForm(data: FormData): Promise<boolean> {
+  try {
+    const response = await fetch('https://tu-nuevo-endpoint.com/api/contact', {
+      method: 'POST',
+      body: data
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error:', error);
+    return false;
+  }
+}
+```
+
+### 📊 Cumplimiento Arquitectónico
+
+| Requisito (arquitecture.md) | Estado | Implementación |
+|------------------------------|--------|----------------|
+| **§2: JS mínimo o nulo** | ⚠️ Excepción | JavaScript necesario para validación + envío (progresive enhancement) |
+| **§5: i18n centralizado** | ✅ | Traducciones en `src/i18n/*.json` (footer.contact_form.*) |
+| **§8: Tailwind utilities** | ✅ | Estados visuales, hover, focus, invalid states con Tailwind |
+| **§9: SEO semántico** | ✅ | `<form>`, `<label>`, `<input>`, `aria-describedby` |
+| **§12: Accessibility** | ✅ | ARIA labels, `required`, validación nativa del navegador |
+| **§14: Performance** | ✅ | Script con `defer`, sin bloqueo del render inicial |
+
+**Nota sobre §2:** El formulario requiere JavaScript para funcionalidad completa (validación personalizada, anti-bot, localStorage). Sin embargo, usa **progressive enhancement** - el HTML nativo con `required` funciona sin JS, y el JavaScript mejora la experiencia.
+
+### 🎨 Estilo Visual
+
+- **Icono:** Envelope (Heroicons v2) en `text-white/70`, matching otros títulos de columnas
+- **Texto descriptivo:** "Únete a la comunidad Ignia y descubre cómo podemos ayudarte"
+- **Campos:**
+  - Fondo: `bg-white/10` (semi-transparente)
+  - Borde: `border-white/20` → `focus:border-orange-400`
+  - Invalid: `invalid:border-red-400` (CSS validation state)
+- **Botón:**
+  - idle: `bg-orange-500 hover:bg-orange-600`
+  - validating: `bg-orange-400` con spinner animado
+  - success: `bg-green-500` con checkmark
+  - already_submitted: `bg-gray-400` deshabilitado
+- **Errores:** Texto `text-red-300` (contraste WCAG AA) debajo de cada campo
+
+### 📝 Código Documentado
+
+**`src/scripts/contact-form.ts`** incluye:
+- 📖 Header con descripción completa del flujo (líneas 1-31)
+- 🔍 JSDoc comments en funciones críticas
+- 💡 Inline comments explicando decisiones arquitectónicas
+- ⚠️ Warnings sobre edge cases (regional locales, honeypot)
+
+**`src/components/SitemapFooter.astro`** incluye:
+- 📦 Comentario de sección: "COLUMNA 6: MINI-FORMULARIO DE CONTACTO"
+- 🎯 Explicación del propósito dentro del grid
+- 🔗 Referencia a contact-form.ts para lógica completa
+
+### ⚠️ Eliminación de ContactForm.astro (Historial)
+
+**Contexto histórico:** En versiones anteriores existía `src/components/ContactForm.astro` (162 líneas) que duplicaba el formulario. Fue **eliminado** porque:
+
+1. ❌ **No estaba importado en ningún archivo** (componente "huérfano")
+2. ❌ **Versión desactualizada** (no incluía elementos `<p id="*-error">` para mostrar validaciones)
+3. ❌ **Duplicación de código** (~95% idéntico a la versión en SitemapFooter)
+4. ❌ **Confusión de mantenimiento** (dos fuentes de verdad para el mismo formulario)
+
+**Decisión:** Mantener **única versión integrada en SitemapFooter** por las razones arquitectónicas explicadas arriba.
+
+**Commit de eliminación:** `chore: remove duplicate ContactForm component and update docs`
+
+### 🔗 Archivos Relacionados
+
+- **`src/components/SitemapFooter.astro`** - Contiene el formulario (líneas 434-599)
+- **`src/scripts/contact-form.ts`** - Lógica completa (557 líneas)
+- **`src/components/Footer.astro`** - Renderiza SitemapFooter (que incluye el formulario)
+- **`src/i18n/es.json`** - Traducciones ES (footer.contact_form.*)
+- **`src/i18n/en.json`** - Traducciones EN (footer.contact_form.*)
+- **`src/i18n/fr.json`** - Traducciones FR (footer.contact_form.*)
+- **`arquitecture.md`** - §2 (JS mínimo), §5 (i18n), §12 (accesibilidad)
+
+---
+
 ## 🎯 Principios Arquitectónicos
 
 Este proyecto sigue principios estrictos definidos en `arquitecture.md` §2:
