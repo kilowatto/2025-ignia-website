@@ -1261,12 +1261,36 @@ El proyecto ya incluye todos los archivos necesarios:
    Root directory:          / (raíz del proyecto)
    ```
 
-3. **Variables de Entorno (opcional):**
+3. **Variables de Entorno:**
+   
+   **IMPORTANTE - Configuración de Dominio Dinámico:**
+   
+   El sitio detecta automáticamente el dominio según el ambiente. Configura:
+   
    ```
    Settings → Environment Variables
+   
+   # Variables obligatorias:
    - NODE_VERSION = 20.18.0
-   - PNPM_VERSION = 10 (o tu versión actual)
+   - PNPM_VERSION = 10
+   
+   # Variable de dominio (opcional pero recomendada):
+   Production Environment:
+     - PUBLIC_SITE_URL = https://ignia.cloud
+   
+   Preview Environment:
+     - PUBLIC_SITE_URL = https://ignia.kilowatto.com
    ```
+   
+   **¿Por qué PUBLIC_SITE_URL?**
+   - ✅ **Sitemaps** usan el dominio correcto en staging/production
+   - ✅ **Canonical URLs** apuntan al dominio correcto
+   - ✅ **Open Graph URLs** en meta tags son correctas
+   - ✅ **Structured Data** (schema.org) tiene URLs válidas
+   
+   **Si no configuras PUBLIC_SITE_URL:**
+   - El sistema detectará automáticamente el dominio del request
+   - Funciona en la mayoría de casos, pero sitemaps pueden ser inconsistentes
 
 4. **Deploy:**
    - Cloudflare detectará automáticamente cambios en `main` branch
@@ -1364,6 +1388,39 @@ pnpm run astro check
 **Optimización adicional:**
 ```javascript
 // astro.config.mjs - habilitar Image Resizing de Cloudflare
+adapter: cloudflare({ 
+  mode: 'directory',
+  imageService: 'cloudflare', // ✅ Activa optimización de imágenes
+}),
+```
+
+#### Sitemaps o canonical URLs usan dominio incorrecto
+**Problema:** Sitemap muestra `https://ignia.cloud` pero estás en staging `https://ignia.kilowatto.com`
+
+**Causa:** Variable de entorno `PUBLIC_SITE_URL` no configurada en Cloudflare Pages
+
+**Solución:**
+```bash
+# En Cloudflare Dashboard → Settings → Environment Variables
+
+# Production Environment:
+PUBLIC_SITE_URL = https://ignia.cloud
+
+# Preview Environment:
+PUBLIC_SITE_URL = https://ignia.kilowatto.com
+```
+
+**Verificación:**
+```bash
+# Después del deploy, verifica el sitemap:
+curl https://tu-dominio.com/sitemap-index.xml
+
+# Debe mostrar URLs con el dominio correcto:
+<loc>https://tu-dominio.com/...</loc>
+```
+
+**Alternativa sin variable de entorno:**
+El sistema detecta automáticamente el dominio del request, pero puede ser inconsistente en sitemaps generados en build-time. La variable de entorno garantiza consistencia.
 adapter: cloudflare({ 
   mode: 'directory',
   imageService: 'cloudflare', // ✅ Activa optimización de imágenes

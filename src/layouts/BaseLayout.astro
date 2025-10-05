@@ -17,6 +17,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SearchModal from "../components/SearchModal.astro";
 import { t } from "astro-i18n";
+import { getSiteUrl, getSiteHost } from "../utils/siteConfig";
 
 interface Props {
   title: string;
@@ -39,9 +40,17 @@ const {
 // Obtener locale actual usando Astro.currentLocale (API correcta)
 const rawLocale = Astro.currentLocale || "en";
 const locale = rawLocale.split("-")[0];
-const baseUrl = "https://ignia.cloud";
+
+// URL base dinámica - detecta ambiente automáticamente
+// - Dev: http://localhost:4321
+// - Staging: https://ignia.kilowatto.com
+// - Production: https://ignia.cloud
+const baseUrl = getSiteUrl(Astro);
 const currentPath = Astro.url.pathname;
 const currentUrl = canonicalUrl || `${baseUrl}${currentPath}`;
+
+// Hostname para resource hints (preconnect/dns-prefetch)
+const siteHost = getSiteHost(Astro);
 
 // Traducción del skip link para accesibilidad multi-idioma
 const skipToContentLabel = t("layout.skip_link", undefined, { locale });
@@ -53,11 +62,12 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    
+
     <!-- Preconnect para mejorar performance de Critical Path -->
-    <link rel="preconnect" href="https://ignia.kilowatto.com" crossorigin />
-    <link rel="dns-prefetch" href="https://ignia.kilowatto.com" />
-    
+    <!-- Hostname dinámico según ambiente (localhost, staging, production) -->
+    <link rel="preconnect" href={`https://${siteHost}`} crossorigin />
+    <link rel="dns-prefetch" href={`https://${siteHost}`} />
+
     <link rel="icon" href="/icons/favicon.ico" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
