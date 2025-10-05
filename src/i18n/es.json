@@ -201,6 +201,7 @@
     "subtitle": "Error 404",
     "description": "La página que buscas parece haberse perdido en la nube...",
     "humor": "Ni nuestros mejores ingenieros de la nube pueden encontrar esta página. ¿Quizás se fue de vacaciones? 🏖️",
+    "extra_humor": "Revisamos todos nuestros servidores, hasta le preguntamos a la cafetera ☕ - ¡nada!",
     "secondary": "No te preocupes, nos pasa a los mejores. Vamos a ayudarte a volver al camino.",
     "cta": {
       "home": "Ir al Inicio",

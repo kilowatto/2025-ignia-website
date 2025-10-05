@@ -201,6 +201,7 @@
     "subtitle": "Erreur 404",
     "description": "La page que vous recherchez semble s'être égarée dans le nuage...",
     "humor": "Même nos meilleurs ingénieurs cloud ne peuvent pas trouver cette page. Peut-être est-elle en vacances? 🏖️",
+    "extra_humor": "Nous avons vérifié tous nos serveurs, même demandé à la machine à café ☕ - rien!",
     "secondary": "Ne vous inquiétez pas, cela arrive aux meilleurs d'entre nous. Remettons-vous sur la bonne voie.",
     "cta": {
       "home": "Aller à l'accueil",

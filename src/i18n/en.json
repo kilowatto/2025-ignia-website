@@ -201,6 +201,7 @@
     "subtitle": "404 Error",
     "description": "The page you're looking for seems to have wandered off into the cloud...",
     "humor": "Even our best cloud engineers can't find this page. Maybe it's on vacation? 🏖️",
+    "extra_humor": "We've checked all our servers, even asked the coffee machine ☕ - nothing!",
     "secondary": "Don't worry, it happens to the best of us. Let's get you back on track.",
     "cta": {
       "home": "Go to Home",
