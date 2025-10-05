@@ -1,31 +1,31 @@
 ---
 /**
  * LanguageSuggestionBanner - Banner Minimalista de Sugerencia de Idioma
- * 
+ *
  * Propósito:
  * Muestra un banner discreto y accesible cuando el idioma del navegador
  * no coincide con el idioma actual de la página.
- * 
+ *
  * Cumplimiento arquitectónico:
  * - §1: Diseño minimalista con fondo blanco
  * - §2: Sin animaciones complejas, solo Tailwind CSS (0 líneas CSS custom)
  * - §5: i18n con astro-i18n (función t(), elimina hardcodes)
  * - §12: WCAG 2.2 AA (contraste negro/blanco, keyboard, ARIA)
  * - §14: Performance (~2KB vs 5KB anterior, -60% tamaño)
- * 
+ *
  * Arquitectura:
  * - Fondo blanco con borde superior accent2 (minimalista)
  * - Texto oscuro sobre fondo claro (contraste WCAG AA)
  * - Sin efectos visuales complejos (scale, rotate, shine eliminados)
  * - Transición CSS simple (slide-down, sin @keyframes)
  * - Mobile-first responsive sin media queries custom
- * 
+ *
  * @see arquitecture.md §1, §2, §5, §12, §14
  * @see src/utils/languageDetection.ts
  * @see src/i18n/en.json language_banner.*
  */
 
-import { t } from 'astro-i18n';
+import { t } from "astro-i18n";
 import { languageNames, generateLanguageUrl } from "../utils/languageDetection";
 
 export interface Props {
@@ -34,9 +34,10 @@ export interface Props {
 }
 
 const { suggestedLanguage, currentLanguage } = Astro.props;
-const currentLocale = Astro.currentLocale || 'en';
+const currentLocale = Astro.currentLocale || "en";
 
-const suggestedLangInfo = languageNames[suggestedLanguage as keyof typeof languageNames];
+const suggestedLangInfo =
+  languageNames[suggestedLanguage as keyof typeof languageNames];
 const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
 ---
 
@@ -51,53 +52,76 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
   id="language-suggestion-banner"
   class="fixed top-0 left-0 right-0 z-50 bg-white border-t-4 border-accent2 shadow-md transform -translate-y-full transition-transform duration-300 ease-out"
   role="banner"
-  aria-label={t('language_banner.aria_label')}
+  aria-label={t("language_banner.aria_label")}
   aria-live="polite"
 >
-  <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-    
+  <div
+    class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+  >
     <!-- Mensaje principal (bandera + texto) -->
-    <div class="flex items-center gap-3" role="group" aria-labelledby="banner-message">
+    <div
+      class="flex items-center gap-3"
+      role="group"
+      aria-labelledby="banner-message"
+    >
       <!-- Bandera (sin efectos complejos, solo emoji) -->
       <span
         class="text-2xl flex-shrink-0"
         role="img"
-        aria-label={t('language_banner.flag_aria', { language: suggestedLangInfo?.native })}
+        aria-label={t("language_banner.flag_aria", {
+          language: suggestedLangInfo?.native,
+        })}
       >
         {suggestedLangInfo?.flag}
       </span>
-      
+
       <!-- Texto (contraste WCAG AA: gris-800 sobre blanco) -->
       <span
         id="banner-message"
         class="text-sm sm:text-base text-gray-800 font-medium"
       >
-        {t('language_banner.message', { language: suggestedLangInfo?.native })}
+        {t("language_banner.message", { language: suggestedLangInfo?.native })}
       </span>
     </div>
 
     <!-- Acciones (minimalistas, sin gradientes ni efectos complejos) -->
-    <div class="flex items-center gap-2 ml-auto" role="group" aria-label={t('language_banner.actions_aria')}>
+    <div
+      class="flex items-center gap-2 ml-auto"
+      role="group"
+      aria-label={t("language_banner.actions_aria")}
+    >
       <!-- Botón Aceptar (color primary, hover más oscuro) -->
       <a
         href={suggestionUrl}
         class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         onclick="acceptLanguageSuggestion()"
         role="button"
-        aria-label={t('language_banner.accept_aria', { language: suggestedLangInfo?.native })}
+        aria-label={t("language_banner.accept_aria", {
+          language: suggestedLangInfo?.native,
+        })}
       >
-        {t('language_banner.accept_button')}
+        {t("language_banner.accept_button")}
       </a>
 
       <!-- Botón Descartar (solo icono X, minimalista) -->
       <button
         onclick="dismissLanguageSuggestion()"
         class="inline-flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-        aria-label={t('language_banner.dismiss_aria')}
+        aria-label={t("language_banner.dismiss_aria")}
         type="button"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
@@ -107,18 +131,18 @@ const suggestionUrl = generateLanguageUrl(suggestedLanguage as any);
 <script>
   /**
    * Script minimalista para banner de idioma
-   * 
+   *
    * Funcionalidad:
    * - Muestra/oculta banner con transición CSS (no manipula DOM complejo)
    * - Respeta localStorage para dismissed/accepted
    * - NO ajusta body padding (banner fixed no afecta layout)
    * - Carga diferida (DOMContentLoaded + 1.5s delay)
-   * 
+   *
    * Cumplimiento:
    * - §2: JS mínimo (~30 líneas vs ~60 anterior)
    * - §14: Performance (defer, no bloquea LCP)
    */
-  
+
   function showLanguageSuggestion() {
     const banner = document.getElementById("language-suggestion-banner");
     if (banner) {
