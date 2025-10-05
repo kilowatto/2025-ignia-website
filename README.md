@@ -207,13 +207,36 @@ localStorage.removeItem('language-suggestion-accepted');
 | **§12: WCAG 2.2 AA** | ✅ | Banner con ARIA, teclado, contraste WCAG |
 | **§14: Performance** | ✅ | Script < 2KB gzip, carga diferida, no bloquea LCP |
 
+#### Banner de Sugerencia Minimalista
+
+**Nuevo diseño (v1.3) - 100% cumplimiento arquitectónico:**
+
+El `LanguageSuggestionBanner.astro` fue completamente rediseñado para cumplir con los lineamientos de `arquitecture.md`:
+
+**Antes (v1.2):**
+- ❌ Gradientes animados coloridos
+- ❌ 100+ líneas de CSS personalizado
+- ❌ 3 animaciones @keyframes complejas
+- ❌ Texto hardcodeado (ternarios)
+- ❌ ~5KB de tamaño
+
+**Ahora (v1.3):**
+- ✅ Fondo blanco con borde superior accent2 (§1: minimalista)
+- ✅ 0 líneas de CSS custom, 100% Tailwind (§2: estilos Tailwind)
+- ✅ Traducciones con `t()` de astro-i18n (§5: i18n híbrido)
+- ✅ Contraste WCAG AA (gris-800 sobre blanco) (§12: accesibilidad)
+- ✅ ~2KB de tamaño (-60% mejora) (§14: performance)
+
+**Claves i18n:** `language_banner.*` en `src/i18n/{en,es,fr}.json`
+
 #### Archivos Relacionados
 
 - **`src/components/LanguageDetection.astro`** - Lógica principal de detección
-- **`src/components/LanguageSuggestionBanner.astro`** - UI alternativa (no usado)
+- **`src/components/LanguageSuggestionBanner.astro`** - Banner minimalista (redesign v1.3)
 - **`src/layouts/BaseLayout.astro`** - Integración del componente
 - **`src/utils/languageDetection.ts`** - Utilidades compartidas
-- **`arquitecture.md`** - §6 (Ruteo y SEO Técnico - Detección de Idioma)
+- **`src/i18n/{en,es,fr}.json`** - Traducciones `language_banner.*`
+- **`arquitecture.md`** - §1, §2, §5, §6, §12, §14 (cumplimiento completo)
 
 ---
 
