@@ -73,52 +73,54 @@ type NavSectionConfig = {
 };
 
 // Mega-menu definition for the desktop experience; each section becomes a hoverable column.
+// NOTA: Las rutas ahora se obtienen desde i18n (arquitecture.md §5 - Centralización Obligatoria)
+// Esto permite mantener URLs localizadas por idioma sin hardcodear rutas en el código.
 const navConfig: NavSectionConfig[] = [
   {
     id: 'solutions',
-    href: '/soluciones/',
+    href: translate('routes.solutions.base'),
     items: [
-      { key: 'nocaas', href: '/soluciones/nocaas/' },
-      { key: 'privateCloudService', href: '/soluciones/private-cloud-as-a-service/' },
-      { key: 'privateCloudOnPremise', href: '/soluciones/private-cloud-on-premise/' },
-      { key: 'bcpDraas', href: '/soluciones/bcp-draas/' },
-      { key: 'kubernetesDevops', href: '/soluciones/kubernetes-devops-platform/' },
-      { key: 'secureWorkloadHosting', href: '/soluciones/secure-workload-hosting/' },
-      { key: 'complianceCloud', href: '/soluciones/compliance-cloud/' },
-      { key: 'regulatoryBackupArchival', href: '/soluciones/regulatory-backup-archival/' },
+      { key: 'nocaas', href: translate('routes.solutions.nocaas') },
+      { key: 'privateCloudService', href: translate('routes.solutions.privateCloudService') },
+      { key: 'privateCloudOnPremise', href: translate('routes.solutions.privateCloudOnPremise') },
+      { key: 'bcpDraas', href: translate('routes.solutions.bcpDraas') },
+      { key: 'kubernetesDevops', href: translate('routes.solutions.kubernetesDevops') },
+      { key: 'secureWorkloadHosting', href: translate('routes.solutions.secureWorkloadHosting') },
+      { key: 'complianceCloud', href: translate('routes.solutions.complianceCloud') },
+      { key: 'regulatoryBackupArchival', href: translate('routes.solutions.regulatoryBackupArchival') },
     ],
   },
   {
     id: 'products',
-    href: '/productos/',
+    href: translate('routes.products.base'),
     items: [
-      { key: 'virtualMachines', href: '/productos/virtual-machines/' },
-      { key: 'kubernetesService', href: '/productos/kubernetes-as-a-service/' },
-      { key: 'blockStorage', href: '/productos/block-storage/' },
-      { key: 'objectStorage', href: '/productos/object-storage/' },
-      { key: 'cloudBackup', href: '/productos/cloud-backup/' },
-      { key: 'cloudFirewall', href: '/productos/cloud-firewall/' },
-      { key: 'dns', href: '/productos/dns/' },
-      { key: 'loadBalancer', href: '/productos/load-balancer/' },
+      { key: 'virtualMachines', href: translate('routes.products.virtualMachines') },
+      { key: 'kubernetesService', href: translate('routes.products.kubernetesService') },
+      { key: 'blockStorage', href: translate('routes.products.blockStorage') },
+      { key: 'objectStorage', href: translate('routes.products.objectStorage') },
+      { key: 'cloudBackup', href: translate('routes.products.cloudBackup') },
+      { key: 'cloudFirewall', href: translate('routes.products.cloudFirewall') },
+      { key: 'dns', href: translate('routes.products.dns') },
+      { key: 'loadBalancer', href: translate('routes.products.loadBalancer') },
     ],
   },
   {
     id: 'ai',
-    href: '/IA/',
+    href: translate('routes.ai.base'),
     items: [
-      { key: 'llmHosting', href: '/IA/llm-hosting/' },
-      { key: 'ragBlueprints', href: '/IA/rag-blueprints/' },
-      { key: 'copilotStudio', href: '/IA/copilots/' },
-      { key: 'mlopsMonitoring', href: '/IA/mlops/' },
+      { key: 'llmHosting', href: translate('routes.ai.llmHosting') },
+      { key: 'ragBlueprints', href: translate('routes.ai.ragBlueprints') },
+      { key: 'copilotStudio', href: translate('routes.ai.copilotStudio') },
+      { key: 'mlopsMonitoring', href: translate('routes.ai.mlopsMonitoring') },
     ],
   },
   {
     id: 'services',
-    href: '/servicios/',
+    href: translate('routes.services.base'),
     items: [
-      { key: 'managedIt', href: '/Managed-IT/' },
-      { key: 'cloudConsulting', href: '/servicios/consultoria-cloud/' },
-      { key: 'supportCenter', href: '/soporte/' },
+      { key: 'managedIt', href: translate('routes.services.managedIt') },
+      { key: 'cloudConsulting', href: translate('routes.services.cloudConsulting') },
+      { key: 'supportCenter', href: translate('routes.services.supportCenter') },
     ],
   },
 ];
@@ -146,17 +148,18 @@ type MobileLink = {
 };
 
 // Mobile menu uses a flattened list of top-level destinations plus key utility pages.
+// NOTA: Rutas centralizadas desde i18n para consistencia multi-idioma
 const mobileLinks: MobileLink[] = [
   ...navSections.map((section) => ({
     href: ensureLocalePath(section.href),
     label: section.label,
   })),
   {
-    href: ensureLocalePath('/blog/'),
+    href: ensureLocalePath(translate('routes.common.blog')),
     label: translate('header.nav.mobile.blog'),
   },
   {
-    href: ensureLocalePath('/contacto/'),
+    href: ensureLocalePath(translate('routes.common.contact')),
     label: translate('header.nav.mobile.contact'),
   },
 ];

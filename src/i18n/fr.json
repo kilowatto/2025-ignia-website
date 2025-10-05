@@ -196,6 +196,47 @@
     "description": "Ignia est un fournisseur de solutions technologiques innovantes qui aide les entreprises à prospérer à l'ère numérique.",
     "title": "Ignia - Votre partenaire technologique de confiance"
   },
+  "routes": {
+    "solutions": {
+      "base": "/solutions/",
+      "nocaas": "/solutions/nocaas/",
+      "privateCloudService": "/solutions/private-cloud-as-a-service/",
+      "privateCloudOnPremise": "/solutions/private-cloud-on-premise/",
+      "bcpDraas": "/solutions/bcp-draas/",
+      "kubernetesDevops": "/solutions/kubernetes-devops-platform/",
+      "secureWorkloadHosting": "/solutions/secure-workload-hosting/",
+      "complianceCloud": "/solutions/compliance-cloud/",
+      "regulatoryBackupArchival": "/solutions/regulatory-backup-archival/"
+    },
+    "products": {
+      "base": "/produits/",
+      "virtualMachines": "/produits/virtual-machines/",
+      "kubernetesService": "/produits/kubernetes-as-a-service/",
+      "blockStorage": "/produits/block-storage/",
+      "objectStorage": "/produits/object-storage/",
+      "cloudBackup": "/produits/cloud-backup/",
+      "cloudFirewall": "/produits/cloud-firewall/",
+      "dns": "/produits/dns/",
+      "loadBalancer": "/produits/load-balancer/"
+    },
+    "ai": {
+      "base": "/ia/",
+      "llmHosting": "/ia/llm-hosting/",
+      "ragBlueprints": "/ia/rag-blueprints/",
+      "copilotStudio": "/ia/copilots/",
+      "mlopsMonitoring": "/ia/mlops/"
+    },
+    "services": {
+      "base": "/services/",
+      "managedIt": "/services/managed-it/",
+      "cloudConsulting": "/services/conseil-cloud/",
+      "supportCenter": "/services/support/"
+    },
+    "common": {
+      "blog": "/blog/",
+      "contact": "/contact/"
+    }
+  },
   "404": {
     "title": "Oups! Page non trouvée",
     "subtitle": "Erreur 404",
