@@ -1225,7 +1225,7 @@ Este proyecto está configurado para deploy automático en **Cloudflare Pages** 
 
 - ✅ Cuenta de Cloudflare (gratis)
 - ✅ Repositorio GitHub con el proyecto
-- ✅ Node.js 18.18.0+ (especificado en `.node-version`)
+- ✅ Node.js 20.18.0+ (especificado en `.node-version`)
 - ✅ `@astrojs/cloudflare` adapter instalado
 
 ### 🔧 Configuración del Proyecto
@@ -1235,7 +1235,7 @@ El proyecto ya incluye todos los archivos necesarios:
 | Archivo | Propósito |
 |---------|-----------|
 | `astro.config.mjs` | Adapter de Cloudflare configurado con `mode: 'directory'` |
-| `.node-version` | Especifica Node.js 18.18.0 para Cloudflare Pages |
+| `.node-version` | Especifica Node.js 20.18.0 para Cloudflare Pages |
 | `wrangler.toml` | Configuración opcional de Workers (compatibilidad 2024-10-04) |
 
 **IMPORTANTE:** El adapter `@astrojs/cloudflare` es para **Cloudflare Workers runtime**, NO Node.js. No uses APIs de Node.js como `fs`, `path`, `child_process`.
@@ -1258,7 +1258,7 @@ El proyecto ya incluye todos los archivos necesarios:
 3. **Variables de Entorno (opcional):**
    ```
    Settings → Environment Variables
-   - NODE_VERSION = 18.18.0
+   - NODE_VERSION = 20.18.0
    - PNPM_VERSION = 10 (o tu versión actual)
    ```
 
@@ -1310,6 +1310,17 @@ git push origin main
 4. **Custom Domain:** Configura tu dominio en Settings → Custom domains
 
 ### 🛠️ Troubleshooting
+
+#### Error: "Node.js vX.X.X is not supported by Astro"
+**Causa:** `.node-version` especifica una versión obsoleta de Node.js
+**Solución:**
+```bash
+# Actualizar .node-version a Node.js 20.18.0+
+echo "20.18.0" > .node-version
+git add .node-version
+git commit -m "chore: actualizar Node.js a v20.18.0 para Astro v5+"
+git push origin main
+```
 
 #### Error: "Could not resolve @astrojs/node"
 **Solución:** Este error ocurre si tienes referencias antiguas al adapter Node.js
