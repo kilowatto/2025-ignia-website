@@ -45,7 +45,7 @@ Idiomas: EN (default), ES, FR.
 * **Búsqueda**: /search server‑side; **minisearch** opcional y exclusivo de esa ruta (defer, ≤100KB índice gz).  
 * **Analítica**: server‑side (rutas de salida /out/\*), opcional beacon propio (≤2KB) defer.  
 * **Integración Email**: API **Odoo SaaS** para newsletter/CRM (alta/baja, doble opt‑in, confirmaciones).
-* **Partytown** para el uso de scripts de terceros. Partytown es una librería que permite mover la ejecución de scripts pesados (como Google Tag Manager, Google Analytics, chatbots, etc.) al Web Worker, evitando que bloqueen el hilo principal del navegador. Esto mejora el rendimiento, reduce el impacto en el LCP y mantiene la experiencia del usuario rápida y fluida. Es especialmente útil para el Tag Manager de Google porque permite cargarlo sin afectar el tiempo de carga ni la interactividad, cumpliendo los objetivos de performance y SEO del sitio. 
+* **Partytown** ✅ **IMPLEMENTADO** - Scripts de terceros en Web Worker (Google Tag Manager, Google Analytics 4, chatbots, etc.). Mueve ejecución de scripts pesados fuera del main thread, mejorando LCP y TBT. Configuración: `forward: ['dataLayer.push', 'gtag']` para soporte GTM/GA4. Ver `src/components/Analytics.astro` para implementación y `README.md` para guía de uso completa.
 * **Lazy Loading Estratégico**: `loading="lazy"` SOLO en imágenes below-the-fold (requieren scroll). Imágenes above-the-fold (logo, hero) usan `fetchpriority="high"` sin lazy loading para optimizar LCP. Ver §10 para detalles completos.
 
 ## **4\) Estructura de Directorios (Astro)**

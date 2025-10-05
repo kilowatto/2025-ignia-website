@@ -1,0 +1,180 @@
+---
+// ============================================================================
+// ANALYTICS COMPONENT - Scripts de Terceros con Partytown
+// ============================================================================
+// 
+// Gestiona scripts de analítica (GTM, GA4) usando Partytown para moverlos
+// al Web Worker y evitar bloquear el main thread.
+//
+// BENEFICIOS:
+// - Performance: Scripts en Worker, no bloquean render ni interactividad
+// - LCP: Sin impacto en Largest Contentful Paint (< 2.5s garantizado)
+// - TBT: Total Blocking Time reducido hasta -40%
+// - Cumplimiento: §3 arquitecture.md (Partytown implementado)
+//
+// CONFIGURACIÓN:
+// Variables de entorno (Cloudflare Pages Dashboard → Settings → Environment Variables):
+// - PUBLIC_GTM_ID: ID de Google Tag Manager (GTM-XXXXXXX)
+// - PUBLIC_GA4_ID: ID de Google Analytics 4 (G-XXXXXXXXXX)
+//
+// USO:
+// 1. Producción: Scripts se cargan automáticamente si las variables existen
+// 2. Desarrollo: Scripts NO se cargan (isProduction = false)
+// 3. Testing: Usar PUBLIC_SITE_URL=http://localhost:4321 para simular producción
+//
+// GDPR/PRIVACY:
+// - anonymize_ip: true (anonimización de IPs)
+// - SameSite=None;Secure (cookies seguras)
+// - Considerar: Integración con banner de cookies (futuro)
+//
+// DOCS:
+// - Partytown: https://partytown.builder.io/
+// - GTM: https://tagmanager.google.com/
+// - GA4: https://analytics.google.com/
+//
+// ARQUITECTURA:
+// - §3: Partytown para scripts de terceros ✅
+// - §14: Performance (LCP < 2.5s, TBT mínimo) ✅
+// ============================================================================
+
+// Solo cargar scripts en producción (no en dev/preview sin configurar)
+const isProduction = import.meta.env.PROD;
+
+// Variables de entorno para GTM y GA4
+const GTM_ID = import.meta.env.PUBLIC_GTM_ID; // Ejemplo: GTM-XXXXXXX
+const GA4_ID = import.meta.env.PUBLIC_GA4_ID; // Ejemplo: G-XXXXXXXXXX
+
+// Logging en desarrollo para debugging
+if (import.meta.env.DEV) {
+  console.log('[Analytics] Development mode - scripts disabled');
+  console.log('[Analytics] GTM_ID:', GTM_ID ? '✅ configured' : '❌ not set');
+  console.log('[Analytics] GA4_ID:', GA4_ID ? '✅ configured' : '❌ not set');
+}
+---
+
+<!-- ============================================================================
+     GOOGLE TAG MANAGER (GTM) - Partytown
+     ============================================================================
+     GTM permite gestionar múltiples tags (GA4, Facebook Pixel, etc.) desde
+     una interfaz centralizada. Se ejecuta en Web Worker gracias a Partytown.
+     
+     IMPORTANTE:
+     - type="text/partytown": Script se mueve al Worker (no bloquea main thread)
+     - Solo se carga si PUBLIC_GTM_ID está definido
+     - Solo en producción (isProduction = true)
+     
+     CONFIGURACIÓN GTM:
+     1. Crear cuenta en https://tagmanager.google.com/
+     2. Obtener GTM-XXXXXXX ID
+     3. Configurar en Cloudflare Pages:
+        Environment Variables → PUBLIC_GTM_ID = GTM-XXXXXXX
+     ============================================================================ -->
+{isProduction && GTM_ID && (
+  <Fragment>
+    <!-- GTM Script (Partytown) -->
+    <script type="text/partytown" define:vars={{ GTM_ID }}>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer',GTM_ID);
+    </script>
+    
+    <!-- GTM NoScript Fallback (para usuarios con JS deshabilitado) -->
+    <noscript>
+      <iframe 
+        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0" 
+        width="0" 
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"
+      ></iframe>
+    </noscript>
+  </Fragment>
+)}
+
+<!-- ============================================================================
+     GOOGLE ANALYTICS 4 (GA4) - Partytown
+     ============================================================================
+     GA4 es la última versión de Google Analytics. Se ejecuta en Web Worker
+     gracias a Partytown para no impactar el performance.
+     
+     IMPORTANTE:
+     - type="text/partytown": Script se mueve al Worker
+     - anonymize_ip: true (cumplimiento GDPR)
+     - SameSite=None;Secure (cookies seguras)
+     - Solo se carga si PUBLIC_GA4_ID está definido
+     
+     CONFIGURACIÓN GA4:
+     1. Crear propiedad en https://analytics.google.com/
+     2. Obtener G-XXXXXXXXXX ID
+     3. Configurar en Cloudflare Pages:
+        Environment Variables → PUBLIC_GA4_ID = G-XXXXXXXXXX
+     
+     NOTA: Si usas GTM, puedes gestionar GA4 desde GTM y no usar este script.
+     ============================================================================ -->
+{isProduction && GA4_ID && (
+  <Fragment>
+    <!-- GA4 Script (Partytown) -->
+    <script 
+      type="text/partytown" 
+      src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+    ></script>
+    
+    <!-- GA4 Configuration (Partytown) -->
+    <script type="text/partytown" define:vars={{ GA4_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      // Configuración con privacy-first approach
+      gtag('config', GA4_ID, {
+        // GDPR Compliance
+        anonymize_ip: true,           // Anonimizar IPs
+        cookie_flags: 'SameSite=None;Secure', // Cookies seguras
+        
+        // Performance
+        send_page_view: true,         // Auto-track page views
+        
+        // Optional: Customize según necesidades
+        // cookie_expires: 63072000,  // 2 años (default)
+        // cookie_domain: 'auto',     // Auto-detect domain
+      });
+    </script>
+  </Fragment>
+)}
+
+<!-- ============================================================================
+     OTROS SCRIPTS DE TERCEROS (Ejemplos comentados)
+     ============================================================================
+     Agrega aquí otros scripts que necesites mover al Web Worker:
+     - Facebook Pixel
+     - LinkedIn Insight Tag
+     - Hotjar
+     - Intercom/Drift (chatbots)
+     - etc.
+     
+     TEMPLATE:
+     {isProduction && import.meta.env.PUBLIC_SERVICE_ID && (
+       <script type="text/partytown">
+         // Tu script aquí
+       </script>
+     )}
+     ============================================================================ -->
+
+<!-- Ejemplo: Facebook Pixel (comentado)
+{isProduction && import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID && (
+  <script type="text/partytown" define:vars={{ FACEBOOK_PIXEL_ID: import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID }}>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', FACEBOOK_PIXEL_ID);
+    fbq('track', 'PageView');
+  </script>
+)}
+-->

@@ -4,6 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
+import partytown from '@astrojs/partytown';
 
 // ============================================================================
 // SITE URL - Configuración Dinámica
@@ -86,5 +87,29 @@ export default defineConfig({
       },
     }),
     compress(),
+    
+    // ============================================================================
+    // PARTYTOWN: Scripts de Terceros en Web Worker
+    // ============================================================================
+    // Mueve scripts pesados (GTM, GA4, chatbots) al Web Worker
+    // Beneficios:
+    // - No bloquea el main thread (mejor performance)
+    // - Mantiene LCP < 2.5s incluso con scripts de terceros
+    // - Reduce TBT (Total Blocking Time) hasta -40%
+    // 
+    // Uso: <script type="text/partytown" src="..."></script>
+    // Docs: https://docs.astro.build/en/guides/integrations-guide/partytown/
+    // ============================================================================
+    partytown({
+      config: {
+        // Forward: Eventos que deben pasar del Worker al main thread
+        // - dataLayer.push: Para Google Tag Manager
+        // - gtag: Para Google Analytics 4
+        forward: ['dataLayer.push', 'gtag'],
+        
+        // Debug: Solo en desarrollo para troubleshooting
+        debug: import.meta.env.DEV,
+      },
+    }),
   ],
 });

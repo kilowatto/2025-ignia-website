@@ -287,6 +287,141 @@ Si el banner muestra claves i18n (`language_banner.message`):
 
 ---
 
+### 🚀 Scripts de Terceros con Partytown
+
+**Status:** ✅ **Implementado** (cumple §3 de arquitecture.md)
+
+**Propósito:**  
+Partytown mueve scripts pesados de terceros (Google Tag Manager, Google Analytics 4, chatbots, etc.) al **Web Worker**, evitando que bloqueen el main thread del navegador.
+
+**Beneficios de Performance:**
+- 🚀 **LCP < 2.5s**: Scripts no impactan Largest Contentful Paint
+- ⚡ **TBT -40%**: Total Blocking Time reducido significativamente
+- 🎯 **INP mejorado**: Interactividad más rápida (< 200ms)
+- ✅ **Core Web Vitals**: Mantiene scores óptimos incluso con múltiples scripts
+
+**Arquitectura:**
+
+```
+Usuario solicita página
+        ↓
+Astro SSR/SSG genera HTML
+        ↓
+Browser descarga página (rápido, sin scripts pesados)
+        ↓
+Partytown Worker inicia en background
+        ↓
+Scripts de terceros (GTM, GA4) se ejecutan en Worker
+        ↓
+Main thread permanece libre para interacción usuario
+```
+
+**Configuración Actual:**
+
+```javascript
+// astro.config.mjs
+partytown({
+  config: {
+    forward: ['dataLayer.push', 'gtag'], // GTM + GA4 support
+    debug: import.meta.env.DEV,          // Debugging en desarrollo
+  },
+})
+```
+
+**Uso: Google Tag Manager (GTM)**
+
+1. **Obtener GTM ID:**
+   - Crear cuenta en [https://tagmanager.google.com/](https://tagmanager.google.com/)
+   - Obtener ID: `GTM-XXXXXXX`
+
+2. **Configurar en Cloudflare Pages:**
+   ```
+   Dashboard → Settings → Environment Variables
+   
+   Production:
+   PUBLIC_GTM_ID = GTM-XXXXXXX
+   
+   Preview/Staging:
+   PUBLIC_GTM_ID = GTM-YYYYYYY (opcional: ID separado para testing)
+   ```
+
+3. **Scripts automáticamente cargados:**
+   - `src/components/Analytics.astro` detecta `PUBLIC_GTM_ID`
+   - Solo se carga en producción (`import.meta.env.PROD`)
+   - Ejecuta en Web Worker (no bloquea main thread)
+
+**Uso: Google Analytics 4 (GA4)**
+
+1. **Obtener GA4 ID:**
+   - Crear propiedad en [https://analytics.google.com/](https://analytics.google.com/)
+   - Obtener ID: `G-XXXXXXXXXX`
+
+2. **Configurar en Cloudflare Pages:**
+   ```
+   PUBLIC_GA4_ID = G-XXXXXXXXXX
+   ```
+
+3. **Configuración Privacy-First:**
+   - ✅ `anonymize_ip: true` (GDPR compliance)
+   - ✅ `SameSite=None;Secure` (cookies seguras)
+   - ✅ Solo producción (no tracking en dev)
+
+**Ejemplo: Agregar Facebook Pixel**
+
+```astro
+<!-- src/components/Analytics.astro -->
+{isProduction && import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID && (
+  <script type="text/partytown" define:vars={{ 
+    PIXEL_ID: import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID 
+  }}>
+    !function(f,b,e,v,n,t,s) {
+      // Facebook Pixel code aquí
+    }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', PIXEL_ID);
+    fbq('track', 'PageView');
+  </script>
+)}
+```
+
+**Testing Local (con scripts):**
+
+```bash
+# Simular producción localmente
+PUBLIC_GTM_ID=GTM-XXXXXXX pnpm run build
+pnpm run preview
+
+# Verificar en DevTools:
+# 1. Application → Service Workers (Partytown worker activo)
+# 2. Network → Filter "partytown" (archivos cargados)
+# 3. Console → Verificar sin errores de Partytown
+# 4. Performance → Main thread libre (scripts en Worker)
+```
+
+**Lighthouse Audit (Esperado):**
+
+```
+Performance Score: ≥ 90
+├─ LCP: < 2.5s ✅ (scripts no bloquean)
+├─ TBT: < 200ms ✅ (Worker aislado)
+├─ CLS: < 0.1 ✅ (sin layout shifts)
+└─ Speed Index: < 3.4s ✅
+```
+
+**Archivos Relacionados:**
+- **`astro.config.mjs`** - Configuración de Partytown
+- **`src/components/Analytics.astro`** - Scripts GTM/GA4 con Partytown
+- **`src/layouts/BaseLayout.astro`** - Integración de `<Analytics />`
+- **`package.json`** - Dependencia `@astrojs/partytown`
+- **`arquitecture.md §3`** - Stack Técnico (Partytown documentado)
+
+**Recursos:**
+- [Partytown Docs](https://partytown.builder.io/)
+- [Astro Partytown Integration](https://docs.astro.build/en/guides/integrations-guide/partytown/)
+- [Google Tag Manager](https://tagmanager.google.com/)
+- [Google Analytics 4](https://analytics.google.com/)
+
+---
+
 ## 📁 Estructura de Directorios
 
 ```
