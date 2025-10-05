@@ -19,22 +19,22 @@
  * @see src/scripts/header-progressive.ts - Script diferido para UX enhancements
  */
 
-// LangSelect renders the language switcher used in both desktop and mobile menus.
+// LangSelect: Selector de idioma usado en menús desktop y mobile
 import LangSelect from "./langSelect.astro";
-// SearchBox provides the command-palette style search modal.
+// SearchBox: Proporciona modal de búsqueda estilo command-palette
 import SearchBox from "./SearchBox.astro";
-// Import translation function from astro-i18n
+// Función de traducción de astro-i18n
 import { t } from 'astro-i18n';
 
-// Normalize the locale coming from Astro so every helper can rely on an allowed value.
-// Split on '-' to handle regional variants (es-MX → es, fr-CA → fr)
+// Normalizar el locale de Astro para que todos los helpers usen un valor consistente.
+// Split en '-' para manejar variantes regionales (es-MX → es, fr-CA → fr)
 const rawLocale = Astro.currentLocale || "es";
 const locale = rawLocale.split("-")[0];
 
-// Helper function to translate with locale
+// Función helper para traducir con locale específico
 const translate = (key: string) => t(key, undefined, { locale });
 
-// Prefix internal links with the current locale (except for English which lives at the root).
+// Prefijo de rutas internas según locale (inglés sin prefijo, otros con /{locale}/)
 const ensureLocalePath = (href: string) => {
   if (!href.startsWith("/")) return href;
   const trimmed = href.replace(/^\/+/u, "");
@@ -69,8 +69,8 @@ type NavSectionConfig = {
   items: NavItemConfig[];
 };
 
-// Mega-menu definition for the desktop experience; each section becomes a hoverable column.
-// NOTA: Las rutas ahora se obtienen desde i18n (arquitecture.md §5 - Centralización Obligatoria)
+// Definición del mega-menú para experiencia desktop; cada sección es una columna hoverable.
+// NOTA: Las rutas se obtienen desde i18n (arquitecture.md §5 - Centralización Obligatoria)
 // Esto permite mantener URLs localizadas por idioma sin hardcodear rutas en el código.
 const navConfig: NavSectionConfig[] = [
   {
@@ -134,7 +134,7 @@ const navSections: NavSection[] = navConfig.map((section) => ({
   })),
 }));
 
-// ARIA labels retrieved from translations.
+// ARIA labels obtenidos desde traducciones i18n
 const navAriaLabel = translate('header.nav.aria.desktop');
 const mobileAriaLabel = translate('header.nav.aria.mobile');
 const toggleMenuLabel = translate('header.nav.toggle');
@@ -144,7 +144,7 @@ type MobileLink = {
   label: string;
 };
 
-// Mobile menu uses a flattened list of top-level destinations plus key utility pages.
+// Menú mobile usa lista plana de destinos principales más páginas clave de utilidad.
 // NOTA: Rutas centralizadas desde i18n para consistencia multi-idioma
 const mobileLinks: MobileLink[] = [
   ...navSections.map((section) => ({
@@ -157,7 +157,7 @@ const mobileLinks: MobileLink[] = [
   },
 ];
 
-// Helper used by the template when linking into nested locale-specific pages.
+// Helper usado por el template al crear enlaces a páginas específicas de locale
 const localeHref = (href: string) => ensureLocalePath(href);
 const logoAlt = translate('header.logo_alt');
 const socialAriaLabel = translate('header.nav.aria.social');
@@ -167,15 +167,15 @@ const socialLabels = {
 };
 ---
 
-<!-- Header: main site navigation with locale-aware links; Tailwind utilities handle spacing, blur, and shadows -->
+<!-- Header: navegación principal del sitio con enlaces localizados; Tailwind gestiona espaciado, blur y sombras -->
  <!-- el header tiene sombra color #f36b1c -->
 <header
   class="relative z-50 w-full border-b border-slate-100 bg-white/85 shadow-md shadow-[#f36b1c] backdrop-blur supports-[backdrop-filter]:bg-white/70"
 >
-  <!-- Wrapper: aligns logo, desktop navigation, and utility actions -->
+  <!-- Wrapper: alinea logo, navegación desktop y acciones de utilidad -->
   <div class="mx-auto flex max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between gap-4 lg:gap-6">
-      <!-- Logo lockup: routes to locale-aware home page -->
+      <!-- Logo del sitio: enlace a home page con locale detectado -->
       <a
         href={locale === "en" ? "/" : `/${locale}/`}
         class="block shrink-0"
@@ -224,7 +224,7 @@ const socialLabels = {
                       />
                     </svg>
                   </button>
-                  <!-- Mega panel: se muestra con CSS :hover y :focus-within del li padre -->
+                  <!-- Panel mega: se muestra con CSS :hover y :focus-within del li padre -->
                   <div class="nav-ignia__panel">
                     <div class="nav-ignia__summary">
                       <h3 class="nav-ignia__summary-title">
@@ -306,7 +306,7 @@ const socialLabels = {
             </svg>
           </a>
         </div>
-        <!-- Mobile toggle button: reveals compact menu and utilities on smaller screens -->
+        <!-- Botón toggle mobile: muestra menú compacto y utilidades en pantallas pequeñas -->
         <button
           id="mobile-menu-button"
           type="button"
@@ -345,9 +345,9 @@ const socialLabels = {
       </div>
     </div>
   </div>
-  <!-- Mobile flyout menu: toggled via hamburger button -->
+  <!-- Menú flyout mobile: alternado mediante botón hamburguesa -->
   <div id="mobile-menu" class="nav-ignia__mobile-menu" hidden>
-    <!-- Mobile primary navigation links -->
+    <!-- Enlaces de navegación primarios mobile -->
     <nav aria-label={mobileAriaLabel}>
       <ul class="nav-ignia__mobile-list">
         {

@@ -1,4 +1,41 @@
 ---
+/**
+ * langSelect.astro
+ * 
+ * SELECTOR DE IDIOMA MULTI-PLATAFORMA
+ * Componente que permite cambiar entre idiomas soportados (EN/ES/FR) con interfaz
+ * adaptativa según el dispositivo (select en mobile, dropdown en desktop).
+ * 
+ * FUNCIONALIDAD:
+ * - Mobile: <select> nativo con banderas como background (mejor UX táctil)
+ * - Desktop: Dropdown custom con hover states y animaciones
+ * - Detección automática del idioma actual (Astro.currentLocale)
+ * - URLs generadas automáticamente preservando path actual
+ * - Banderas SVG optimizadas desde /public/icons/flags/
+ * 
+ * COMPORTAMIENTO:
+ * - Cambio de idioma: Navega a la URL equivalente en el nuevo idioma
+ * - Path preservation: /es/solutions → /fr/solutions (mantiene ruta)
+ * - Fallback a EN: Si locale no es válido, usa inglés por defecto
+ * - Progressive enhancement: Funciona sin JS (enlaces directos)
+ * 
+ * CUMPLIMIENTO ARQUITECTÓNICO:
+ * - §2: JS mínimo (solo para dropdown UX, select funciona sin JS)
+ * - §5: i18n centralizada (traducciones desde JSON)
+ * - §6: hreflang implementado (via generateLanguageUrl)
+ * - §12: WCAG 2.2 AA (labels, sr-only, keyboard navigation)
+ * - §14: Performance (banderas lazy-loaded, sprites SVG)
+ * 
+ * ESTRUCTURA:
+ * - Mobile (< sm): Select nativo con bandera fija y cambio directo
+ * - Desktop (≥ sm): Dropdown con hover, banderas inline, animaciones
+ * 
+ * @see src/utils/languageDetection.ts - Utilidades de URLs y nombres
+ * @see public/icons/flags/ - Banderas SVG optimizadas (en.svg, es.svg, fr.svg)
+ * @see src/i18n/{en,es,fr}.json - Traducciones del selector
+ * @see arquitecture.md §6 - Ruteo y SEO Técnico (i18n)
+ */
+
 // Importamos las utilidades de detección
 import {
   languageNames,

@@ -1,0 +1,383 @@
+/**
+ * header.css
+ * 
+ * Estilos CSS-only para el Header de Ignia Cloud.
+ * Cumplimiento arquitecture.md §2: "JS mínimo o nulo; si algo se puede con CSS/HTML, se implementa así"
+ * 
+ * Funcionalidad implementada sin JavaScript:
+ * - Mega-menu desktop con :hover y :focus-within
+ * - Mobile menu nativo con <details> y <summary>
+ * - Transiciones y animaciones puras CSS
+ * - Magic line simplificada con ::after pseudo-element
+ * 
+ * @see src/components/Header.astro - Componente que usa estos estilos
+ * @see arquitecture.md §2, §14 - Principios de Performance y JS mínimo
+ */
+
+/* ============================================
+   DESKTOP MEGA-MENU (≥1280px)
+   ============================================ */
+
+/* Contenedor principal de navegación desktop */
+.nav-ignia {
+  position: relative;
+}
+
+/* Lista de triggers del mega-menu */
+.nav-ignia__list {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+/* Item individual del menú */
+.nav-ignia__item {
+  position: relative;
+}
+
+/* Botón/trigger del mega-menu */
+.nav-ignia__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #334155; /* slate-700 */
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Icono del trigger (chevron down) */
+.nav-ignia__trigger-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.2s ease;
+}
+
+/* Estados hover y focus del trigger */
+.nav-ignia__trigger:hover,
+.nav-ignia__trigger:focus-visible {
+  color: #f97316; /* orange-500 */
+  background-color: #fff7ed; /* orange-50 */
+  outline: none;
+}
+
+/* Rotar icono cuando el menú está abierto (usando :focus-within en el item) */
+.nav-ignia__item:hover .nav-ignia__trigger-icon,
+.nav-ignia__item:focus-within .nav-ignia__trigger-icon {
+  transform: rotate(180deg);
+}
+
+/* Panel del mega-menu (oculto por defecto) */
+.nav-ignia__panel {
+  position: absolute;
+  top: calc(100% + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 48rem; /* 768px */
+  background: white;
+  border: 1px solid #e2e8f0; /* slate-200 */
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  display: none;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Mostrar panel en hover o focus-within del item padre */
+.nav-ignia__item:hover .nav-ignia__panel,
+.nav-ignia__item:focus-within .nav-ignia__panel {
+  display: grid;
+  opacity: 1;
+}
+
+/* Bloque de resumen (lado izquierdo del panel) */
+.nav-ignia__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 1.5rem;
+  border-right: 1px solid #e2e8f0; /* slate-200 */
+}
+
+.nav-ignia__summary-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a; /* slate-900 */
+  margin: 0;
+}
+
+.nav-ignia__summary-text {
+  font-size: 0.875rem;
+  color: #64748b; /* slate-500 */
+  line-height: 1.5;
+  margin: 0;
+}
+
+.nav-ignia__summary-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #f97316; /* orange-500 */
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-top: auto;
+}
+
+.nav-ignia__summary-link:hover,
+.nav-ignia__summary-link:focus-visible {
+  color: #ea580c; /* orange-600 */
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Lista de items del panel (lado derecho) */
+.nav-ignia__panel-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-ignia__panel-item {
+  display: flex;
+}
+
+/* Links dentro del panel */
+.nav-ignia__panel-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.nav-ignia__panel-link:hover,
+.nav-ignia__panel-link:focus-visible {
+  background-color: #f8fafc; /* slate-50 */
+  outline: none;
+}
+
+.nav-ignia__panel-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a; /* slate-900 */
+}
+
+.nav-ignia__panel-description {
+  font-size: 0.8125rem;
+  color: #64748b; /* slate-500 */
+  line-height: 1.4;
+}
+
+/* Magic line simplificada (decorativa, usando ::after) */
+.nav-ignia__magic-line {
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(to right, #f97316, #ea580c); /* orange gradient */
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  width: 0;
+}
+
+/* Mostrar magic line en hover del trigger */
+.nav-ignia__item:hover .nav-ignia__trigger::after,
+.nav-ignia__item:focus-within .nav-ignia__trigger::after {
+  content: '';
+  position: absolute;
+  bottom: -0.25rem;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background: linear-gradient(to right, #f97316, #ea580c);
+  border-radius: 2px;
+}
+
+/* ============================================
+   MOBILE MENU (<1280px)
+   ============================================ */
+
+/* Menú mobile usando <details> y <summary> nativos */
+.nav-ignia__mobile-menu {
+  background: white;
+  border-top: 1px solid #e2e8f0; /* slate-200 */
+  padding: 1rem;
+  margin-top: 0;
+}
+
+/* Lista de links mobile */
+.nav-ignia__mobile-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Links individuales en mobile */
+.nav-ignia__mobile-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #334155; /* slate-700 */
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-ignia__mobile-link:hover,
+.nav-ignia__mobile-link:focus-visible {
+  background-color: #fff7ed; /* orange-50 */
+  color: #f97316; /* orange-500 */
+  outline: none;
+}
+
+/* Sección de búsqueda mobile */
+.nav-ignia__mobile-search {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0; /* slate-200 */
+}
+
+/* Selector de idioma mobile */
+.nav-ignia__mobile-lang {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0; /* slate-200 */
+}
+
+/* Redes sociales mobile */
+.nav-ignia__mobile-social {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* ============================================
+   REDES SOCIALES (Compartido Desktop/Mobile)
+   ============================================ */
+
+.nav-ignia__social {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-ignia__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-ignia__social-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* LinkedIn */
+.nav-ignia__social-link--linkedin {
+  background-color: #0a66c2;
+  color: white;
+}
+
+.nav-ignia__social-link--linkedin:hover,
+.nav-ignia__social-link--linkedin:focus-visible {
+  background-color: #004182;
+  transform: scale(1.1);
+  outline: 2px solid #0a66c2;
+  outline-offset: 2px;
+}
+
+/* WhatsApp */
+.nav-ignia__social-link--whatsapp {
+  background-color: #25d366;
+  color: white;
+}
+
+.nav-ignia__social-link--whatsapp:hover,
+.nav-ignia__social-link--whatsapp:focus-visible {
+  background-color: #1da851;
+  transform: scale(1.1);
+  outline: 2px solid #25d366;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Skip link (oculto hasta focus) */
+.nav-ignia__skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1rem;
+  background: #f97316; /* orange-500 */
+  color: white;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.nav-ignia__skip:focus {
+  left: 1rem;
+  top: 1rem;
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Ocultar magic line en mobile y tablet */
+@media (max-width: 1279px) {
+  .nav-ignia__magic-line {
+    display: none;
+  }
+}
