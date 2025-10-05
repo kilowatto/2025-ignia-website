@@ -49,19 +49,19 @@ import type { AstroGlobal } from 'astro';
  * ```
  */
 export function getSiteUrl(Astro: AstroGlobal): string {
-  // Prioridad 1: Usar Astro.site de config (incluye PUBLIC_SITE_URL)
-  if (Astro.site) {
-    return Astro.site.toString().replace(/\/$/, '');
-  }
-  
-  // Prioridad 2: Detectar del request actual (SSR)
-  // Funciona automáticamente en cualquier dominio
-  if (Astro.url && Astro.url.origin) {
-    return Astro.url.origin;
-  }
-  
-  // Prioridad 3: Fallback a production (solo si fallan las anteriores)
-  return 'https://ignia.cloud';
+    // Prioridad 1: Usar Astro.site de config (incluye PUBLIC_SITE_URL)
+    if (Astro.site) {
+        return Astro.site.toString().replace(/\/$/, '');
+    }
+
+    // Prioridad 2: Detectar del request actual (SSR)
+    // Funciona automáticamente en cualquier dominio
+    if (Astro.url && Astro.url.origin) {
+        return Astro.url.origin;
+    }
+
+    // Prioridad 3: Fallback a production (solo si fallan las anteriores)
+    return 'https://ignia.cloud';
 }
 
 /**
@@ -79,13 +79,13 @@ export function getSiteUrl(Astro: AstroGlobal): string {
  * ```
  */
 export function getSiteHost(Astro: AstroGlobal): string {
-  const siteUrl = getSiteUrl(Astro);
-  
-  try {
-    const url = new URL(siteUrl);
-    return url.host;
-  } catch (e) {
-    // Fallback si la URL es inválida
-    return 'ignia.cloud';
-  }
+    const siteUrl = getSiteUrl(Astro);
+
+    try {
+        const url = new URL(siteUrl);
+        return url.host;
+    } catch (e) {
+        // Fallback si la URL es inválida
+        return 'ignia.cloud';
+    }
 }
