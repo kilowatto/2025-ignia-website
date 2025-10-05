@@ -5,13 +5,34 @@ import { useAstroI18n } from 'astro-i18n';
 import config from '../../astro-i18n.config.mjs';
 
 /**
- * Inicialización de astro-i18n middleware
- * IMPORTANTE: Se inicializa UNA SOLA VEZ al cargar el módulo
- * para evitar el error "Cannot initialize astro-i18n, it already has been initialized"
+ * Inicialización de astro-i18n middleware con caché global
  * 
- * Esta instancia se reutiliza en cada request para procesar las rutas con i18n
+ * PROBLEMA: En modo desarrollo (HMR), Vite puede recargar este módulo múltiples veces,
+ * causando el error "Cannot initialize astro-i18n, it already has been initialized"
+ * 
+ * SOLUCIÓN: Usar caché global (globalThis) para almacenar la instancia inicializada
+ * y reutilizarla en recargas del módulo en dev mode.
+ * 
+ * Esta técnica es segura porque:
+ * - En producción: el módulo se carga una sola vez
+ * - En desarrollo: globalThis persiste entre hot reloads de Vite
+ * 
+ * @see https://github.com/alexandre-fernandez/astro-i18n/issues
  */
-const astroI18nMiddleware = useAstroI18n(config);
+
+// Declarar tipo global para TypeScript
+declare global {
+  // eslint-disable-next-line no-var
+  var __astroI18nMiddleware: ReturnType<typeof useAstroI18n> | undefined;
+}
+
+// Crear o reutilizar la instancia de astro-i18n
+const astroI18nMiddleware = globalThis.__astroI18nMiddleware ?? useAstroI18n(config);
+
+// Guardar en caché global para reutilizar en hot reloads
+if (!globalThis.__astroI18nMiddleware) {
+  globalThis.__astroI18nMiddleware = astroI18nMiddleware;
+}
 
 /**
  * Middleware para excluir rutas específicas del procesamiento i18n
