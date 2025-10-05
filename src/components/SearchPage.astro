@@ -1,101 +1,117 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { t } from 'astro-i18n';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { t } from "astro-i18n";
 import { getSearchDataByLocale } from "../data/searchData";
 
 export interface Props {
-  locale?: 'en' | 'es' | 'fr';
+  locale?: "en" | "es" | "fr";
 }
 
 const url = Astro.url;
-const initialQuery = url.searchParams.get('q') ?? '';
-const initialCategory = url.searchParams.get('category') ?? '';
-const initialType = url.searchParams.get('type') ?? '';
-const initialPage = parseInt(url.searchParams.get('page') ?? '1');
+const initialQuery = url.searchParams.get("q") ?? "";
+const initialCategory = url.searchParams.get("category") ?? "";
+const initialType = url.searchParams.get("type") ?? "";
+const initialPage = parseInt(url.searchParams.get("page") ?? "1");
 
-const supportedLocales = ['en', 'es', 'fr'] as const;
-const requestedLocale = (Astro.locals?.locale ?? (Astro.props as Props).locale ?? 'en') as string;
+const supportedLocales = ["en", "es", "fr"] as const;
+// Obtener locale usando API nativa de Astro 5.x
+// currentLocale retorna el idioma actual del contexto i18n (ej: "en", "es-MX", "fr")
+const requestedLocale = (Astro.currentLocale?.split("-")[0] ??
+  (Astro.props as Props).locale ??
+  "en") as string;
 const locale = (supportedLocales as readonly string[]).includes(requestedLocale)
-  ? (requestedLocale as 'en' | 'es' | 'fr')
-  : 'en';
+  ? (requestedLocale as "en" | "es" | "fr")
+  : "en";
 
 const translate = (key: string) => t(key, undefined, { locale });
 
-const pageType = 'SearchResultsPage';
+const pageType = "SearchResultsPage";
 const layoutTitle = initialQuery
-  ? `${translate('search.results_for')} "${initialQuery}" - Ignia`
-  : `${translate('search.results_title')} - Ignia`;
-const layoutDescription = translate('search.meta_description');
-const searchPath = locale === 'en' ? '/search' : `/${locale}/search`;
+  ? `${translate("search.results_for")} "${initialQuery}" - Ignia`
+  : `${translate("search.results_title")} - Ignia`;
+const layoutDescription = translate("search.meta_description");
+const searchPath = locale === "en" ? "/search" : `/${locale}/search`;
 
 const filters = {
   category: {
-    all: translate('search.filters.category.all'),
-    service: translate('search.filters.category.service'),
-    product: translate('search.filters.category.product'),
-    article: translate('search.filters.category.article'),
+    all: translate("search.filters.category.all"),
+    service: translate("search.filters.category.service"),
+    product: translate("search.filters.category.product"),
+    article: translate("search.filters.category.article"),
   },
   type: {
-    all: translate('search.filters.type.all'),
+    all: translate("search.filters.type.all"),
   },
-  clear: translate('search.filters.clear'),
+  clear: translate("search.filters.clear"),
   sort: {
-    label: translate('search.filters.sort.label'),
+    label: translate("search.filters.sort.label"),
     options: {
-      relevance: translate('search.filters.sort.options.relevance'),
-      title: translate('search.filters.sort.options.title'),
-      category: translate('search.filters.sort.options.category'),
+      relevance: translate("search.filters.sort.options.relevance"),
+      title: translate("search.filters.sort.options.title"),
+      category: translate("search.filters.sort.options.category"),
     },
   },
 };
 
 const statsLabels = {
-  title: translate('search.stats.title'),
-  total: translate('search.stats.total'),
-  time: translate('search.stats.time'),
-  page: translate('search.stats.page'),
+  title: translate("search.stats.title"),
+  total: translate("search.stats.total"),
+  time: translate("search.stats.time"),
+  page: translate("search.stats.page"),
 };
 
 const i18nPayload = {
   locale,
   filters,
   stats: statsLabels,
-  relatedTitle: translate('search.related_title'),
-  loading: translate('search.loading'),
-  empty: translate('search.empty'),
+  relatedTitle: translate("search.related_title"),
+  loading: translate("search.loading"),
+  empty: translate("search.empty"),
   noResults: {
-    title: translate('search.no_results.title'),
-    message: translate('search.no_results.message'),
-    tipsIntro: translate('search.no_results.tips.intro'),
+    title: translate("search.no_results.title"),
+    message: translate("search.no_results.message"),
+    tipsIntro: translate("search.no_results.tips.intro"),
     tipsItems: {
-      general: translate('search.no_results.tips.items.general'),
-      spelling: translate('search.no_results.tips.items.spelling'),
-      combinations: translate('search.no_results.tips.items.combinations'),
-      filters: translate('search.no_results.tips.items.filters'),
+      general: translate("search.no_results.tips.items.general"),
+      spelling: translate("search.no_results.tips.items.spelling"),
+      combinations: translate("search.no_results.tips.items.combinations"),
+      filters: translate("search.no_results.tips.items.filters"),
     },
   },
   error: {
-    title: translate('search.error_title'),
-    message: translate('search.error_message'),
+    title: translate("search.error_title"),
+    message: translate("search.error_message"),
   },
-  resultsDescription: translate('search.results_description'),
+  resultsDescription: translate("search.results_description"),
   pagination: {
-    previous: translate('search.pagination.previous'),
-    next: translate('search.pagination.next'),
+    previous: translate("search.pagination.previous"),
+    next: translate("search.pagination.next"),
   },
-  suggestionsLabel: translate('search.suggestions'),
-  resultsTitle: translate('search.results_title'),
-  resultsFor: translate('search.results_for'),
+  suggestionsLabel: translate("search.suggestions"),
+  resultsTitle: translate("search.results_title"),
+  resultsFor: translate("search.results_for"),
 };
 
 const searchDataLocale = getSearchDataByLocale(locale);
 const i18nJson = JSON.stringify(i18nPayload);
+
+// Datos estructurados para SEO (arquitecture.md §9)
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    name: layoutTitle,
+    description: layoutDescription,
+    url: `https://ignia.cloud${searchPath}${initialQuery ? `?q=${encodeURIComponent(initialQuery)}` : ""}`,
+  },
+];
 ---
 
-<Layout
+<BaseLayout
   title={layoutTitle}
-  Content_Description={layoutDescription}
+  description={layoutDescription}
   pageType={pageType}
+  structuredData={structuredData}
 >
   <div class="max-w-6xl mx-auto px-4 py-8">
     <!-- Header de búsqueda -->
@@ -312,7 +328,7 @@ const i18nJson = JSON.stringify(i18nPayload);
       </main>
     </div>
   </div>
-</Layout>
+</BaseLayout>
 
 <script>
   import MiniSearch from "minisearch";
@@ -689,7 +705,7 @@ const i18nJson = JSON.stringify(i18nPayload);
     function updateURL() {
       const params = new URLSearchParams();
       if (lastQuery) params.set("q", lastQuery);
-      if (lastFilters.initialCategory) params.set("category", lastFilters.initialCategory);
+      if (lastFilters.category) params.set("category", lastFilters.category);
       if (lastFilters.type) params.set("type", lastFilters.type);
       if (currentPage > 1) params.set("page", currentPage.toString());
 

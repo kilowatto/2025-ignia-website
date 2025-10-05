@@ -1,3 +1,18 @@
+/* 
+ * global.css - Estilos globales de Ignia Cloud
+ * 
+ * Incluye:
+ * - Directivas de Tailwind CSS (@tailwind)
+ * - Variables CSS personalizadas (@layer base)
+ * - Estilos del Header/Navegación (@layer components)
+ * - Componentes globales (search modal, etc.)
+ * 
+ * Cumplimiento arquitecture.md §2: "JS mínimo o nulo; si algo se puede con CSS/HTML, se implementa así"
+ * 
+ * @see src/components/Header.astro - Componente que usa estos estilos de navegación
+ * @see arquitecture.md §2, §14 - Principios de Performance y JS mínimo
+ */
+
 /* Directivas de Tailwind CSS - procesadas por @astrojs/tailwind */
 /* postcss-custom-syntax: @tailwind es una directiva válida de Tailwind CSS */
 @tailwind base;
@@ -101,7 +116,7 @@
   }
 
   .nav-ignia__item {
-    position: static;
+    position: relative;
   }
 
   .nav-ignia__trigger {
@@ -203,8 +218,8 @@
   }
 
   .nav-ignia__panel {
-    position: absolute;
-    top: calc(100% + var(--space-3, 0.75rem));
+    position: fixed;
+    top: calc(var(--header-height, 5rem) - 1px);
     left: 50%;
     transform: translateX(-50%);
     width: min(70rem, calc(100vw - 4rem));
@@ -213,12 +228,37 @@
     border: 1px solid var(--color-border-muted, #e2e8f0);
     box-shadow: 0 28px 64px rgba(15, 23, 42, 0.18);
     padding: var(--space-6, 1.5rem) var(--space-7, 1.75rem);
-    display: grid;
+    display: none;
     gap: var(--space-6, 1.5rem);
     grid-template-columns: 22rem 1fr;
     align-items: start;
     min-height: 22rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
     z-index: 60;
+  }
+
+  /* Puente invisible para mantener hover al mover cursor hacia el panel */
+  .nav-ignia__panel::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+  }
+
+  /* Mostrar panel en hover o focus-within del item padre */
+  .nav-ignia__item:hover .nav-ignia__panel,
+  .nav-ignia__item:focus-within .nav-ignia__panel {
+    display: grid;
+    opacity: 1;
+  }
+
+  /* Rotar icono chevron cuando el menú está abierto */
+  .nav-ignia__item:hover .nav-ignia__trigger-icon,
+  .nav-ignia__item:focus-within .nav-ignia__trigger-icon {
+    transform: rotate(180deg);
   }
 
   .nav-ignia__panel[hidden] {

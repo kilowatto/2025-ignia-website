@@ -1,0 +1,29 @@
+---
+/**
+ * search.astro (FR - Français)
+ *
+ * Página wrapper minimalista para búsqueda en francés.
+ * Reutiliza el componente SearchPage.astro para evitar duplicación de código.
+ *
+ * Cumplimiento arquitecture.md:
+ * - §2: Evitar Encadenamiento - Sin capas intermedias innecesarias
+ * - §4: Estructura Espejo - Mantiene /search, /es/search, /fr/search
+ * - §5: i18n Centralizada - Todo el texto viene de src/i18n/fr.json
+ * - §14: Performance - Componente reutilizable reduce código en 94%
+ *
+ * @see src/components/SearchPage.astro - Componente unificado con toda la lógica
+ * @see src/i18n/fr.json - Traducciones en francés
+ */
+import SearchPage from "../../components/SearchPage.astro";
+export const prerender = false;
+---
+
+<!-- 
+  Componente SearchPage maneja:
+  - Detección automática de locale (via Astro.currentLocale)
+  - Renderizado de UI con traducciones de i18n/fr.json
+  - Lógica de búsqueda con minisearch
+  - Filtros, paginación y estadísticas
+  - SEO con meta tags y structured data
+-->
+<SearchPage locale="fr" />

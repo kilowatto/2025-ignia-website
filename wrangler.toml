@@ -1,0 +1,71 @@
+# ============================================================================
+# WRANGLER.TOML - Cloudflare Workers/Pages Configuration
+# ============================================================================
+# Archivo de configuración para Cloudflare Workers y Pages
+# Define el comportamiento del runtime de Cloudflare y compatibilidad
+#
+# IMPORTANTE: Este archivo es OPCIONAL para Cloudflare Pages
+# Cloudflare Pages detecta automáticamente el proyecto Astro.
+# Solo necesario si requieres configuración avanzada.
+#
+# Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+# ============================================================================
+
+name = "ignia-website"
+compatibility_date = "2024-10-04"
+
+# ============================================================================
+# COMPATIBILITY DATE
+# ============================================================================
+# Define qué versión de las APIs de Cloudflare Workers usar
+# Fecha en formato YYYY-MM-DD
+# - Cloudflare mejora continuamente el runtime
+# - Esta fecha "congela" el comportamiento para evitar breaking changes
+# - Actualiza periódicamente para obtener mejoras de performance
+#
+# Latest: https://developers.cloudflare.com/workers/configuration/compatibility-dates/
+# ============================================================================
+
+# ============================================================================
+# PAGES CONFIGURATION (opcional)
+# ============================================================================
+# Si Cloudflare Pages no detecta automáticamente tu proyecto:
+# 
+# [build]
+# command = "pnpm run build"
+# 
+# [build.upload]
+# format = "service-worker"
+# dir = "dist"
+#
+# NOTA: Cloudflare Pages normalmente detecta esto automáticamente vía
+# package.json scripts.build
+# ============================================================================
+
+# ============================================================================
+# ENVIRONMENT VARIABLES (opcional)
+# ============================================================================
+# Define variables de entorno para producción
+# MEJOR PRÁCTICA: Configurar en Cloudflare Dashboard > Pages > Settings
+# 
+# [env.production]
+# [env.production.vars]
+# API_URL = "https://api.ignia.cloud"
+# ============================================================================
+
+# ============================================================================
+# BINDINGS (opcional - avanzado)
+# ============================================================================
+# Integración con servicios de Cloudflare:
+# - KV (Key-Value storage)
+# - R2 (Object storage como S3)
+# - D1 (SQL database)
+# - Durable Objects
+#
+# Ejemplo KV:
+# [[kv_namespaces]]
+# binding = "MY_KV"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#
+# Docs: https://developers.cloudflare.com/workers/runtime-apis/bindings/
+# ============================================================================
