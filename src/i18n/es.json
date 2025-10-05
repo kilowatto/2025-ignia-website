@@ -217,6 +217,15 @@
       "dismiss": "Descartar sugerencia de idioma",
       "prompt": "¿Prefieres ver el sitio en español?"
     },
+    "language_banner": {
+      "aria_label": "Banner de sugerencia de idioma",
+      "flag_aria": "Bandera de {{language}}",
+      "message": "¿Prefieres ver el sitio en {{language}}?",
+      "accept_button": "Cambiar idioma",
+      "accept_aria": "Cambiar el sitio web a {{language}}",
+      "dismiss_aria": "Descartar sugerencia de idioma",
+      "actions_aria": "Acciones de idioma"
+    },
     "switcher": {
       "label": "Selecciona el idioma",
       "languages": {

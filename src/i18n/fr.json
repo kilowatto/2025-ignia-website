@@ -217,6 +217,15 @@
       "dismiss": "Ignorer la suggestion de langue",
       "prompt": "Préférez-vous voir le site en français ?"
     },
+    "language_banner": {
+      "aria_label": "Bannière de suggestion de langue",
+      "flag_aria": "Drapeau de {{language}}",
+      "message": "Préférez-vous voir le site en {{language}}?",
+      "accept_button": "Changer langue",
+      "accept_aria": "Changer le site web en {{language}}",
+      "dismiss_aria": "Rejeter la suggestion de langue",
+      "actions_aria": "Actions de langue"
+    },
     "switcher": {
       "label": "Choisir la langue",
       "languages": {

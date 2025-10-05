@@ -217,6 +217,15 @@
       "dismiss": "Dismiss language suggestion",
       "prompt": "Would you like to view this site in English?"
     },
+    "language_banner": {
+      "aria_label": "Language suggestion banner",
+      "flag_aria": "Flag of {{language}}",
+      "message": "Would you prefer to view this site in {{language}}?",
+      "accept_button": "Switch Language",
+      "accept_aria": "Switch website to {{language}}",
+      "dismiss_aria": "Dismiss language suggestion",
+      "actions_aria": "Language actions"
+    },
     "switcher": {
       "label": "Select language",
       "languages": {
