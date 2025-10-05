@@ -7,7 +7,8 @@
  * 
  * PROPÓSITO:
  * Cumplir con arquitecture.md §2 "MiniSearch Actualizado": cada vez que se cree
- * una página o contenido, se debe actualizar automáticamente la base de datos
+ * una   // Extraer metadata de cada página
+  const metadataPromises = validFiles.map((file: string) => extractMetadata(file));gina o contenido, se debe actualizar automáticamente la base de datos
  * de MiniSearch sin olvidar usar correctamente los idiomas.
  * 
  * FUNCIONALIDAD:
@@ -44,7 +45,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { glob } from 'glob';
 
 // ============================================================================
 // TIPOS TYPESCRIPT
@@ -54,32 +54,32 @@ import { glob } from 'glob';
  * Estructura de un item del índice de búsqueda
  */
 interface SearchItem {
-  id: string;
-  title: string;
-  description: string;
-  content: string;
-  url: string;
-  type: 'service' | 'product' | 'article' | 'page';
-  category: string;
-  tags: string[];
-  locale: 'en' | 'es' | 'fr';
-  dateCreated?: string;
-  priority: number;
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    url: string;
+    type: 'service' | 'product' | 'article' | 'page';
+    category: string;
+    tags: string[];
+    locale: 'en' | 'es' | 'fr';
+    dateCreated?: string;
+    priority: number;
 }
 
 /**
  * Metadata extraída de una página .astro
  */
 interface PageMetadata {
-  filePath: string;
-  locale: 'en' | 'es' | 'fr';
-  url: string;
-  title?: string;
-  description?: string;
-  category?: string;
-  tags?: string[];
-  type?: 'service' | 'product' | 'article' | 'page';
-  priority?: number;
+    filePath: string;
+    locale: 'en' | 'es' | 'fr';
+    url: string;
+    title?: string;
+    description?: string;
+    category?: string;
+    tags?: string[];
+    type?: 'service' | 'product' | 'article' | 'page';
+    priority?: number;
 }
 
 // ============================================================================
@@ -94,10 +94,10 @@ const OUTPUT_FILE = path.join(WORKSPACE_ROOT, 'src', 'data', 'searchData.ts');
  * Páginas a excluir del índice (internas, técnicas, etc.)
  */
 const EXCLUDE_PATTERNS = [
-  '404.astro',
-  'robots.txt.ts',
-  'sitemap*.ts',
-  '_*.astro', // Páginas privadas con prefijo _
+    '404.astro',
+    'robots.txt.ts',
+    'sitemap*.ts',
+    '_*.astro', // Páginas privadas con prefijo _
 ];
 
 // ============================================================================
@@ -116,17 +116,17 @@ const EXCLUDE_PATTERNS = [
  * - src/pages/fr/solutions.astro → "fr"
  */
 function detectLocale(filePath: string): 'en' | 'es' | 'fr' {
-  const relativePath = path.relative(PAGES_DIR, filePath);
-  
-  if (relativePath.startsWith('es/') || relativePath.startsWith('es\\')) {
-    return 'es';
-  }
-  
-  if (relativePath.startsWith('fr/') || relativePath.startsWith('fr\\')) {
-    return 'fr';
-  }
-  
-  return 'en';
+    const relativePath = path.relative(PAGES_DIR, filePath);
+
+    if (relativePath.startsWith('es/') || relativePath.startsWith('es\\')) {
+        return 'es';
+    }
+
+    if (relativePath.startsWith('fr/') || relativePath.startsWith('fr\\')) {
+        return 'fr';
+    }
+
+    return 'en';
 }
 
 /**
@@ -142,28 +142,28 @@ function detectLocale(filePath: string): 'en' | 'es' | 'fr' {
  * - src/pages/fr/products/cloud.astro, fr → "/fr/products/cloud/"
  */
 function generateUrl(filePath: string, locale: 'en' | 'es' | 'fr'): string {
-  const relativePath = path.relative(PAGES_DIR, filePath);
-  let urlPath = relativePath
-    .replace(/\\/g, '/') // Windows paths
-    .replace(/\.astro$/, '')
-    .replace(/\/index$/, '/');
-  
-  // Normalizar trailing slash
-  if (!urlPath.endsWith('/')) {
-    urlPath += '/';
-  }
-  
-  // Agregar prefijo de idioma si no es EN
-  if (locale === 'en') {
-    return urlPath === '/' ? '/' : `${urlPath}`;
-  }
-  
-  // Remover prefijo de idioma si ya existe en el path
-  if (urlPath.startsWith(`${locale}/`)) {
-    return `/${urlPath}`;
-  }
-  
-  return `/${locale}${urlPath}`;
+    const relativePath = path.relative(PAGES_DIR, filePath);
+    let urlPath = relativePath
+        .replace(/\\/g, '/') // Windows paths
+        .replace(/\.astro$/, '')
+        .replace(/\/index$/, '/');
+
+    // Normalizar trailing slash
+    if (!urlPath.endsWith('/')) {
+        urlPath += '/';
+    }
+
+    // Agregar prefijo de idioma si no es EN
+    if (locale === 'en') {
+        return urlPath === '/' ? '/' : `${urlPath}`;
+    }
+
+    // Remover prefijo de idioma si ya existe en el path
+    if (urlPath.startsWith(`${locale}/`)) {
+        return `/${urlPath}`;
+    }
+
+    return `/${locale}${urlPath}`;
 }
 
 /**
@@ -175,32 +175,33 @@ function generateUrl(filePath: string, locale: 'en' | 'es' | 'fr'): string {
  * @returns Metadata extraída o null si no se pudo procesar
  */
 async function extractMetadata(filePath: string): Promise<PageMetadata | null> {
-  try {
-    const content = await fs.promises.readFile(filePath, 'utf-8');
-    const locale = detectLocale(filePath);
-    const url = generateUrl(filePath, locale);
-    
-    // Metadata por defecto
-    const metadata: PageMetadata = {
-      filePath,
-      locale,
-      url,
-      title: path.basename(filePath, '.astro'),
-      description: '',
-      category: 'Page',
-      tags: [],
-      type: 'page',
-      priority: 5,
-    };
-    
-    // TODO: Extraer metadata del frontmatter (---...---)
-    // Por ahora retornamos metadata básica
-    
-    return metadata;
-  } catch (error) {
-    console.error(`Error reading ${filePath}:`, error);
-    return null;
-  }
+    try {
+        // TODO: Leer y parsear el contenido del archivo para extraer frontmatter
+        // const content = await fs.promises.readFile(filePath, 'utf-8');
+        const locale = detectLocale(filePath);
+        const url = generateUrl(filePath, locale);
+
+        // Metadata por defecto
+        const metadata: PageMetadata = {
+            filePath,
+            locale,
+            url,
+            title: path.basename(filePath, '.astro'),
+            description: '',
+            category: 'Page',
+            tags: [],
+            type: 'page',
+            priority: 5,
+        };
+
+        // TODO: Extraer metadata del frontmatter (---...---)
+        // Por ahora retornamos metadata básica
+
+        return metadata;
+    } catch (error) {
+        console.error(`Error reading ${filePath}:`, error);
+        return null;
+    }
 }
 
 /**
@@ -211,13 +212,13 @@ async function extractMetadata(filePath: string): Promise<PageMetadata | null> {
  * @returns ID único (ej: "page-en-solutions")
  */
 function generateId(url: string, locale: string): string {
-  const cleanUrl = url
-    .replace(/^\//, '')
-    .replace(/\/$/, '')
-    .replace(/\//g, '-')
-    || 'home';
-  
-  return `page-${locale}-${cleanUrl}`;
+    const cleanUrl = url
+        .replace(/^\//, '')
+        .replace(/\/$/, '')
+        .replace(/\//g, '-')
+        || 'home';
+
+    return `page-${locale}-${cleanUrl}`;
 }
 
 /**
@@ -227,19 +228,43 @@ function generateId(url: string, locale: string): string {
  * @returns SearchItem para el índice de búsqueda
  */
 function metadataToSearchItem(metadata: PageMetadata): SearchItem {
-  return {
-    id: generateId(metadata.url, metadata.locale),
-    title: metadata.title || 'Untitled',
-    description: metadata.description || '',
-    content: metadata.description || '', // TODO: extraer contenido real
-    url: metadata.url,
-    type: metadata.type || 'page',
-    category: metadata.category || 'Page',
-    tags: metadata.tags || [],
-    locale: metadata.locale,
-    dateCreated: new Date().toISOString(),
-    priority: metadata.priority || 5,
-  };
+    return {
+        id: generateId(metadata.url, metadata.locale),
+        title: metadata.title || 'Untitled',
+        description: metadata.description || '',
+        content: metadata.description || '', // TODO: extraer contenido real
+        url: metadata.url,
+        type: metadata.type || 'page',
+        category: metadata.category || 'Page',
+        tags: metadata.tags || [],
+        locale: metadata.locale,
+        dateCreated: new Date().toISOString(),
+        priority: metadata.priority || 5,
+    };
+}
+
+/**
+ * Escanea recursivamente un directorio buscando archivos .astro
+ * 
+ * @param dir - Directorio a escanear
+ * @param fileList - Array acumulador de archivos encontrados
+ * @returns Array de paths absolutos de archivos .astro
+ */
+function scanAstroFiles(dir: string, fileList: string[] = []): string[] {
+  const files = fs.readdirSync(dir);
+  
+  files.forEach((file: string) => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    
+    if (stat.isDirectory()) {
+      scanAstroFiles(filePath, fileList);
+    } else if (file.endsWith('.astro')) {
+      fileList.push(filePath);
+    }
+  });
+  
+  return fileList;
 }
 
 /**
@@ -249,17 +274,17 @@ function metadataToSearchItem(metadata: PageMetadata): SearchItem {
  * @returns true si debe ser excluida, false si debe ser indexada
  */
 function shouldExclude(filePath: string): boolean {
-  const filename = path.basename(filePath);
-  
-  return EXCLUDE_PATTERNS.some(pattern => {
-    if (pattern.includes('*')) {
-      // Patrón con wildcard
-      const regex = new RegExp(pattern.replace('*', '.*'));
-      return regex.test(filename);
-    }
-    // Coincidencia exacta
-    return filename === pattern;
-  });
+    const filename = path.basename(filePath);
+
+    return EXCLUDE_PATTERNS.some(pattern => {
+        if (pattern.includes('*')) {
+            // Patrón con wildcard
+            const regex = new RegExp(pattern.replace('*', '.*'));
+            return regex.test(filename);
+        }
+        // Coincidencia exacta
+        return filename === pattern;
+    });
 }
 
 // ============================================================================
@@ -270,44 +295,41 @@ function shouldExclude(filePath: string): boolean {
  * Escanea todas las páginas y genera el índice de búsqueda
  */
 async function generateSearchIndex(): Promise<void> {
-  console.log('🔍 Scanning pages directory...');
-  console.log(`   Root: ${PAGES_DIR}`);
-  
-  // Buscar todos los archivos .astro
-  const allFiles = await glob('**/*.astro', {
-    cwd: PAGES_DIR,
-    absolute: true,
-  });
-  
-  console.log(`   Found: ${allFiles.length} .astro files`);
-  
-  // Filtrar páginas excluidas
-  const validFiles = allFiles.filter(file => !shouldExclude(file));
-  console.log(`   Valid: ${validFiles.length} files (after exclusions)`);
-  
-  // Extraer metadata de cada página
-  const metadataPromises = validFiles.map(file => extractMetadata(file));
-  const allMetadata = (await Promise.all(metadataPromises)).filter(Boolean) as PageMetadata[];
-  
-  // Convertir a SearchItems
-  const searchItems = allMetadata.map(metadataToSearchItem);
-  
-  // Separar por idioma
-  const searchDataEN = searchItems.filter(item => item.locale === 'en');
-  const searchDataES = searchItems.filter(item => item.locale === 'es');
-  const searchDataFR = searchItems.filter(item => item.locale === 'fr');
-  
-  console.log(`\n📊 Index statistics:`);
-  console.log(`   EN: ${searchDataEN.length} pages`);
-  console.log(`   ES: ${searchDataES.length} pages`);
-  console.log(`   FR: ${searchDataFR.length} pages`);
-  console.log(`   Total: ${searchItems.length} pages`);
-  
-  // Generar archivo TypeScript
-  await generateTypeScriptFile(searchDataEN, searchDataES, searchDataFR);
-  
-  console.log(`\n✅ Search index updated successfully!`);
-  console.log(`   Output: ${OUTPUT_FILE}`);
+    console.log('🔍 Scanning pages directory...');
+    console.log(`   Root: ${PAGES_DIR}`);
+
+    // Buscar todos los archivos .astro recursivamente
+    const allFiles = scanAstroFiles(PAGES_DIR);
+
+    console.log(`   Found: ${allFiles.length} .astro files`);
+
+    // Filtrar páginas excluidas
+    const validFiles = allFiles.filter((file: string) => !shouldExclude(file));
+    console.log(`   Valid: ${validFiles.length} files (after exclusions)`);
+
+    // Extraer metadata de cada página
+    const metadataPromises = validFiles.map((file: string) => extractMetadata(file));
+    const allMetadata = (await Promise.all(metadataPromises)).filter(Boolean) as PageMetadata[];
+
+    // Convertir a SearchItems
+    const searchItems = allMetadata.map(metadataToSearchItem);
+
+    // Separar por idioma
+    const searchDataEN = searchItems.filter(item => item.locale === 'en');
+    const searchDataES = searchItems.filter(item => item.locale === 'es');
+    const searchDataFR = searchItems.filter(item => item.locale === 'fr');
+
+    console.log(`\n📊 Index statistics:`);
+    console.log(`   EN: ${searchDataEN.length} pages`);
+    console.log(`   ES: ${searchDataES.length} pages`);
+    console.log(`   FR: ${searchDataFR.length} pages`);
+    console.log(`   Total: ${searchItems.length} pages`);
+
+    // Generar archivo TypeScript
+    await generateTypeScriptFile(searchDataEN, searchDataES, searchDataFR);
+
+    console.log(`\n✅ Search index updated successfully!`);
+    console.log(`   Output: ${OUTPUT_FILE}`);
 }
 
 /**
@@ -318,11 +340,11 @@ async function generateSearchIndex(): Promise<void> {
  * @param searchDataFR - Items en francés
  */
 async function generateTypeScriptFile(
-  searchDataEN: SearchItem[],
-  searchDataES: SearchItem[],
-  searchDataFR: SearchItem[]
+    searchDataEN: SearchItem[],
+    searchDataES: SearchItem[],
+    searchDataFR: SearchItem[]
 ): Promise<void> {
-  const template = `// src/data/searchData.ts
+    const template = `// src/data/searchData.ts
 // ⚠️ Este archivo es GENERADO AUTOMÁTICAMENTE por scripts/update-search-index.ts
 // ⚠️ NO EDITAR MANUALMENTE - Los cambios serán sobrescritos
 // 
@@ -362,7 +384,7 @@ export function getSearchDataByLocale(locale: 'en' | 'es' | 'fr'): SearchItem[] 
 }
 `;
 
-  await fs.promises.writeFile(OUTPUT_FILE, template, 'utf-8');
+    await fs.promises.writeFile(OUTPUT_FILE, template, 'utf-8');
 }
 
 // ============================================================================
@@ -373,20 +395,20 @@ export function getSearchDataByLocale(locale: 'en' | 'es' | 'fr'): SearchItem[] 
  * Punto de entrada del script
  */
 async function main(): Promise<void> {
-  console.log('🚀 Starting search index update...\n');
-  
-  try {
-    await generateSearchIndex();
-    process.exit(0);
-  } catch (error) {
-    console.error('\n❌ Error updating search index:', error);
-    process.exit(1);
-  }
+    console.log('🚀 Starting search index update...\n');
+
+    try {
+        await generateSearchIndex();
+        process.exit(0);
+    } catch (error) {
+        console.error('\n❌ Error updating search index:', error);
+        process.exit(1);
+    }
 }
 
 // Ejecutar si es invocado directamente
 if (require.main === module) {
-  main();
+    main();
 }
 
 export { generateSearchIndex, extractMetadata };
