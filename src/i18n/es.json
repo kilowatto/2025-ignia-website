@@ -9,8 +9,17 @@
       "description": "Recibe las últimas noticias y actualizaciones directamente en tu bandeja de entrada."
     },
     "sitemap": {
-      "title": "Mapa del Sitio",
+      "title": "Nuestras Ligas Rápidas",
       "aria_label": "Mapa de navegación del sitio"
+    },
+    "corporate": {
+      "label": "Corporativo",
+      "press": "Notas de Prensa",
+      "offices": "Oficinas",
+      "about": "Sobre Nosotros",
+      "team": "Equipo",
+      "careers": "Carreras",
+      "partners": "Partners"
     }
   },
   "header": {
@@ -203,42 +212,41 @@
   "routes": {
     "solutions": {
       "base": "/soluciones/",
-      "nocaas": "/soluciones/nocaas/",
-      "privateCloudService": "/soluciones/private-cloud-as-a-service/",
-      "privateCloudOnPremise": "/soluciones/private-cloud-on-premise/",
-      "bcpDraas": "/soluciones/bcp-draas/",
-      "kubernetesDevops": "/soluciones/kubernetes-devops-platform/",
-      "secureWorkloadHosting": "/soluciones/secure-workload-hosting/",
-      "complianceCloud": "/soluciones/compliance-cloud/",
-      "regulatoryBackupArchival": "/soluciones/regulatory-backup-archival/"
+      "cloud": "/soluciones/transformacion-cloud/",
+      "data": "/soluciones/analisis-de-datos/",
+      "digital": "/soluciones/transformacion-digital/"
     },
     "products": {
       "base": "/productos/",
-      "virtualMachines": "/productos/virtual-machines/",
-      "kubernetesService": "/productos/kubernetes-as-a-service/",
-      "blockStorage": "/productos/block-storage/",
-      "objectStorage": "/productos/object-storage/",
-      "cloudBackup": "/productos/cloud-backup/",
-      "cloudFirewall": "/productos/cloud-firewall/",
-      "dns": "/productos/dns/",
-      "loadBalancer": "/productos/load-balancer/"
+      "platform": "/productos/plataforma-ignia/",
+      "studio": "/productos/ignia-studio/",
+      "connect": "/productos/ignia-connect/"
     },
     "ai": {
       "base": "/IA/",
-      "llmHosting": "/IA/llm-hosting/",
-      "ragBlueprints": "/IA/rag-blueprints/",
-      "copilotStudio": "/IA/copilots/",
-      "mlopsMonitoring": "/IA/mlops/"
+      "consulting": "/IA/consultoria/",
+      "implementation": "/IA/implementacion/",
+      "models": "/IA/modelos-personalizados/"
     },
     "services": {
       "base": "/servicios/",
-      "managedIt": "/Managed-IT/",
-      "cloudConsulting": "/servicios/consultoria-cloud/",
-      "supportCenter": "/soporte/"
+      "consulting": "/servicios/consultoria/",
+      "development": "/servicios/desarrollo/",
+      "support": "/servicios/soporte/"
     },
     "common": {
+      "home": "/",
       "blog": "/blog/",
-      "contact": "/contacto/"
+      "contact": "/contacto/",
+      "about": "/acerca-de/"
+    },
+    "corporate": {
+      "press": "/notas-de-prensa/",
+      "offices": "/oficinas/",
+      "about": "/sobre-nosotros/",
+      "team": "/equipo/",
+      "careers": "/carreras/",
+      "partners": "/partners/"
     }
   },
   "404": {

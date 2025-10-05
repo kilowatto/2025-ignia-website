@@ -9,8 +9,17 @@
       "description": "Recevez les dernières nouvelles et mises à jour directement dans votre boîte de réception."
     },
     "sitemap": {
-      "title": "Plan du Site",
+      "title": "Nos Liens Rapides",
       "aria_label": "Plan de navigation du site"
+    },
+    "corporate": {
+      "label": "Entreprise",
+      "press": "Communiqués de Presse",
+      "offices": "Bureaux",
+      "about": "À Propos",
+      "team": "Équipe",
+      "careers": "Carrières",
+      "partners": "Partenaires"
     }
   },
   "header": {
@@ -239,6 +248,14 @@
     "common": {
       "blog": "/blog/",
       "contact": "/contact/"
+    },
+    "corporate": {
+      "press": "/presse/",
+      "offices": "/bureaux/",
+      "about": "/a-propos-de-nous/",
+      "team": "/equipe/",
+      "careers": "/carrieres/",
+      "partners": "/partenaires/"
     }
   },
   "404": {

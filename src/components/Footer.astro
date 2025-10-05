@@ -1,26 +1,26 @@
 ---
 /**
  * Footer.astro
- * 
+ *
  * Componente de pie de página completo del sitio Ignia Cloud.
- * 
+ *
  * ESTRUCTURA:
  * 1. SitemapFooter: Mini-sitemap dinámico con todas las rutas organizadas
  * 2. Logo: Ignia Cloud branding
  * 3. Newsletter: CTA de suscripción con descripción
  * 4. Copyright: Información legal
- * 
+ *
  * FUNCIONALIDAD:
  * - SitemapFooter se alimenta dinámicamente de routes.* en i18n JSON
  * - Traducciones centralizadas (footer.* en src/i18n/)
  * - Multi-idioma con detección automática de Astro.currentLocale
- * 
+ *
  * CUMPLIMIENTO arquitecture.md:
  * - §2: Sin JS, solo HTML + CSS
  * - §5: Traducciones centralizadas en i18n JSON
  * - §7: Footer sticky mencionado en arquitectura
  * - §9: HTML5 semántico (<footer role="contentinfo">)
- * 
+ *
  * @see src/components/SitemapFooter.astro - Componente de sitemap dinámico
  * @see src/i18n/en.json - Traducciones footer.* (EN)
  * @see src/i18n/es.json - Traducciones footer.* (ES)
@@ -35,22 +35,6 @@ const rawLocale = Astro.currentLocale || "en";
 const locale = rawLocale.split("-")[0];
 ---
 
-<!-- 
-  SITEMAP FOOTER
-  
-  Componente de mini-sitemap dinámico que genera automáticamente
-  un mapa visual de todas las rutas del sitio organizadas por secciones.
-  
-  Se renderiza ANTES del footer principal para:
-  1. Mejorar SEO con enlaces internos estructurados
-  2. Facilitar navegación (usuarios encuentran contenido fácilmente)
-  3. Reducir bounce rate con acceso rápido a todas las secciones
-  
-  El componente es completamente autónomo y se actualiza automáticamente
-  al agregar nuevas rutas en src/i18n/*.json (zero maintenance).
--->
-<SitemapFooter />
-
 <footer
   class="mt-auto w-full min-h-[250px] bg-[var(--color-secondary)]"
   role="contentinfo"
@@ -61,6 +45,26 @@ const locale = rawLocale.split("-")[0];
     alt="Ignia Cloud Logo"
     class="h-24 mx-auto pt-8 mb-4"
   />
+
+  <!-- 
+    SITEMAP FOOTER (INTEGRADO)
+    
+    Componente de mini-sitemap dinámico que genera automáticamente
+    un mapa visual de todas las rutas del sitio organizadas por secciones.
+    
+    Integrado dentro del footer azul para cohesión visual.
+    Usa texto blanco para contraste con el fondo azul (var(--color-secondary)).
+    
+    BENEFICIOS:
+    1. Mejorar SEO con enlaces internos estructurados
+    2. Facilitar navegación (usuarios encuentran contenido fácilmente)
+    3. Reducir bounce rate con acceso rápido a todas las secciones
+    4. Incluye nueva sección "Corporativo" con 6 enlaces institucionales
+    
+    El componente es completamente autónomo y se actualiza automáticamente
+    al agregar nuevas rutas en src/i18n/*.json (zero maintenance).
+  -->
+  <SitemapFooter />
 
   <nav class="flex justify-center space-x-6 mb-6" aria-label="Footer">
     <h2 id="footer-heading" class="sr-only">Footer</h2>

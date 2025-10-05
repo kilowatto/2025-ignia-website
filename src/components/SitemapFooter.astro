@@ -118,18 +118,19 @@ const ensureLocalePath = (href: string) => {
  * @property icon - Path SVG para el icono visual de la sección
  */
 type SitemapSection = {
-  id: 'solutions' | 'products' | 'ai' | 'services';
+  id: 'solutions' | 'products' | 'ai' | 'services' | 'corporate';
   icon: string;
 };
 
 /**
- * Configuración de las 4 secciones principales del sitemap
+ * Configuración de las 5 secciones principales del sitemap
  * 
  * ICONOS SVG:
  * - Solutions: Shield con checkmark (seguridad, compliance)
  * - Products: Cubo 3D (infraestructura, bloques de construcción)
  * - AI: Cerebro/Rayo (inteligencia artificial, machine learning)
  * - Services: Grupo de personas (consultoría, soporte, servicios gestionados)
+ * - Corporate: Edificio (corporativo, institucional)
  * 
  * Nota: Los iconos son paths SVG optimizados de Heroicons v2 (MIT License)
  */
@@ -149,6 +150,10 @@ const sections: SitemapSection[] = [
   {
     id: 'services',
     icon: 'M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
+  },
+  {
+    id: 'corporate',
+    icon: 'M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z',
   },
 ];
 
@@ -228,11 +233,21 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
       'cloudConsulting',
       'supportCenter',
     ],
+    corporate: [
+      'press',
+      'offices',
+      'about',
+      'team',
+      'careers',
+      'partners',
+    ],
   };
 
   // Mapear cada clave a un objeto con título y href traducidos
   return itemKeys[sectionId].map((key) => ({
-    title: translate(`header.sections.${sectionId}.items.${key}.title`),
+    title: sectionId === 'corporate' 
+      ? translate(`footer.corporate.${key}`)
+      : translate(`header.sections.${sectionId}.items.${key}.title`),
     href: ensureLocalePath(translate(`routes.${sectionId}.${key}`)),
   }));
 };
@@ -246,11 +261,11 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
   SITEMAP FOOTER SECTION
   
   Sección visual del sitemap integrada en el footer del sitio.
-  Fondo gris claro para distinguirla del contenido principal.
+  Sin background propio (hereda el azul del footer).
   Padding responsive: 2rem (móvil) → 2.5rem (tablet) → 3rem (desktop)
 -->
 <section
-  class="border-t border-gray-200 bg-gray-50 py-8 sm:py-10 lg:py-12"
+  class="border-t border-white/20 py-8 sm:py-10 lg:py-12"
   aria-labelledby="sitemap-heading"
 >
   <!-- 
@@ -267,12 +282,13 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
       
       Traducido dinámicamente según idioma (footer.sitemap.title)
       Centrado, tamaño responsive, margin-bottom responsive
+      Texto blanco para contraste con fondo azul
       
       id="sitemap-heading": Referencia para aria-labelledby del section
     -->
     <h2
       id="sitemap-heading"
-      class="mb-6 text-center text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl"
+      class="mb-6 text-center text-xl font-bold text-white sm:mb-8 sm:text-2xl"
     >
       {translate('footer.sitemap.title')}
     </h2>
@@ -283,14 +299,14 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
       Breakpoints:
       - Móvil (< 640px): 1 columna, stack vertical
       - Tablet (≥ 640px): 2 columnas, grid equilibrado
-      - Desktop (≥ 1024px): 4 columnas, una por sección
+      - Desktop (≥ 1024px): 5 columnas (4 secciones principales + Corporativo)
       
       Gap responsive: 1.5rem (móvil) → 2rem (tablet+)
       
       aria-label: Etiqueta ARIA traducida para lectores de pantalla
     -->
     <nav
-      class="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4"
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5"
       aria-label={translate('footer.sitemap.aria_label')}
     >
       {
@@ -298,8 +314,11 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
           // Obtener items de la sección dinámicamente desde i18n
           const items = getSectionItems(section.id);
           
-          // Obtener label traducido de la sección (ej: "Solutions", "Soluciones", etc.)
-          const sectionLabel = translate(`header.sections.${section.id}.label`);
+          // Obtener label traducido de la sección
+          // Corporate usa footer.corporate.label, otras usan header.sections.*.label
+          const sectionLabel = section.id === 'corporate'
+            ? translate('footer.corporate.label')
+            : translate(`header.sections.${section.id}.label`);
           
           // Obtener URL base de la sección con prefijo de idioma
           const sectionHref = ensureLocalePath(translate(`routes.${section.id}.base`));
@@ -321,26 +340,27 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                 TÍTULO DE COLUMNA CON ICONO
                 
                 Enlace clickeable al landing de la sección
-                Hover: color naranja (color primario de Ignia)
+                Hover: color más brillante (texto blanco con hover:text-white)
                 Transición suave de color CSS-only
+                Texto blanco para contraste con fondo azul
                 
                 group: Permite que el hover del <a> afecte a hijos con group-hover:
               -->
               <a
                 href={sectionHref}
-                class="group flex items-center gap-2 text-base font-semibold text-gray-900 transition-colors hover:text-orange-600 sm:text-lg"
+                class="group flex items-center gap-2 text-base font-semibold text-white transition-colors hover:text-white sm:text-lg"
               >
                 <!-- 
                   ICONO SVG DE LA SECCIÓN
                   
                   Tamaño fijo: 20x20px (1.25rem)
-                  Color naranja por defecto, más oscuro en hover
-                  group-hover: cambia color cuando se hace hover en el padre (<a>)
+                  Color blanco semi-transparente, más opaco en hover
+                  group-hover: cambia opacidad cuando se hace hover en el padre (<a>)
                   
                   aria-hidden: oculto para lectores de pantalla (decorativo)
                 -->
                 <svg
-                  class="h-5 w-5 text-orange-500 transition-colors group-hover:text-orange-600"
+                  class="h-5 w-5 text-white/70 transition-colors group-hover:text-white"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -363,7 +383,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                 space-y-2/2.5: Espaciado vertical entre enlaces responsive
                 
                 Cada enlace:
-                - Texto gris oscuro, naranja en hover
+                - Texto blanco semi-transparente, totalmente opaco en hover
                 - Underline en hover para feedback visual
                 - Tamaño texto: 14px (text-sm)
                 - Transición CSS-only
@@ -373,7 +393,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                   <li>
                     <a
                       href={item.href}
-                      class="block text-sm text-gray-600 transition-colors hover:text-orange-600 hover:underline"
+                      class="block text-sm text-white/80 transition-colors hover:text-white hover:underline"
                     >
                       {item.title}
                     </a>
@@ -381,36 +401,38 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                 ))}
               </ul>
 
-              <!-- 
-                ENLACE "VER TODAS"
+              {/* 
+                ENLACE "VER TODAS" (solo para secciones no-corporate)
                 
                 Link a la página base de la sección (same as título)
-                Estilo diferente para distinguirlo de los items
-                Color naranja (primario), más oscuro en hover
+                No se muestra para la sección Corporate (items directos sin landing page)
+                Estilo: blanco semi-transparente con hover
                 Icono de flecha a la derecha para indicar navegación
                 
                 Texto "Explore all" / "Ver todas" / "Tout explorer" según idioma
-              -->
-              <a
-                href={sectionHref}
-                class="inline-flex items-center text-sm font-medium text-orange-600 transition-colors hover:text-orange-700"
-              >
-                {translate('header.sections.explore_all')}
-                
-                <!-- Icono de flecha derecha (Chevron Right de Heroicons) -->
-                <svg
-                  class="ml-1 h-4 w-4"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
+              */}
+              {section.id !== 'corporate' && (
+                <a
+                  href={sectionHref}
+                  class="inline-flex items-center text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
+                  {translate('header.sections.explore_all')}
+                  
+                  {/* Icono de flecha derecha (Chevron Right de Heroicons) */}
+                  <svg
+                    class="ml-1 h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              )}
             </div>
           );
         })
@@ -425,27 +447,28 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
       
       Centrados horizontalmente
       Separados por un pipe "|" visual (aria-hidden para lectores de pantalla)
+      Texto blanco para contraste con fondo azul
       
       Margin-top y padding-top responsive
       Gap responsive entre enlaces: 1rem (móvil) → 1.5rem (tablet+)
     -->
-    <div class="mt-8 border-t border-gray-200 pt-6 sm:mt-10 sm:pt-8">
+    <div class="mt-8 border-t border-white/20 pt-6 sm:mt-10 sm:pt-8">
       <div class="flex flex-wrap justify-center gap-4 text-sm sm:gap-6 sm:text-base">
         <!-- Enlace Blog -->
         <a
           href={ensureLocalePath(translate('routes.common.blog'))}
-          class="text-gray-600 transition-colors hover:text-orange-600"
+          class="text-white/80 transition-colors hover:text-white"
         >
           {translate('header.nav.mobile.blog')}
         </a>
 
         <!-- Separador visual (pipe) -->
-        <span class="text-gray-300" aria-hidden="true">|</span>
+        <span class="text-white/30" aria-hidden="true">|</span>
 
         <!-- Enlace Contact -->
         <a
           href={ensureLocalePath(translate('routes.common.contact'))}
-          class="text-gray-600 transition-colors hover:text-orange-600"
+          class="text-white/80 transition-colors hover:text-white"
         >
           {translate('header.nav.mobile.contact')}
         </a>
