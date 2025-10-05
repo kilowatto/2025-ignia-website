@@ -1176,6 +1176,12 @@ git checkout -b rama-recuperada
 - 🌳 Tree-shaking de dependencias no usadas
 - 📊 Presupuesto de bundle monitoreado (≤300KB móvil)
 
+#### 6. **Critical Path Optimization**
+- 🔗 **Preconnect** al dominio principal (reduce latencia DNS/TLS ~50-100ms)
+- 🔗 **DNS-prefetch** como fallback para navegadores antiguos
+- 📦 **Resource Hints** minimizan waterfall de CSS
+- ⚡ **Resultado**: Critical Path < 350ms (HTML + CSS)
+
 ### Métricas Objetivo
 
 | Métrica | Objetivo | Estrategia |

@@ -53,6 +53,11 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    
+    <!-- Preconnect para mejorar performance de Critical Path -->
+    <link rel="preconnect" href="https://ignia.kilowatto.com" crossorigin />
+    <link rel="dns-prefetch" href="https://ignia.kilowatto.com" />
+    
     <link rel="icon" href="/icons/favicon.ico" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
