@@ -1,0 +1,269 @@
+---
+/**
+ * 404.astro - Página de error personalizada multi-idioma
+ * 
+ * Cumplimiento arquitecture.md §2:
+ * - Versión "light" sin Header/Footer completos para máxima performance
+ * - Multi-idioma con detección automática desde URL
+ * - Humor en mensajes de error
+ * - Links a Home y Search según idioma detectado
+ * - Estilos reutilizados de global.css (sin crear nuevos CSS)
+ * - Sin JS bloqueante (solo HTML + CSS)
+ * 
+ * Detección de idioma:
+ * 1. Desde pathname (/es/*, /fr/* → es/fr)
+ * 2. Desde Astro.currentLocale (i18n nativo)
+ * 3. Fallback a 'en'
+ * 
+ * URLs generadas:
+ * - Home: / (en), /es/ (es), /fr/ (fr)
+ * - Search: /search (en), /es/search (es), /fr/search (fr)
+ * 
+ * @see src/i18n/en.json - Traducciones inglés (404.*)
+ * @see src/i18n/es.json - Traducciones español (404.*)
+ * @see src/i18n/fr.json - Traducciones francés (404.*)
+ * @see arquitecture.md §2 - Requisito de página 404 personalizada
+ */
+
+import { t } from "astro-i18n";
+
+// Detectar idioma desde URL pathname o Astro.currentLocale
+const pathname = Astro.url.pathname;
+let detectedLocale: "en" | "es" | "fr" = "en";
+
+if (pathname.startsWith("/es/") || pathname === "/es") {
+  detectedLocale = "es";
+} else if (pathname.startsWith("/fr/") || pathname === "/fr") {
+  detectedLocale = "fr";
+} else if (Astro.currentLocale) {
+  // Normalizar locale (ej: "es-MX" → "es")
+  const normalizedLocale = Astro.currentLocale.split("-")[0];
+  if (normalizedLocale === "es" || normalizedLocale === "fr") {
+    detectedLocale = normalizedLocale as "en" | "es" | "fr";
+  }
+}
+
+// Construir URLs según idioma detectado
+const homeUrl = detectedLocale === "en" ? "/" : `/${detectedLocale}/`;
+const searchUrl =
+  detectedLocale === "en" ? "/search" : `/${detectedLocale}/search`;
+
+// Configurar status HTTP 404
+Astro.response.status = 404;
+---
+
+<!doctype html>
+<html lang={detectedLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t("404.meta.title")}</title>
+    <meta name="description" content={t("404.meta.description")} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-touch-icon.png"
+    />
+
+    <!-- Robots: No indexar páginas de error -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Styles: Solo Tailwind (desde global.css procesado) -->
+    <!-- 
+      No se crea CSS nuevo - cumple arquitecture.md §2 
+      Usa variables CSS y Tailwind de global.css 
+    -->
+    <style is:inline>
+      /* Importar variables CSS de global.css */
+      :root {
+        --color-primary: #f36b1c;
+        --color-secondary: #0b6ab0;
+        --color-gray-900: #000000;
+        --color-gray-100: #ffffff;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Raleway Regular", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+      }
+
+      /* Animación suave para entrada (CSS-only) */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* Respeto a preferencias de motion reducido */
+      @media (prefers-reduced-motion: reduce) {
+        .fade-in {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <main
+      class="max-w-2xl w-full text-center fade-in"
+      role="main"
+      aria-labelledby="error-title"
+    >
+      <!-- Tarjeta principal con sombra -->
+      <div
+        class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-gray-100"
+      >
+        <!-- Icono 404 humorístico (SVG inline - nube rota) -->
+        <div class="mb-6">
+          <svg
+            class="w-32 h-32 mx-auto text-primary"
+            style="color: var(--color-primary)"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <!-- Nube con signo de interrogación -->
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+            ></path>
+            <!-- Signo de interrogación centrado -->
+            <circle cx="12" cy="13" r="0.5" fill="currentColor"></circle>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 9v2"
+            ></path>
+          </svg>
+        </div>
+
+        <!-- Subtítulo (404 Error) -->
+        <p
+          class="text-sm font-semibold uppercase tracking-wider mb-2"
+          style="color: var(--color-secondary)"
+        >
+          {t("404.subtitle")}
+        </p>
+
+        <!-- Título principal -->
+        <h1
+          id="error-title"
+          class="text-3xl md:text-4xl font-bold mb-4"
+          style="color: var(--color-gray-900)"
+        >
+          {t("404.title")}
+        </h1>
+
+        <!-- Descripción principal -->
+        <p class="text-lg text-gray-600 mb-4">
+          {t("404.description")}
+        </p>
+
+        <!-- Mensaje humorístico con emoji -->
+        <p class="text-base text-gray-500 mb-6 font-emoji">
+          {t("404.humor")}
+        </p>
+
+        <!-- Mensaje secundario de ayuda -->
+        <p class="text-sm text-gray-500 mb-8">
+          {t("404.secondary")}
+        </p>
+
+        <!-- Botones de acción (Home + Search) -->
+        <div
+          class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <!-- Botón primario: Ir al Inicio -->
+          <a
+            href={homeUrl}
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            style="background: var(--color-primary)"
+            aria-label={t("404.cta.home")}
+          >
+            <!-- Icono Home (SVG inline) -->
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              ></path>
+            </svg>
+            <span>{t("404.cta.home")}</span>
+          </a>
+
+          <!-- Botón secundario: Buscar -->
+          <a
+            href={searchUrl}
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 border-2 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+            style="color: var(--color-secondary); border-color: var(--color-secondary)"
+            aria-label={t("404.cta.search")}
+          >
+            <!-- Icono Search (SVG inline) -->
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <span>{t("404.cta.search")}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer minimalista (solo copyright) -->
+      <footer class="mt-8 text-center">
+        <p class="text-sm text-gray-500">
+          <a
+            href={homeUrl}
+            class="hover:underline"
+            style="color: var(--color-secondary)"
+            aria-label="Ignia Cloud Home"
+          >
+            Ignia Cloud
+          </a>
+          · © 2024 · {
+            detectedLocale === "en"
+              ? "All rights reserved"
+              : detectedLocale === "es"
+                ? "Todos los derechos reservados"
+                : "Tous droits réservés"
+          }
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -107,6 +107,7 @@ Esta combinación nos dio **los mejores resultados** en términos de:
 │   ├── pages/                      # Páginas del sitio
 │   │   ├── index.astro             # Home (EN)
 │   │   ├── search.astro            # Búsqueda (EN)
+│   │   ├── 404.astro               # Página de error personalizada (multi-idioma)
 │   │   ├── robots.txt.ts           # Robots.txt dinámico
 │   │   ├── sitemap-index.xml.ts    # Sitemap index
 │   │   ├── sitemap-[lang].xml.ts   # Sitemaps por idioma

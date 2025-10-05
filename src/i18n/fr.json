@@ -196,6 +196,21 @@
     "description": "Ignia est un fournisseur de solutions technologiques innovantes qui aide les entreprises à prospérer à l'ère numérique.",
     "title": "Ignia - Votre partenaire technologique de confiance"
   },
+  "404": {
+    "title": "Oups! Page non trouvée",
+    "subtitle": "Erreur 404",
+    "description": "La page que vous recherchez semble s'être égarée dans le nuage...",
+    "humor": "Même nos meilleurs ingénieurs cloud ne peuvent pas trouver cette page. Peut-être est-elle en vacances? 🏖️",
+    "secondary": "Ne vous inquiétez pas, cela arrive aux meilleurs d'entre nous. Remettons-vous sur la bonne voie.",
+    "cta": {
+      "home": "Aller à l'accueil",
+      "search": "Rechercher sur notre site"
+    },
+    "meta": {
+      "title": "404 - Page non trouvée | Ignia Cloud",
+      "description": "La page que vous recherchez n'existe pas. Retournez à l'accueil ou recherchez sur notre site."
+    }
+  },
   "search": {
     "aria_label": "Rechercher sur le site web",
     "button": "Rechercher",

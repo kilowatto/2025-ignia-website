@@ -196,6 +196,21 @@
     "description": "Ignia es un proveedor líder de soluciones tecnológicas, ofreciendo productos y servicios innovadores para ayudar a las empresas a prosperar en la era digital.",
     "title": "Ignia - Potenciando tu Viaje Digital"
   },
+  "404": {
+    "title": "¡Ups! Página no encontrada",
+    "subtitle": "Error 404",
+    "description": "La página que buscas parece haberse perdido en la nube...",
+    "humor": "Ni nuestros mejores ingenieros de la nube pueden encontrar esta página. ¿Quizás se fue de vacaciones? 🏖️",
+    "secondary": "No te preocupes, nos pasa a los mejores. Vamos a ayudarte a volver al camino.",
+    "cta": {
+      "home": "Ir al Inicio",
+      "search": "Buscar en nuestro sitio"
+    },
+    "meta": {
+      "title": "404 - Página no encontrada | Ignia Cloud",
+      "description": "La página que buscas no existe. Regresa al inicio o busca en nuestro sitio."
+    }
+  },
   "search": {
     "aria_label": "Buscar en el sitio web",
     "button": "Buscar",
