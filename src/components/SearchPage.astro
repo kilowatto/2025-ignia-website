@@ -334,6 +334,12 @@ const structuredData = [
   </div>
 </BaseLayout>
 
+<!-- Script inline para pasar el locale del servidor al cliente -->
+<script define:vars={{ locale }}>
+  // Variable global para el locale detectado en el servidor
+  window.__SEARCH_LOCALE__ = locale;
+</script>
+
 <script>
   import MiniSearch from "minisearch";
   import { getSearchDataByLocale } from "../data/searchData.ts";
@@ -342,6 +348,9 @@ const structuredData = [
     performSearch,
     getSearchSuggestions,
   } from "../utils/searchConfig.ts";
+
+  // Obtener locale desde variable global inyectada desde el servidor
+  const locale = (window as any).__SEARCH_LOCALE__ || "en";
 
   // Configuración de paginación
   const RESULTS_PER_PAGE = 6;
@@ -425,10 +434,10 @@ const structuredData = [
       showLoadingState();
 
       try {
-        // Usar la función de búsqueda de searchConfig.ts
+        // Usar la función de búsqueda de searchConfig.ts con locale automático
         const results = performSearch({
           query,
-          locale: "en",
+          locale: locale as "en" | "es" | "fr",
           filters: {
             type: filters.type ? [filters.type] : undefined,
             category: filters.category ? [filters.category] : undefined,
@@ -658,7 +667,8 @@ const structuredData = [
       }
 
       try {
-        const suggestions = getSearchSuggestions(query, "en", 5);
+        // Obtener sugerencias usando el locale detectado automáticamente
+        const suggestions = getSearchSuggestions(query, locale as "en" | "es" | "fr", 5);
 
         if (suggestions.length > 0) {
           const suggestionsHTML = suggestions
