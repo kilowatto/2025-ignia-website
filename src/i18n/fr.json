@@ -381,5 +381,57 @@
     },
     "to_close": "pour fermer",
     "to_search": "pour rechercher"
+  },
+  "status": {
+    "meta": {
+      "title": "État du Système - Ignia Cloud",
+      "description": "Surveillance en temps réel des services Ignia Cloud. Consultez l'état opérationnel actuel de notre infrastructure."
+    },
+    "title": "État du Système",
+    "subtitle": "Surveillance des services en temps réel",
+    "last_check": "Dernière vérification",
+    "services": {
+      "title": "Services",
+      "website": {
+        "name": "Site Web",
+        "description": "Site web principal et pages d'accueil"
+      },
+      "odoo_api": {
+        "name": "API Odoo",
+        "description": "Système CRM et gestion des contacts"
+      }
+    },
+    "status": {
+      "operational": "Opérationnel",
+      "degraded": "Performance Dégradée",
+      "down": "Service Indisponible"
+    },
+    "details": {
+      "title": "Détails",
+      "response_time": "Temps de Réponse",
+      "user_id": "ID Utilisateur",
+      "error": "Erreur",
+      "code": "Code"
+    },
+    "logs": {
+      "title": "Logs de Diagnostic",
+      "protected": "Contenu Protégé",
+      "auth_required": "Authentification requise pour voir les logs de diagnostic.",
+      "auth_hint": "Ajoutez ?token=VOTRE_TOKEN à l'URL",
+      "export": "Exporter JSON",
+      "copy": "Copier les Logs",
+      "copied": "Copié!"
+    },
+    "aria": {
+      "status_page": "Page d'état du système",
+      "services_list": "Liste des services surveillés",
+      "service_card": "Carte d'état du service {{service}}",
+      "operational_icon": "Service opérationnel",
+      "degraded_icon": "Service dégradé",
+      "down_icon": "Service indisponible",
+      "logs_section": "Section des logs de diagnostic",
+      "export_button": "Exporter les données de diagnostic en JSON",
+      "copy_button": "Copier les logs dans le presse-papiers"
+    }
   }
 }

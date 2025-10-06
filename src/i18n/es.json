@@ -371,5 +371,57 @@
     },
     "to_close": "para cerrar",
     "to_search": "para buscar"
+  },
+  "status": {
+    "meta": {
+      "title": "Estado del Sistema - Ignia Cloud",
+      "description": "Monitoreo en tiempo real de los servicios de Ignia Cloud. Consulta el estado operacional actual de nuestra infraestructura."
+    },
+    "title": "Estado del Sistema",
+    "subtitle": "Monitoreo de servicios en tiempo real",
+    "last_check": "Última verificación",
+    "services": {
+      "title": "Servicios",
+      "website": {
+        "name": "Sitio Web",
+        "description": "Sitio web principal y páginas de aterrizaje"
+      },
+      "odoo_api": {
+        "name": "API de Odoo",
+        "description": "Sistema de CRM y gestión de contactos"
+      }
+    },
+    "status": {
+      "operational": "Operacional",
+      "degraded": "Rendimiento Degradado",
+      "down": "Servicio No Disponible"
+    },
+    "details": {
+      "title": "Detalles",
+      "response_time": "Tiempo de Respuesta",
+      "user_id": "ID de Usuario",
+      "error": "Error",
+      "code": "Código"
+    },
+    "logs": {
+      "title": "Logs de Diagnóstico",
+      "protected": "Contenido Protegido",
+      "auth_required": "Se requiere autenticación para ver los logs de diagnóstico.",
+      "auth_hint": "Agrega ?token=TU_TOKEN a la URL",
+      "export": "Exportar JSON",
+      "copy": "Copiar Logs",
+      "copied": "¡Copiado!"
+    },
+    "aria": {
+      "status_page": "Página de estado del sistema",
+      "services_list": "Lista de servicios monitoreados",
+      "service_card": "Tarjeta de estado del servicio {{service}}",
+      "operational_icon": "Servicio operacional",
+      "degraded_icon": "Servicio degradado",
+      "down_icon": "Servicio no disponible",
+      "logs_section": "Sección de logs de diagnóstico",
+      "export_button": "Exportar datos de diagnóstico como JSON",
+      "copy_button": "Copiar logs al portapapeles"
+    }
   }
 }

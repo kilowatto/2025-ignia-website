@@ -1,11 +1,16 @@
 ---
 /**
- * status.astro - Página de monitoreo de servicios
+ * /status - Página de Estado del Sistema (System Status)
  * 
  * PROPÓSITO:
  * Monitorea el estado de servicios críticos del sitio en tiempo real:
  * - Website (self-check)
- * - Odoo API (conectividad + autenticación)
+ * - Odoo API (conectividad + autenticación con XML-RPC)
+ * 
+ * SISTEMA DE SEMÁFOROS:
+ * 🟢 Operational - Servicio funcionando correctamente
+ * 🟡 Degraded - Rendimiento degradado
+ * 🔴 Down - Servicio no disponible
  * 
  * SEGURIDAD:
  * - Sin token: Solo muestra semáforos públicos (🟢🟡🔴)
@@ -19,14 +24,32 @@
  * - Variable de entorno: STATUS_PAGE_TOKEN (opcional)
  * - Si no existe el token, todos los logs son públicos (dev mode)
  * 
- * CUMPLIMIENTO arquitecture.md:
- * - §2: JavaScript mínimo (solo copy-to-clipboard)
- * - §3: TypeScript como base
- * - §8: Tailwind CSS exclusivamente
+ * CUMPLIMIENTO arquitectura.md:
+ * - §2: BaseLayout para herencia SEO/GEO ✅
+ * - §2: JavaScript mínimo (solo copy-to-clipboard) ✅
+ * - §3: TypeScript como base ✅
+ * - §5: i18n con astro-i18n (función t()) ✅
+ * - §7: Accesibilidad WCAG 2.2 AA ✅
+ * - §8: Tailwind CSS exclusivamente ✅
+ * - §9: SEO con JSON-LD ✅
+ * 
+ * @see src/lib/odoo/OdooClient.ts - Cliente XML-RPC para Odoo
+ * @see src/lib/odoo/config.ts - Configuración y validación de Odoo
+ * @see src/layouts/BaseLayout.astro - Layout base con SEO/GEO
+ * @see README.md - Documentación completa del sistema de monitoreo
  */
 
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from 'astro-i18n';
 import { getOdooConfig, validateOdooConfig } from '../lib/odoo/config';
 import { OdooClient } from '../lib/odoo/OdooClient';
+
+// ==========================================
+// i18n - Obtener locale actual
+// ==========================================
+// Arquitectura híbrida: Astro nativo (routing) + astro-i18n (traducciones)
+const rawLocale = Astro.currentLocale || 'en';
+const locale = rawLocale.split('-')[0] as 'en' | 'es' | 'fr';
 
 // Tipos para status de servicios
 type ServiceStatus = 'operational' | 'degraded' | 'down';
@@ -222,256 +245,242 @@ const statusColor = {
 // ============================================================================
 const hasErrors = services.some(s => s.error);
 const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
+
+// ==========================================
+// SEO & STRUCTURED DATA
+// ==========================================
+// Metadatos para BaseLayout (i18n)
+// Cumplimiento: arquitectura.md §5 (uso de función t() para i18n)
+const pageTitle = t('status.meta.title', undefined, { locale });
+const pageDescription = t('status.meta.description', undefined, { locale });
+
+// JSON-LD para WebPage
+// Cumplimiento: arquitectura.md §9 (Datos Estructurados)
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: Astro.url.href,
+    inLanguage: locale,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Ignia Cloud',
+      url: Astro.url.origin,
+    },
+  },
+];
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>System Status - Ignia Cloud</title>
-  <meta name="robots" content="noindex, nofollow">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-</head>
-
-<body class="bg-slate-50 min-h-screen py-8 px-4">
-  <div class="max-w-4xl mx-auto">
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={structuredData}
+  pageType="WebPage"
+>
+  <!-- 
+    Página de Status con BaseLayout
+    Cumplimiento arquitectura.md:
+    - §2: BaseLayout único (sin encadenamiento) ✅
+    - §5: i18n con función t() ✅
+    - §7: Accesibilidad WCAG 2.2 AA ✅
+    - §8: Tailwind CSS para estilos ✅
+    - §9: SEO con JSON-LD ✅
+  -->
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     
-    <!-- Header -->
-    <header class="mb-8">
-      <a href="/" class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Back to website
-      </a>
-      <h1 class="text-4xl font-bold text-slate-900">System Status</h1>
-      <p class="text-slate-600 mt-2">Real-time monitoring of Ignia Cloud services</p>
+    <!-- Header de la Página -->
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">
+        {t('status.title', undefined, { locale })}
+      </h1>
+      <p class="text-lg text-gray-600">
+        {t('status.subtitle', undefined, { locale })}
+      </p>
+      <p class="text-sm text-gray-500 mt-4">
+        {t('status.last_check', undefined, { locale })}: {new Date().toLocaleString(locale)}
+      </p>
     </header>
 
-    <!-- Overall Status Banner -->
-    <div class={`rounded-lg border-2 p-6 mb-8 ${statusColor[overallStatus]}`}>
-      <div class="flex items-center gap-3">
-        <span class="text-4xl">{statusEmoji[overallStatus]}</span>
-        <div>
-          <h2 class="text-2xl font-bold">{overallMessage}</h2>
-          <p class="text-sm opacity-75 mt-1">
-            Last checked: {new Date().toLocaleString('en-US', { 
-              timeZone: 'UTC',
-              dateStyle: 'medium',
-              timeStyle: 'medium'
-            })} UTC
-          </p>
-        </div>
-      </div>
-    </div>
+    <!-- Servicios Monitoreados -->
+    <section 
+      aria-labelledby="services-heading"
+      aria-label={t('status.aria.services_list', undefined, { locale })}
+      class="mb-12"
+    >
+      <h2 id="services-heading" class="text-2xl font-bold text-gray-900 mb-6">
+        {t('status.services.title', undefined, { locale })}
+      </h2>
 
-    <!-- Token Warning (if no valid token) -->
-    {!showLogs && expectedToken && (
-      <div class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 mb-6">
-        <div class="flex items-start gap-3">
-          <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-          </svg>
-          <div>
-            <p class="font-semibold text-amber-900">Limited view</p>
-            <p class="text-sm text-amber-700 mt-1">
-              Add <code class="bg-amber-100 px-1 py-0.5 rounded">?token=YOUR_TOKEN</code> to URL to see detailed logs and debugging information.
-            </p>
-          </div>
-        </div>
-      </div>
-    )}
-
-    <!-- Dev Mode Warning (if no token configured) -->
-    {showLogs && !expectedToken && (
-      <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <div class="flex items-start gap-3">
-          <svg class="w-5 h-5 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <div>
-            <p class="font-semibold text-blue-900">Development Mode</p>
-            <p class="text-sm text-blue-700 mt-1">
-              No <code class="bg-blue-100 px-1 py-0.5 rounded">STATUS_PAGE_TOKEN</code> configured. Logs are publicly visible. 
-              Add token to <code class="bg-blue-100 px-1 py-0.5 rounded">.env.local</code> for production security.
-            </p>
-          </div>
-        </div>
-      </div>
-    )}
-
-    <!-- Services Grid -->
-    <div class="space-y-4 mb-8">
-      {services.map((service) => (
-        <div class={`bg-white rounded-lg border-2 p-6 ${statusColor[service.status]}`}>
-          <!-- Service Header -->
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <span class="text-3xl">{statusEmoji[service.status]}</span>
-              <div>
-                <h3 class="text-xl font-bold text-slate-900">{service.name}</h3>
-                <p class={`text-sm font-medium ${service.status === 'operational' ? 'text-green-700' : service.status === 'degraded' ? 'text-yellow-700' : 'text-red-700'}`}>
-                  {service.message}
-                </p>
-              </div>
-            </div>
-            {service.responseTime && (
-              <div class="text-right">
-                <p class="text-sm text-slate-500">Response Time</p>
-                <p class="text-lg font-mono font-bold text-slate-900">{service.responseTime}ms</p>
-              </div>
-            )}
-          </div>
-
-          <!-- Service Details (if available) -->
-          {service.details && showLogs && (
-            <div class="bg-slate-50 rounded p-4 border border-slate-200">
-              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Details</p>
-              <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                {Object.entries(service.details).map(([key, value]) => (
-                  <div class="flex justify-between">
-                    <dt class="text-slate-600 font-medium">{key}:</dt>
-                    <dd class="text-slate-900 font-mono text-xs">{String(value)}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          )}
-
-          <!-- Error Summary (public, even without token) -->
-          {service.error && !showLogs && (
-            <div class="mt-4 bg-red-50 border border-red-200 rounded p-3">
-              <p class="text-sm text-red-800">
-                <span class="font-semibold">Error:</span> {service.error.message}
-              </p>
-              {service.error.code && (
-                <p class="text-xs text-red-600 mt-1">Code: {service.error.code}</p>
-              )}
-            </div>
-          )}
-
-          <!-- Timestamp -->
-          <p class="text-xs text-slate-500 mt-4">
-            Last checked: {new Date(service.lastChecked).toLocaleString('en-US', {
-              timeZone: 'UTC',
-              dateStyle: 'medium',
-              timeStyle: 'medium'
-            })} UTC
-          </p>
-        </div>
-      ))}
-    </div>
-
-    <!-- Diagnostic Logs (only with valid token) -->
-    {logs.length > 0 && showLogs && (
-      <div class="bg-slate-900 text-slate-100 rounded-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            Diagnostic Logs
-          </h2>
-          <button 
-            onclick="copyLogs()"
-            class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm font-medium transition-colors"
+      <!-- Grid de Servicios -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {services.map((service) => (
+          <article 
+            class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            aria-label={t('status.aria.service_card', { service: service.name }, { locale })}
           >
-            Copy to Clipboard
-          </button>
-        </div>
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center">
+                <span 
+                  class="text-3xl mr-3" 
+                  role="img" 
+                  aria-label={t(`status.aria.${service.status}_icon`, undefined, { locale })}
+                >
+                  {statusEmoji[service.status]}
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    {service.name}
+                  </h3>
+                  <p class="text-sm text-gray-600">
+                    {service.message}
+                  </p>
+                </div>
+              </div>
+              <span class={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                service.status === 'operational' ? 'bg-green-100 text-green-800' :
+                service.status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {t(`status.status.${service.status}`, undefined, { locale })}
+              </span>
+            </div>
 
-        <div class="space-y-6 font-mono text-xs">
-          {logs.map((service, index) => (
-            <div class="border-t border-slate-700 pt-4" class:list={[index === 0 && 'border-t-0 pt-0']}>
-              <p class="text-red-400 font-bold mb-2">
-                [{new Date(service.lastChecked).toISOString()}] ❌ {service.name} Failed
-              </p>
+            <!-- Detalles del Servicio -->
+            <dl class="mt-4 border-t border-gray-100 pt-4 space-y-2">
+              {service.responseTime !== undefined && (
+                <div class="flex justify-between text-sm">
+                  <dt class="text-gray-600">{t('status.details.response_time', undefined, { locale })}:</dt>
+                  <dd class="text-gray-900 font-medium">{service.responseTime}ms</dd>
+                </div>
+              )}
               
+              {service.details && showLogs && Object.entries(service.details).map(([key, value]) => (
+                <div class="flex justify-between text-sm">
+                  <dt class="text-gray-600 capitalize">{key}:</dt>
+                  <dd class="text-gray-900 font-mono text-xs">{String(value)}</dd>
+                </div>
+              ))}
+
               {service.error && (
                 <>
-                  <p class="text-slate-300 mb-1">Error: {service.error.message}</p>
+                  <div class="flex justify-between text-sm pt-2 border-t border-red-100">
+                    <dt class="text-gray-600">{t('status.details.error', undefined, { locale })}:</dt>
+                    <dd class="text-red-600 font-medium text-right flex-1 ml-4">{service.error.message}</dd>
+                  </div>
                   {service.error.code && (
-                    <p class="text-slate-400 mb-1">Code: {service.error.code}</p>
-                  )}
-                  
-                  {service.details && (
-                    <>
-                      <p class="text-slate-400 mt-3 mb-1">Details:</p>
-                      <pre class="bg-slate-800 rounded p-3 overflow-x-auto text-slate-300">
-{JSON.stringify(service.details, null, 2)}
-                      </pre>
-                    </>
-                  )}
-                  
-                  {service.error.stack && (
-                    <>
-                      <p class="text-slate-400 mt-3 mb-1">Stack Trace:</p>
-                      <pre class="bg-slate-800 rounded p-3 overflow-x-auto text-slate-300 whitespace-pre-wrap">
-{service.error.stack}
-                      </pre>
-                    </>
+                    <div class="flex justify-between text-sm">
+                      <dt class="text-gray-600">{t('status.details.code', undefined, { locale })}:</dt>
+                      <dd class="text-gray-900 font-mono text-xs">{service.error.code}</dd>
+                    </div>
                   )}
                 </>
               )}
-            </div>
-          ))}
-        </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+    </section>
 
-        <div class="mt-6 pt-4 border-t border-slate-700">
-          <p class="text-xs text-slate-400">
-            💡 <strong>Tip:</strong> Copy these logs and share them with your team or paste in a support ticket.
+    <!-- Sección de Logs (Protegida por Token) -->
+    <section 
+      aria-labelledby="logs-heading"
+      aria-label={t('status.aria.logs_section', undefined, { locale })}
+      class="mt-12"
+    >
+      <h2 id="logs-heading" class="text-2xl font-bold text-gray-900 mb-6">
+        {t('status.logs.title', undefined, { locale })}
+      </h2>
+
+      {showLogs ? (
+        <div class="bg-gray-900 rounded-lg p-6">
+          <!-- Toolbar -->
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-green-400 text-sm font-mono">
+              {t('status.logs.protected', undefined, { locale })}
+            </span>
+            <div class="flex gap-2">
+              <button
+                id="copyLogsBtn"
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label={t('status.aria.copy_button', undefined, { locale })}
+              >
+                {t('status.logs.copy', undefined, { locale })}
+              </button>
+              <button
+                id="exportJsonBtn"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label={t('status.aria.export_button', undefined, { locale })}
+              >
+                {t('status.logs.export', undefined, { locale })}
+              </button>
+            </div>
+          </div>
+
+          <!-- Logs JSON -->
+          <pre 
+            id="logsContent" 
+            class="bg-black text-green-400 p-4 rounded text-sm overflow-x-auto font-mono"
+            role="log"
+            aria-live="polite"
+          ><code>{JSON.stringify({ timestamp: new Date().toISOString(), services }, null, 2)}</code></pre>
+        </div>
+      ) : (
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+          <p class="text-yellow-800 font-medium mb-2">
+            🔒 {t('status.logs.auth_required', undefined, { locale })}
+          </p>
+          <p class="text-yellow-700 text-sm">
+            {t('status.logs.auth_hint', undefined, { locale })}
           </p>
         </div>
-      </div>
-    )}
+      )}
+    </section>
 
-    <!-- Actions -->
-    <div class="mt-8 flex gap-4">
-      <button 
-        onclick="window.location.reload()"
-        class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-colors"
-      >
-        🔄 Refresh Status
-      </button>
-      <a 
-        href="/"
-        class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-lg font-medium transition-colors"
-      >
-        ← Back to Home
-      </a>
-    </div>
-
-    <!-- Footer -->
-    <footer class="mt-12 pt-6 border-t border-slate-200 text-center text-sm text-slate-500">
-      <p>Ignia Cloud System Status • Updated in real-time</p>
-      <p class="mt-1">
-        For support, contact: <a href="mailto:support@ignia.cloud" class="text-orange-600 hover:text-orange-700">support@ignia.cloud</a>
-      </p>
-    </footer>
   </div>
 
-  <!-- Copy to Clipboard Script -->
-  <script is:inline>
-    function copyLogs() {
-      const logsDiv = document.querySelector('.bg-slate-900.text-slate-100');
-      if (!logsDiv) return;
-      
-      const logsText = logsDiv.innerText;
-      navigator.clipboard.writeText(logsText).then(() => {
-        const button = document.querySelector('button[onclick="copyLogs()"]');
-        const originalText = button.textContent;
-        button.textContent = '✓ Copied!';
-        button.classList.add('bg-green-600');
-        button.classList.remove('bg-slate-700', 'hover:bg-slate-600');
-        
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.classList.remove('bg-green-600');
-          button.classList.add('bg-slate-700', 'hover:bg-slate-600');
-        }, 2000);
+  <!-- 
+    Scripts Mínimos (Solo para Funcionalidad de Logs)
+    Cumplimiento: arquitectura.md §2 (JS mínimo o nulo)
+    Solo se cargan si el usuario está autenticado
+  -->
+  {showLogs && (
+    <script define:vars={{ locale }}>
+      // Copy logs to clipboard
+      document.getElementById('copyLogsBtn')?.addEventListener('click', async () => {
+        const logsContent = document.getElementById('logsContent')?.textContent || '';
+        try {
+          await navigator.clipboard.writeText(logsContent);
+          const btn = document.getElementById('copyLogsBtn');
+          if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = locale === 'es' ? '¡Copiado!' : locale === 'fr' ? 'Copié!' : 'Copied!';
+            setTimeout(() => {
+              btn.textContent = originalText;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('Failed to copy:', err);
+          alert('Failed to copy logs to clipboard');
+        }
       });
-    }
-  </script>
-</body>
-</html>
+
+      // Export JSON
+      document.getElementById('exportJsonBtn')?.addEventListener('click', () => {
+        const logsContent = document.getElementById('logsContent')?.textContent || '';
+        const dataBlob = new Blob([logsContent], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ignia-status-${new Date().toISOString()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    </script>
+  )}
+
+</BaseLayout>
