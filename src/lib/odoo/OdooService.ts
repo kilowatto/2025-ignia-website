@@ -183,26 +183,16 @@ export class OdooService {
       // Campos a devolver (optimización)
       const fields = ['id', 'name', 'email', 'phone', 'lang', 'comment', 'create_date'];
 
-      // Buscar IDs
-      const partnerIds = await this.client.execute<number[]>(
-        'res.partner',
-        'search',
-        [domain],
-        { limit: 10 } // Máximo 10 resultados (debería haber 0 o 1)
-      );
-
-      if (!partnerIds || partnerIds.length === 0) {
-        return {
-          success: true,
-          data: [],
-        };
-      }
-
-      // Leer datos completos de los partners encontrados
+      // Usar search_read() en lugar de search() + read() para evitar dos llamadas
+      // search_read() es más eficiente y evita problemas de recursión
       const partners = await this.client.execute<OdooPartner[]>(
         'res.partner',
-        'read',
-        [partnerIds, fields]
+        'search_read',
+        [domain],
+        {
+          limit: 10, // Máximo 10 resultados (debería haber 0 o 1)
+          fields: fields,
+        }
       );
 
       return {
