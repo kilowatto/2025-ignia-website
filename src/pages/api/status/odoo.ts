@@ -25,16 +25,18 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
     // Verificar si tiene token válido para logs detallados
     const providedToken = url.searchParams.get('token');
-    const expectedToken = import.meta.env.STATUS_PAGE_TOKEN;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const runtimeEnv = (locals as any).runtime?.env || {};
+    const expectedToken = runtimeEnv.STATUS_PAGE_TOKEN || import.meta.env.STATUS_PAGE_TOKEN;
     const showLogs = expectedToken ? providedToken === expectedToken : true;
 
     try {
-            // 2. Validar configuración de Odoo
-    //    Si faltan variables de entorno, retornamos error informativo
-    //    IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const validation = validateOdooConfig({ env: (locals as any).runtime?.env });
-    if (!validation.valid) {
+        // 2. Validar configuración de Odoo
+        //    Si faltan variables de entorno, retornamos error informativo
+        //    IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const validation = validateOdooConfig({ env: (locals as any).runtime?.env });
+        if (!validation.valid) {
             return new Response(
                 JSON.stringify({
                     name: 'Odoo API',

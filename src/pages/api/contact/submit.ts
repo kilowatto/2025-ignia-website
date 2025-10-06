@@ -242,9 +242,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 10. Manejar resultado
     if (!result.success) {
       console.error('[API /contact/submit] Odoo error:', result.error);
-      
+
       // Determinar status code según el tipo de error
-      const is5xxError = 
+      const is5xxError =
         result.error?.code?.includes('AUTH') ||
         result.error?.code?.includes('CONNECTION') ||
         result.error?.code?.includes('TIMEOUT');

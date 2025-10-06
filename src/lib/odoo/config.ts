@@ -77,7 +77,7 @@ export function getOdooConfig(context?: { env?: Record<string, any> }): OdooConf
   const runtimeEnv = context?.env || {};
   const importMetaEnv = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
   const processEnv = typeof process !== 'undefined' ? process.env : {};
-  
+
   // Merge con prioridad: runtime > importMeta > process
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const env: any = { ...processEnv, ...importMetaEnv, ...runtimeEnv };
@@ -190,7 +190,7 @@ export function validateOdooConfig(context?: { env?: Record<string, any> }): {
     const processEnv = typeof process !== 'undefined' ? process.env : {};
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const env: any = { ...processEnv, ...importMetaEnv, ...runtimeEnv };
-    
+
     const missingVars: string[] = [];
     if (!env.ODOO_URL && !env.PUBLIC_ODOO_URL) missingVars.push('ODOO_URL');
     if (!env.ODOO_DB && !env.PUBLIC_ODOO_DB) missingVars.push('ODOO_DB');
@@ -210,20 +210,20 @@ export function validateOdooConfig(context?: { env?: Record<string, any> }): {
 export const ODOO_DEFAULTS = {
   /** Timeout por defecto para requests HTTP (30 segundos) */
   REQUEST_TIMEOUT: 30000,
-  
+
   /** Idiomas soportados y su mapeo a locales Odoo */
   LOCALE_MAP: {
     'en': 'en_US',
     'es': 'es_MX',
     'fr': 'fr_FR',
   } as const,
-  
+
   /** Tipo de contacto por defecto para formularios web */
   DEFAULT_CONTACT_TYPE: 'contact' as const,
-  
+
   /** Valor por defecto de is_company para personas individuales */
   DEFAULT_IS_COMPANY: false,
-  
+
   /** Endpoints de Odoo XML-RPC */
   ENDPOINTS: {
     COMMON: '/xmlrpc/2/common',
