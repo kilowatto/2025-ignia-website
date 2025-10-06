@@ -96,7 +96,7 @@ import type { ContactFormData } from '../../../lib/odoo/types';
  * - 429: Too many requests (rate limit)
  * - 500: Error interno del servidor o Odoo
  */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // 1. Parsear body JSON
     let body: any;
@@ -217,9 +217,11 @@ export const POST: APIRoute = async ({ request }) => {
     // 8. Obtener configuración de Odoo
     let config;
     try {
-      config = getOdooConfig();
-    } catch (error) {
-      console.error('[API /contact/submit] Odoo config error:', error);
+      // IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      config = getOdooConfig({ env: (locals as any).runtime?.env });
+    } catch (configError) {
+      console.error('[API /contact/submit] Odoo config error:', configError);
       return new Response(
         JSON.stringify({
           success: false,
@@ -337,9 +339,11 @@ export const OPTIONS: APIRoute = async () => {
  *   "odoo": "configured" | "not_configured"
  * }
  */
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ locals }) => {
   try {
-    const config = getOdooConfig();
+    // IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const config = getOdooConfig({ env: (locals as any).runtime?.env });
     return new Response(
       JSON.stringify({
         status: 'ok',

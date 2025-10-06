@@ -20,7 +20,7 @@ import type { APIRoute } from 'astro';
 import { getOdooConfig, validateOdooConfig } from '../../../lib/odoo/config';
 import { OdooClient } from '../../../lib/odoo/OdooClient';
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
     const start = Date.now();
 
     // Verificar si tiene token válido para logs detallados
@@ -29,10 +29,12 @@ export const GET: APIRoute = async ({ url }) => {
     const showLogs = expectedToken ? providedToken === expectedToken : true;
 
     try {
-        // Paso 1: Validar configuración
-        const validation = validateOdooConfig();
-
-        if (!validation.valid) {
+            // 2. Validar configuración de Odoo
+    //    Si faltan variables de entorno, retornamos error informativo
+    //    IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const validation = validateOdooConfig({ env: (locals as any).runtime?.env });
+    if (!validation.valid) {
             return new Response(
                 JSON.stringify({
                     name: 'Odoo API',

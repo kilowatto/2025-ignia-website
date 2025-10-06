@@ -37,26 +37,50 @@ import type { OdooConfig } from './types';
  * 
  * ENVIRONMENTS:
  * - Development: Lee de import.meta.env (Vite)
- * - Production: Lee de process.env (Cloudflare Workers)
+ * - Production: Lee de runtime context (Cloudflare Workers) via locals.runtime.env
+ * 
+ * CLOUDFLARE WORKERS:
+ * En Cloudflare, las env vars están en el runtime context, no en process.env.
+ * Debes pasar el context desde tu API route o componente Astro:
+ * 
+ * ```typescript
+ * // En API route
+ * export const GET: APIRoute = async ({ locals }) => {
+ *   const config = getOdooConfig({ env: locals.runtime?.env });
+ * };
+ * 
+ * // En componente Astro
+ * const config = getOdooConfig({ env: Astro.locals.runtime?.env });
+ * ```
  * 
  * EJEMPLO DE USO:
  * ```typescript
  * try {
- *   const config = getOdooConfig();
+ *   const config = getOdooConfig({ env: locals.runtime?.env });
  *   const client = new OdooClient(config);
  * } catch (error) {
  *   console.error('Odoo config error:', error.message);
  * }
  * ```
  * 
+ * @param context - Objeto opcional con runtime environment de Cloudflare
+ * @param context.env - Environment variables del runtime (locals.runtime.env)
  * @throws {Error} Si falta alguna variable de entorno requerida
  * @returns {OdooConfig} Configuración validada de Odoo
  */
-export function getOdooConfig(): OdooConfig {
-  // Determinar el runtime environment (Vite dev vs Cloudflare Workers)
-  const env = typeof import.meta !== 'undefined' && import.meta.env 
-    ? import.meta.env 
-    : (typeof process !== 'undefined' ? process.env : {});
+export function getOdooConfig(context?: { env?: Record<string, any> }): OdooConfig {
+  // Prioridad: runtime context > import.meta.env > process.env
+  // Esto asegura compatibilidad con:
+  // - Cloudflare Workers/Pages (runtime context)
+  // - Vite dev server (import.meta.env)
+  // - Node.js SSR (process.env)
+  const runtimeEnv = context?.env || {};
+  const importMetaEnv = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
+  const processEnv = typeof process !== 'undefined' ? process.env : {};
+  
+  // Merge con prioridad: runtime > importMeta > process
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const env: any = { ...processEnv, ...importMetaEnv, ...runtimeEnv };
 
   // Leer variables de entorno
   const url = env.ODOO_URL || env.PUBLIC_ODOO_URL;
@@ -133,29 +157,39 @@ export function getOdooConfig(): OdooConfig {
  * Útil para health checks o validaciones no críticas donde no queremos
  * interrumpir el flujo con excepciones.
  * 
+ * CLOUDFLARE WORKERS:
+ * Pasa el runtime context para validar correctamente en production:
+ * ```typescript
+ * const validation = validateOdooConfig({ env: locals.runtime?.env });
+ * ```
+ * 
  * EJEMPLO DE USO:
  * ```typescript
- * const validation = validateOdooConfig();
+ * const validation = validateOdooConfig({ env: locals.runtime?.env });
  * if (!validation.valid) {
  *   console.warn('Odoo no configurado:', validation.missingVars);
  *   // Deshabilitar features que dependen de Odoo
  * }
  * ```
  * 
+ * @param context - Objeto opcional con runtime environment de Cloudflare
+ * @param context.env - Environment variables del runtime (locals.runtime.env)
  * @returns {object} Resultado de validación con lista de variables faltantes
  */
-export function validateOdooConfig(): {
+export function validateOdooConfig(context?: { env?: Record<string, any> }): {
   valid: boolean;
   missingVars: string[];
 } {
   try {
-    getOdooConfig();
+    getOdooConfig(context);
     return { valid: true, missingVars: [] };
   } catch (error) {
-    // Extraer nombres de variables faltantes del mensaje de error
-    const env = typeof import.meta !== 'undefined' && import.meta.env 
-      ? import.meta.env 
-      : (typeof process !== 'undefined' ? process.env : {});
+    // Extraer nombres de variables faltantes
+    const runtimeEnv = context?.env || {};
+    const importMetaEnv = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
+    const processEnv = typeof process !== 'undefined' ? process.env : {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const env: any = { ...processEnv, ...importMetaEnv, ...runtimeEnv };
     
     const missingVars: string[] = [];
     if (!env.ODOO_URL && !env.PUBLIC_ODOO_URL) missingVars.push('ODOO_URL');
