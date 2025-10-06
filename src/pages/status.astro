@@ -1,51 +1,51 @@
 ---
 /**
  * /status - System Status Page (English)
- * 
+ *
  * WRAPPER MÍNIMO para StatusPage.astro
- * 
+ *
  * PROPÓSITO:
  * Página wrapper que define metadatos SEO y llama al componente StatusPage.astro
  * con locale='en'. Mantiene estructura espejo para routing de Astro (§4).
- * 
+ *
  * PATRÓN:
  * Similar a search.astro - wrapper mínimo que usa componente reutilizable.
  * Lógica centralizada en src/components/StatusPage.astro (DRY).
- * 
+ *
  * CUMPLIMIENTO arquitectura.md:
  * - §2: BaseLayout único (sin encadenamiento) ✅
  * - §4: Estructura espejo de páginas (routing) ✅
  * - §5: i18n con función t() ✅
  * - §9: SEO con JSON-LD ✅
- * 
+ *
  * @see src/components/StatusPage.astro - Lógica centralizada
  * @see src/pages/es/status.astro - Wrapper ES
  * @see src/pages/fr/status.astro - Wrapper FR
  */
 
-import BaseLayout from '../layouts/BaseLayout.astro';
-import StatusPage from '../components/StatusPage.astro';
-import { t } from 'astro-i18n';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StatusPage from "../components/StatusPage.astro";
+import { t } from "astro-i18n";
 
 // Forzar locale inglés
-const locale = 'en' as const;
+const locale = "en" as const;
 
 // Metadatos SEO
-const pageTitle = t('status.meta.title', undefined, { locale });
-const pageDescription = t('status.meta.description', undefined, { locale });
+const pageTitle = t("status.meta.title", undefined, { locale });
+const pageDescription = t("status.meta.description", undefined, { locale });
 
 // JSON-LD para WebPage (§9: Datos Estructurados)
 const structuredData = [
   {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
+    "@context": "https://schema.org",
+    "@type": "WebPage",
     name: pageTitle,
     description: pageDescription,
     url: Astro.url.href,
     inLanguage: locale,
     isPartOf: {
-      '@type': 'WebSite',
-      name: 'Ignia Cloud',
+      "@type": "WebSite",
+      name: "Ignia Cloud",
       url: Astro.url.origin,
     },
   },
