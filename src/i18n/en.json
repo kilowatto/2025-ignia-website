@@ -19,7 +19,8 @@
       "about": "About Us",
       "team": "Team",
       "careers": "Careers",
-      "partners": "Partners"
+      "partners": "Partners",
+      "status": "System Status"
     },
     "contact_form": {
       "title": "Get in Touch",
@@ -290,7 +291,8 @@
       "about": "/about-us/",
       "team": "/team/",
       "careers": "/careers/",
-      "partners": "/partners/"
+      "partners": "/partners/",
+      "status": "/status/"
     }
   },
   "404": {

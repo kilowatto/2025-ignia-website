@@ -19,7 +19,8 @@
       "about": "Sobre Nosotros",
       "team": "Equipo",
       "careers": "Carreras",
-      "partners": "Partners"
+      "partners": "Partners",
+      "status": "Estado del Sistema"
     },
     "contact_form": {
       "title": "Contáctanos",
@@ -285,12 +286,13 @@
       "about": "/acerca-de/"
     },
     "corporate": {
-      "press": "/notas-de-prensa/",
-      "offices": "/oficinas/",
-      "about": "/sobre-nosotros/",
-      "team": "/equipo/",
-      "careers": "/carreras/",
-      "partners": "/partners/"
+      "press": "/press/",
+      "offices": "/offices/",
+      "about": "/about-us/",
+      "team": "/team/",
+      "careers": "/careers/",
+      "partners": "/partners/",
+      "status": "/status/"
     }
   },
   "404": {

@@ -19,7 +19,8 @@
       "about": "À Propos",
       "team": "Équipe",
       "careers": "Carrières",
-      "partners": "Partenaires"
+      "partners": "Partenaires",
+      "status": "État du Système"
     },
     "contact_form": {
       "title": "Contactez-nous",
@@ -295,12 +296,13 @@
       "contact": "/contact/"
     },
     "corporate": {
-      "press": "/presse/",
-      "offices": "/bureaux/",
-      "about": "/a-propos-de-nous/",
-      "team": "/equipe/",
-      "careers": "/carrieres/",
-      "partners": "/partenaires/"
+      "press": "/press/",
+      "offices": "/offices/",
+      "about": "/about-us/",
+      "team": "/team/",
+      "careers": "/careers/",
+      "partners": "/partners/",
+      "status": "/status/"
     }
   },
   "404": {
