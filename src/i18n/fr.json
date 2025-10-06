@@ -392,6 +392,7 @@
     "title": "État du Système",
     "subtitle": "Surveillance des services en temps réel",
     "last_check": "Dernière vérification",
+    "auto_refresh": "Cette page se rafraîchit automatiquement toutes les 5 minutes",
     "services": {
       "title": "Services",
       "website": {

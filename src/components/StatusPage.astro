@@ -75,68 +75,66 @@ const showLogs = hasValidToken;
 const services: Service[] = [];
 
 // ============================================================================
+// PARALLEL API CHECKS (Promise.allSettled para no bloquear)
+// ============================================================================
+
 // CHECK 1: WEBSITE (Self-check)
-// ============================================================================
-const websiteStart = Date.now();
-try {
-  services.push({
-    name: 'Website',
-    status: 'operational',
-    responseTime: Date.now() - websiteStart,
-    message: 'Astro SSR responding correctly',
-    lastChecked: new Date().toISOString(),
-    details: {
-      runtime: import.meta.env.PROD ? 'production' : 'development',
-      adapter: 'Cloudflare Workers',
-    },
-  });
-} catch (error) {
-  services.push({
-    name: 'Website',
-    status: 'down',
-    responseTime: Date.now() - websiteStart,
-    message: 'Failed to render page',
-    lastChecked: new Date().toISOString(),
-    error: {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      code: 'WEBSITE_ERROR',
-      stack: error instanceof Error ? error.stack : undefined,
-    },
-  });
-}
-
-// ============================================================================
-// CHECK 2: ODOO API
-// ============================================================================
-const odooStart = Date.now();
-let odooService: Service = {
-  name: 'Odoo API',
-  status: 'down',
-  message: 'Not configured',
-  lastChecked: new Date().toISOString(),
-};
-
-try {
-  // Paso 1: Validar que existen las env vars
-  const validation = validateOdooConfig();
-  
-  if (!validation.valid) {
-    odooService = {
-      name: 'Odoo API',
+const websiteCheck = async (): Promise<Service> => {
+  const start = Date.now();
+  try {
+    return {
+      name: 'Website',
+      status: 'operational',
+      responseTime: Date.now() - start,
+      message: 'Astro SSR responding correctly',
+      lastChecked: new Date().toISOString(),
+      details: {
+        runtime: import.meta.env.PROD ? 'production' : 'development',
+        adapter: 'Cloudflare Workers',
+      },
+    };
+  } catch (error) {
+    return {
+      name: 'Website',
       status: 'down',
-      responseTime: Date.now() - odooStart,
-      message: 'Configuration missing',
+      responseTime: Date.now() - start,
+      message: 'Failed to render page',
       lastChecked: new Date().toISOString(),
       error: {
-        message: `Missing environment variables: ${validation.missingVars.join(', ')}`,
-        code: 'CONFIG_MISSING',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        code: 'WEBSITE_ERROR',
+        stack: error instanceof Error ? error.stack : undefined,
       },
-      details: showLogs ? {
-        missingVars: validation.missingVars,
-        hint: 'Add variables to .env.local or Cloudflare Pages settings',
-      } : undefined,
     };
-  } else {
+  }
+};
+
+// CHECK 2: ODOO API
+const odooCheck = async (): Promise<Service> => {
+  const start = Date.now();
+  
+  try {
+    // Paso 1: Validar que existen las env vars
+    const validation = validateOdooConfig();
+    
+    if (!validation.valid) {
+      return {
+        name: 'Odoo API',
+        status: 'down',
+        responseTime: Date.now() - start,
+        message: 'Configuration missing',
+        lastChecked: new Date().toISOString(),
+        error: {
+          message: `Missing environment variables: ${validation.missingVars.join(', ')}`,
+          code: 'CONFIG_MISSING',
+        },
+        details: showLogs ? {
+          missingVars: validation.missingVars,
+          hint: 'Add variables to .env.local or Cloudflare Pages settings',
+        } : undefined,
+      };
+    }
+    
     // Paso 2: Obtener config y crear cliente
     const config = getOdooConfig();
     const client = new OdooClient(config, 5000); // 5s timeout
@@ -147,9 +145,9 @@ try {
     const authTime = Date.now() - authStart;
     
     // Paso 4: Success - conexión establecida
-    const totalTime = Date.now() - odooStart;
+    const totalTime = Date.now() - start;
     
-    odooService = {
+    return {
       name: 'Odoo API',
       status: totalTime < 2000 ? 'operational' : 'degraded',
       responseTime: totalTime,
@@ -168,36 +166,59 @@ try {
         database: config.db,
       },
     };
+  } catch (error) {
+    const totalTime = Date.now() - start;
+    
+    // Type guard para error
+    const errorObj = error as any;
+    
+    return {
+      name: 'Odoo API',
+      status: 'down',
+      responseTime: totalTime,
+      message: error instanceof Error ? error.message : 'Connection failed',
+      lastChecked: new Date().toISOString(),
+      error: showLogs ? {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        code: errorObj.code || 'CONNECTION_ERROR',
+        stack: error instanceof Error ? error.stack : undefined,
+        raw: errorObj,
+      } : {
+        message: 'Authentication or connection error',
+        code: 'ODOO_ERROR',
+      },
+      details: showLogs ? {
+        attemptedUrl: getOdooConfig()?.url,
+        timeout: '5000ms',
+      } : undefined,
+    };
   }
-} catch (error) {
-  const totalTime = Date.now() - odooStart;
-  
-  // Type guard para error
-  const errorObj = error as any;
-  
-  odooService = {
-    name: 'Odoo API',
-    status: 'down',
-    responseTime: totalTime,
-    message: error instanceof Error ? error.message : 'Connection failed',
-    lastChecked: new Date().toISOString(),
-    error: showLogs ? {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      code: errorObj.code || 'CONNECTION_ERROR',
-      stack: error instanceof Error ? error.stack : undefined,
-      raw: errorObj,
-    } : {
-      message: 'Authentication or connection error',
-      code: 'ODOO_ERROR',
-    },
-    details: showLogs ? {
-      attemptedUrl: getOdooConfig()?.url,
-      timeout: '5000ms',
-    } : undefined,
-  };
-}
+};
 
-services.push(odooService);
+// Ejecutar todos los checks en paralelo (no bloqueante)
+const results = await Promise.allSettled([
+  websiteCheck(),
+  odooCheck(),
+]);
+
+// Extraer servicios de los resultados
+results.forEach((result) => {
+  if (result.status === 'fulfilled') {
+    services.push(result.value);
+  } else {
+    // Fallback si Promise.allSettled falla (edge case)
+    services.push({
+      name: 'Unknown Service',
+      status: 'down',
+      message: 'Check failed to execute',
+      lastChecked: new Date().toISOString(),
+      error: {
+        message: result.reason?.message || 'Unknown error',
+        code: 'PROMISE_REJECTED',
+      },
+    });
+  }
+});
 
 // ============================================================================
 // OVERALL STATUS
@@ -257,6 +278,12 @@ const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
     </p>
     <p class="text-sm text-gray-500 mt-4">
       {t('status.last_check', undefined, { locale })}: {new Date().toLocaleString(locale)}
+    </p>
+    <p class="text-sm text-blue-600 mt-2 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+      </svg>
+      {t('status.auto_refresh', undefined, { locale })}
     </p>
   </header>
 
@@ -385,11 +412,8 @@ const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
       </div>
     ) : (
       <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-        <p class="text-yellow-800 font-medium mb-2">
+        <p class="text-yellow-800 font-medium">
           🔒 {t('status.logs.auth_required', undefined, { locale })}
-        </p>
-        <p class="text-yellow-700 text-sm">
-          {t('status.logs.auth_hint', undefined, { locale })}
         </p>
       </div>
     )}

@@ -380,8 +380,9 @@
       "description": "Monitoreo en tiempo real de los servicios de Ignia Cloud. Consulta el estado operacional actual de nuestra infraestructura."
     },
     "title": "Estado del Sistema",
-    "subtitle": "Monitoreo de servicios en tiempo real",
+        "subtitle": "Monitoreo en tiempo real de servicios Ignia Cloud",
     "last_check": "Última verificación",
+    "auto_refresh": "Esta página se actualiza automáticamente cada 5 minutos",
     "services": {
       "title": "Servicios",
       "website": {

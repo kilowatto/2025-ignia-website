@@ -382,6 +382,7 @@
     "title": "System Status",
     "subtitle": "Real-time service monitoring",
     "last_check": "Last check",
+    "auto_refresh": "This page automatically refreshes every 5 minutes",
     "services": {
       "title": "Services",
       "website": {

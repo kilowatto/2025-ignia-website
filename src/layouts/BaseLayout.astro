@@ -28,6 +28,7 @@ interface Props {
   ogImage?: string;
   pageType?: string;
   structuredData?: Record<string, unknown>[];
+  metaRefresh?: number; // Segundos para auto-refresh (opcional)
 }
 
 const {
@@ -37,6 +38,7 @@ const {
   ogImage,
   pageType = "WebPage",
   structuredData = [],
+  metaRefresh, // Opcional para auto-refresh (status pages)
 } = Astro.props as Props;
 
 // Obtener locale actual usando Astro.currentLocale (API correcta)
@@ -62,6 +64,10 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Auto-refresh meta tag (opcional, solo para status pages) -->
+    {metaRefresh && <meta http-equiv="refresh" content={metaRefresh.toString()} />}
+    
     <title>{title}</title>
     <meta name="description" content={description} />
 
