@@ -412,48 +412,185 @@ export class OdooClient {
       throw new Error(`Odoo Fault: ${errorMsg}`);
     }
 
-    // Extraer valor de la respuesta
-    // Orden de prioridad: int > double > string > boolean > array > struct
-    
+    // Extraer el primer <param> de <params> (donde está el valor de retorno)
+    const paramMatch = xml.match(/<param>\s*<value>(.*?)<\/value>\s*<\/param>/s);
+    if (!paramMatch) {
+      console.warn('[OdooClient] No se encontró <param><value> en respuesta:', xml.substring(0, 200));
+      return xml as T;
+    }
+
+    const valueContent = paramMatch[1];
+    return this.parseValue(valueContent) as T;
+  }
+
+  /**
+   * Parsea el contenido interno de un tag <value>
+   * 
+   * TIPOS XML-RPC:
+   * - <int>123</int>
+   * - <double>45.67</double>
+   * - <string>texto</string>
+   * - <boolean>1</boolean> o <boolean>0</boolean>
+   * - <array><data>...</data></array>
+   * - <struct><member>...</member></struct>
+   * 
+   * @param valueContent - Contenido entre <value> y </value>
+   * @returns Valor parseado (number, string, boolean, array, object)
+   */
+  private parseValue(valueContent: string): unknown {
+    // Limpiar whitespace
+    const content = valueContent.trim();
+
     // Int
-    const intMatch = xml.match(/<int>(-?\d+)<\/int>/);
+    const intMatch = content.match(/^<int>(-?\d+)<\/int>$/);
     if (intMatch) {
-      return parseInt(intMatch[1], 10) as T;
+      return parseInt(intMatch[1], 10);
     }
 
     // Double
-    const doubleMatch = xml.match(/<double>([\d.]+)<\/double>/);
+    const doubleMatch = content.match(/^<double>([\d.]+)<\/double>$/);
     if (doubleMatch) {
-      return parseFloat(doubleMatch[1]) as T;
+      return parseFloat(doubleMatch[1]);
     }
 
     // Boolean
-    const boolMatch = xml.match(/<boolean>([01])<\/boolean>/);
+    const boolMatch = content.match(/^<boolean>([01])<\/boolean>$/);
     if (boolMatch) {
-      return (boolMatch[1] === '1') as T;
+      return boolMatch[1] === '1';
     }
 
     // String
-    const stringMatch = xml.match(/<string>(.*?)<\/string>/s);
+    const stringMatch = content.match(/^<string>(.*?)<\/string>$/s);
     if (stringMatch) {
-      return this.unescapeXML(stringMatch[1]) as T;
+      return this.unescapeXML(stringMatch[1]);
     }
 
-    // Array (simplificado - solo para arrays de primitivos)
-    if (xml.includes('<array>')) {
-      const values: unknown[] = [];
-      const valueRegex = /<value>(.*?)<\/value>/gs;
-      let match;
-      while ((match = valueRegex.exec(xml)) !== null) {
-        // Recursivamente parsear cada valor
-        values.push(this.parseXMLResponse(match[0]));
+    // Array
+    if (content.startsWith('<array>')) {
+      return this.parseArray(content);
+    }
+
+    // Struct (object)
+    if (content.startsWith('<struct>')) {
+      return this.parseStruct(content);
+    }
+
+    // Nil/None
+    if (content.includes('<nil/>')) {
+      return null;
+    }
+
+    // Si no se reconoce el tipo, retornar string crudo
+    console.warn('[OdooClient] Tipo XML-RPC no reconocido:', content.substring(0, 100));
+    return content;
+  }
+
+  /**
+   * Parsea un <array><data>...</data></array>
+   * 
+   * ESTRUCTURA:
+   * <array>
+   *   <data>
+   *     <value><int>1</int></value>
+   *     <value><string>texto</string></value>
+   *     ...
+   *   </data>
+   * </array>
+   * 
+   * @param arrayXML - XML completo del array
+   * @returns Array de valores parseados
+   */
+  private parseArray(arrayXML: string): unknown[] {
+    const values: unknown[] = [];
+    
+    // Extraer contenido de <data>...</data>
+    const dataMatch = arrayXML.match(/<data>(.*?)<\/data>/s);
+    if (!dataMatch) {
+      return values;
+    }
+
+    const dataContent = dataMatch[1];
+
+    // Buscar todos los <value>...</value> usando un enfoque de stack
+    // para evitar problemas con nested values
+    let depth = 0;
+    let currentValue = '';
+    let insideValue = false;
+
+    for (let i = 0; i < dataContent.length; i++) {
+      const char = dataContent[i];
+      const remaining = dataContent.substring(i);
+
+      if (remaining.startsWith('<value>')) {
+        if (depth === 0) {
+          insideValue = true;
+          currentValue = '';
+          i += 6; // Saltar '<value>'
+          continue;
+        }
+        depth++;
+      } else if (remaining.startsWith('</value>')) {
+        if (depth === 0 && insideValue) {
+          // Fin del value actual, parsearlo
+          values.push(this.parseValue(currentValue));
+          insideValue = false;
+          currentValue = '';
+          i += 7; // Saltar '</value>'
+          continue;
+        }
+        depth--;
       }
-      return values as T;
+
+      if (insideValue) {
+        currentValue += char;
+      }
     }
 
-    // Si no se puede parsear, retornar el XML crudo (fallback)
-    console.warn('No se pudo parsear respuesta XML, retornando raw:', xml.substring(0, 200));
-    return xml as T;
+    return values;
+  }
+
+  /**
+   * Parsea un <struct>...</struct> (object)
+   * 
+   * ESTRUCTURA:
+   * <struct>
+   *   <member>
+   *     <name>key1</name>
+   *     <value><string>valor1</string></value>
+   *   </member>
+   *   <member>
+   *     <name>key2</name>
+   *     <value><int>123</int></value>
+   *   </member>
+   * </struct>
+   * 
+   * @param structXML - XML completo del struct
+   * @returns Objeto JavaScript
+   */
+  private parseStruct(structXML: string): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+
+    // Buscar todos los <member>...</member>
+    const memberRegex = /<member>(.*?)<\/member>/gs;
+    let memberMatch;
+
+    while ((memberMatch = memberRegex.exec(structXML)) !== null) {
+      const memberContent = memberMatch[1];
+
+      // Extraer <name>
+      const nameMatch = memberContent.match(/<name>(.*?)<\/name>/s);
+      if (!nameMatch) continue;
+      const key = this.unescapeXML(nameMatch[1].trim());
+
+      // Extraer <value>
+      const valueMatch = memberContent.match(/<value>(.*?)<\/value>/s);
+      if (!valueMatch) continue;
+      const value = this.parseValue(valueMatch[1]);
+
+      result[key] = value;
+    }
+
+    return result;
   }
 
   /**
