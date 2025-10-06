@@ -1,0 +1,477 @@
+---
+/**
+ * status.astro - Página de monitoreo de servicios
+ * 
+ * PROPÓSITO:
+ * Monitorea el estado de servicios críticos del sitio en tiempo real:
+ * - Website (self-check)
+ * - Odoo API (conectividad + autenticación)
+ * 
+ * SEGURIDAD:
+ * - Sin token: Solo muestra semáforos públicos (🟢🟡🔴)
+ * - Con token: Muestra logs completos y datos de debugging
+ * 
+ * USO:
+ * - Público: https://ignia.cloud/status
+ * - Con logs: https://ignia.cloud/status?token=tu_token_secreto
+ * 
+ * CONFIGURACIÓN:
+ * - Variable de entorno: STATUS_PAGE_TOKEN (opcional)
+ * - Si no existe el token, todos los logs son públicos (dev mode)
+ * 
+ * CUMPLIMIENTO arquitecture.md:
+ * - §2: JavaScript mínimo (solo copy-to-clipboard)
+ * - §3: TypeScript como base
+ * - §8: Tailwind CSS exclusivamente
+ */
+
+import { getOdooConfig, validateOdooConfig } from '../lib/odoo/config';
+import { OdooClient } from '../lib/odoo/OdooClient';
+
+// Tipos para status de servicios
+type ServiceStatus = 'operational' | 'degraded' | 'down';
+
+interface Service {
+  name: string;
+  status: ServiceStatus;
+  responseTime?: number;
+  message?: string;
+  lastChecked: string;
+  details?: Record<string, any>;
+  error?: {
+    message: string;
+    code?: string;
+    stack?: string;
+    raw?: any;
+  };
+}
+
+// Verificar si tiene token válido para ver logs
+const url = new URL(Astro.request.url);
+const providedToken = url.searchParams.get('token');
+const expectedToken = import.meta.env.STATUS_PAGE_TOKEN;
+
+// Si no hay token configurado, mostrar warning pero permitir acceso (dev mode)
+const hasValidToken = expectedToken 
+  ? providedToken === expectedToken 
+  : true; // Sin token configurado = dev mode, todos los logs visibles
+
+const showLogs = hasValidToken;
+
+// Array de servicios monitoreados
+const services: Service[] = [];
+
+// ============================================================================
+// CHECK 1: WEBSITE (Self-check)
+// ============================================================================
+const websiteStart = Date.now();
+try {
+  services.push({
+    name: 'Website',
+    status: 'operational',
+    responseTime: Date.now() - websiteStart,
+    message: 'Astro SSR responding correctly',
+    lastChecked: new Date().toISOString(),
+    details: {
+      runtime: import.meta.env.PROD ? 'production' : 'development',
+      adapter: 'Cloudflare Workers',
+    },
+  });
+} catch (error) {
+  services.push({
+    name: 'Website',
+    status: 'down',
+    responseTime: Date.now() - websiteStart,
+    message: 'Failed to render page',
+    lastChecked: new Date().toISOString(),
+    error: {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: 'WEBSITE_ERROR',
+      stack: error instanceof Error ? error.stack : undefined,
+    },
+  });
+}
+
+// ============================================================================
+// CHECK 2: ODOO API
+// ============================================================================
+const odooStart = Date.now();
+let odooService: Service = {
+  name: 'Odoo API',
+  status: 'down',
+  message: 'Not configured',
+  lastChecked: new Date().toISOString(),
+};
+
+try {
+  // Paso 1: Validar que existen las env vars
+  const validation = validateOdooConfig();
+  
+  if (!validation.valid) {
+    odooService = {
+      name: 'Odoo API',
+      status: 'down',
+      responseTime: Date.now() - odooStart,
+      message: 'Configuration missing',
+      lastChecked: new Date().toISOString(),
+      error: {
+        message: `Missing environment variables: ${validation.missingVars.join(', ')}`,
+        code: 'CONFIG_MISSING',
+      },
+      details: showLogs ? {
+        missingVars: validation.missingVars,
+        hint: 'Add variables to .env.local or Cloudflare Pages settings',
+      } : undefined,
+    };
+  } else {
+    // Paso 2: Obtener config y crear cliente
+    const config = getOdooConfig();
+    const client = new OdooClient(config, 5000); // 5s timeout
+    
+    // Paso 3: Intentar autenticación
+    const authStart = Date.now();
+    const auth = await client.authenticate();
+    const authTime = Date.now() - authStart;
+    
+    // Paso 4: Success - conexión establecida
+    const totalTime = Date.now() - odooStart;
+    
+    odooService = {
+      name: 'Odoo API',
+      status: totalTime < 2000 ? 'operational' : 'degraded',
+      responseTime: totalTime,
+      message: totalTime < 2000 
+        ? 'Connected and authenticated' 
+        : 'Connected but slow response',
+      lastChecked: new Date().toISOString(),
+      details: showLogs ? {
+        url: config.url,
+        database: config.db,
+        username: config.username,
+        uid: auth.uid,
+        authTime: `${authTime}ms`,
+      } : {
+        url: config.url.replace(/https?:\/\//, '').split('/')[0], // Solo dominio
+        database: config.db,
+      },
+    };
+  }
+} catch (error) {
+  const totalTime = Date.now() - odooStart;
+  
+  // Type guard para error
+  const errorObj = error as any;
+  
+  odooService = {
+    name: 'Odoo API',
+    status: 'down',
+    responseTime: totalTime,
+    message: error instanceof Error ? error.message : 'Connection failed',
+    lastChecked: new Date().toISOString(),
+    error: showLogs ? {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: errorObj.code || 'CONNECTION_ERROR',
+      stack: error instanceof Error ? error.stack : undefined,
+      raw: errorObj,
+    } : {
+      message: 'Authentication or connection error',
+      code: 'ODOO_ERROR',
+    },
+    details: showLogs ? {
+      attemptedUrl: getOdooConfig()?.url,
+      timeout: '5000ms',
+    } : undefined,
+  };
+}
+
+services.push(odooService);
+
+// ============================================================================
+// OVERALL STATUS
+// ============================================================================
+const allOperational = services.every(s => s.status === 'operational');
+const anyDown = services.some(s => s.status === 'down');
+
+const overallStatus: ServiceStatus = allOperational 
+  ? 'operational' 
+  : anyDown 
+  ? 'down' 
+  : 'degraded';
+
+const overallMessage = allOperational
+  ? 'All systems operational'
+  : anyDown
+  ? 'Some systems are down'
+  : 'Systems running with degraded performance';
+
+// Emojis de semáforo
+const statusEmoji = {
+  operational: '🟢',
+  degraded: '🟡',
+  down: '🔴',
+};
+
+const statusColor = {
+  operational: 'text-green-600 bg-green-50 border-green-200',
+  degraded: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+  down: 'text-red-600 bg-red-50 border-red-200',
+};
+
+// ============================================================================
+// LOGS (solo si tiene token válido)
+// ============================================================================
+const hasErrors = services.some(s => s.error);
+const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Status - Ignia Cloud</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+
+<body class="bg-slate-50 min-h-screen py-8 px-4">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header -->
+    <header class="mb-8">
+      <a href="/" class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to website
+      </a>
+      <h1 class="text-4xl font-bold text-slate-900">System Status</h1>
+      <p class="text-slate-600 mt-2">Real-time monitoring of Ignia Cloud services</p>
+    </header>
+
+    <!-- Overall Status Banner -->
+    <div class={`rounded-lg border-2 p-6 mb-8 ${statusColor[overallStatus]}`}>
+      <div class="flex items-center gap-3">
+        <span class="text-4xl">{statusEmoji[overallStatus]}</span>
+        <div>
+          <h2 class="text-2xl font-bold">{overallMessage}</h2>
+          <p class="text-sm opacity-75 mt-1">
+            Last checked: {new Date().toLocaleString('en-US', { 
+              timeZone: 'UTC',
+              dateStyle: 'medium',
+              timeStyle: 'medium'
+            })} UTC
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Token Warning (if no valid token) -->
+    {!showLogs && expectedToken && (
+      <div class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <div>
+            <p class="font-semibold text-amber-900">Limited view</p>
+            <p class="text-sm text-amber-700 mt-1">
+              Add <code class="bg-amber-100 px-1 py-0.5 rounded">?token=YOUR_TOKEN</code> to URL to see detailed logs and debugging information.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Dev Mode Warning (if no token configured) -->
+    {showLogs && !expectedToken && (
+      <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <p class="font-semibold text-blue-900">Development Mode</p>
+            <p class="text-sm text-blue-700 mt-1">
+              No <code class="bg-blue-100 px-1 py-0.5 rounded">STATUS_PAGE_TOKEN</code> configured. Logs are publicly visible. 
+              Add token to <code class="bg-blue-100 px-1 py-0.5 rounded">.env.local</code> for production security.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Services Grid -->
+    <div class="space-y-4 mb-8">
+      {services.map((service) => (
+        <div class={`bg-white rounded-lg border-2 p-6 ${statusColor[service.status]}`}>
+          <!-- Service Header -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">{statusEmoji[service.status]}</span>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900">{service.name}</h3>
+                <p class={`text-sm font-medium ${service.status === 'operational' ? 'text-green-700' : service.status === 'degraded' ? 'text-yellow-700' : 'text-red-700'}`}>
+                  {service.message}
+                </p>
+              </div>
+            </div>
+            {service.responseTime && (
+              <div class="text-right">
+                <p class="text-sm text-slate-500">Response Time</p>
+                <p class="text-lg font-mono font-bold text-slate-900">{service.responseTime}ms</p>
+              </div>
+            )}
+          </div>
+
+          <!-- Service Details (if available) -->
+          {service.details && showLogs && (
+            <div class="bg-slate-50 rounded p-4 border border-slate-200">
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Details</p>
+              <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                {Object.entries(service.details).map(([key, value]) => (
+                  <div class="flex justify-between">
+                    <dt class="text-slate-600 font-medium">{key}:</dt>
+                    <dd class="text-slate-900 font-mono text-xs">{String(value)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+
+          <!-- Error Summary (public, even without token) -->
+          {service.error && !showLogs && (
+            <div class="mt-4 bg-red-50 border border-red-200 rounded p-3">
+              <p class="text-sm text-red-800">
+                <span class="font-semibold">Error:</span> {service.error.message}
+              </p>
+              {service.error.code && (
+                <p class="text-xs text-red-600 mt-1">Code: {service.error.code}</p>
+              )}
+            </div>
+          )}
+
+          <!-- Timestamp -->
+          <p class="text-xs text-slate-500 mt-4">
+            Last checked: {new Date(service.lastChecked).toLocaleString('en-US', {
+              timeZone: 'UTC',
+              dateStyle: 'medium',
+              timeStyle: 'medium'
+            })} UTC
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Diagnostic Logs (only with valid token) -->
+    {logs.length > 0 && showLogs && (
+      <div class="bg-slate-900 text-slate-100 rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Diagnostic Logs
+          </h2>
+          <button 
+            onclick="copyLogs()"
+            class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-sm font-medium transition-colors"
+          >
+            Copy to Clipboard
+          </button>
+        </div>
+
+        <div class="space-y-6 font-mono text-xs">
+          {logs.map((service, index) => (
+            <div class="border-t border-slate-700 pt-4" class:list={[index === 0 && 'border-t-0 pt-0']}>
+              <p class="text-red-400 font-bold mb-2">
+                [{new Date(service.lastChecked).toISOString()}] ❌ {service.name} Failed
+              </p>
+              
+              {service.error && (
+                <>
+                  <p class="text-slate-300 mb-1">Error: {service.error.message}</p>
+                  {service.error.code && (
+                    <p class="text-slate-400 mb-1">Code: {service.error.code}</p>
+                  )}
+                  
+                  {service.details && (
+                    <>
+                      <p class="text-slate-400 mt-3 mb-1">Details:</p>
+                      <pre class="bg-slate-800 rounded p-3 overflow-x-auto text-slate-300">
+{JSON.stringify(service.details, null, 2)}
+                      </pre>
+                    </>
+                  )}
+                  
+                  {service.error.stack && (
+                    <>
+                      <p class="text-slate-400 mt-3 mb-1">Stack Trace:</p>
+                      <pre class="bg-slate-800 rounded p-3 overflow-x-auto text-slate-300 whitespace-pre-wrap">
+{service.error.stack}
+                      </pre>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-700">
+          <p class="text-xs text-slate-400">
+            💡 <strong>Tip:</strong> Copy these logs and share them with your team or paste in a support ticket.
+          </p>
+        </div>
+      </div>
+    )}
+
+    <!-- Actions -->
+    <div class="mt-8 flex gap-4">
+      <button 
+        onclick="window.location.reload()"
+        class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-colors"
+      >
+        🔄 Refresh Status
+      </button>
+      <a 
+        href="/"
+        class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-lg font-medium transition-colors"
+      >
+        ← Back to Home
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-6 border-t border-slate-200 text-center text-sm text-slate-500">
+      <p>Ignia Cloud System Status • Updated in real-time</p>
+      <p class="mt-1">
+        For support, contact: <a href="mailto:support@ignia.cloud" class="text-orange-600 hover:text-orange-700">support@ignia.cloud</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Copy to Clipboard Script -->
+  <script is:inline>
+    function copyLogs() {
+      const logsDiv = document.querySelector('.bg-slate-900.text-slate-100');
+      if (!logsDiv) return;
+      
+      const logsText = logsDiv.innerText;
+      navigator.clipboard.writeText(logsText).then(() => {
+        const button = document.querySelector('button[onclick="copyLogs()"]');
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied!';
+        button.classList.add('bg-green-600');
+        button.classList.remove('bg-slate-700', 'hover:bg-slate-600');
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('bg-green-600');
+          button.classList.add('bg-slate-700', 'hover:bg-slate-600');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

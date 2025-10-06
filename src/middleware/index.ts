@@ -70,7 +70,7 @@ const excludeFromI18n = defineMiddleware(async (context, next) => {
         // Si astro-i18n falla, log el error y continuar sin i18n
         console.error('[astro-i18n] Middleware error:', error);
         console.error('[astro-i18n] Pathname:', pathname);
-        
+
         // Continuar sin procesamiento i18n
         return next();
     }

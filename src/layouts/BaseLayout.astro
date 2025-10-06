@@ -64,10 +64,14 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
+
     <!-- Auto-refresh meta tag (opcional, solo para status pages) -->
-    {metaRefresh && <meta http-equiv="refresh" content={metaRefresh.toString()} />}
-    
+    {
+      metaRefresh && (
+        <meta http-equiv="refresh" content={metaRefresh.toString()} />
+      )
+    }
+
     <title>{title}</title>
     <meta name="description" content={description} />
 
