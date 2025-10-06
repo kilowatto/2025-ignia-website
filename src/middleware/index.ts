@@ -39,6 +39,7 @@ if (!globalThis.__astroI18nMiddleware) {
  * Rutas excluidas:
  * - /robots.txt (endpoint dinámico SEO)
  * - /sitemap*.xml (sitemaps multiidioma)
+ * - /status (página de monitoreo, sin i18n)
  * - /_* (rutas internas de Astro)
  * 
  * Estas rutas deben procesarse sin i18n para funcionar correctamente
@@ -47,9 +48,10 @@ if (!globalThis.__astroI18nMiddleware) {
 const excludeFromI18n = defineMiddleware(async (context, next) => {
     const { pathname } = context.url;
 
-    // Excluir robots.txt, sitemaps y rutas internas del procesamiento i18n
+    // Excluir robots.txt, sitemaps, status page y rutas internas del procesamiento i18n
     if (
         pathname === '/robots.txt' ||
+        pathname === '/status' ||
         pathname.startsWith('/sitemap') ||
         pathname.endsWith('.xml') ||
         pathname.startsWith('/_')
