@@ -219,7 +219,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       // IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      config = getOdooConfig({ env: (locals as any).runtime?.env });
+      const runtimeEnv = (locals as any).runtime?.env || {};
+      config = getOdooConfig({ env: runtimeEnv });
     } catch (configError) {
       console.error('[API /contact/submit] Odoo config error:', configError);
       return new Response(
@@ -343,7 +344,8 @@ export const GET: APIRoute = async ({ locals }) => {
   try {
     // IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const config = getOdooConfig({ env: (locals as any).runtime?.env });
+    const runtimeEnv = (locals as any).runtime?.env || {};
+    const config = getOdooConfig({ env: runtimeEnv });
     return new Response(
       JSON.stringify({
         status: 'ok',

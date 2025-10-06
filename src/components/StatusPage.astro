@@ -66,10 +66,8 @@ const providedToken = url.searchParams.get('token');
 const runtimeEnv = (Astro.locals as any).runtime?.env || {};
 const expectedToken = runtimeEnv.STATUS_PAGE_TOKEN || import.meta.env.STATUS_PAGE_TOKEN;
 
-// Si no hay token configurado, mostrar warning pero permitir acceso (dev mode)
-const hasValidToken = expectedToken 
-  ? providedToken === expectedToken 
-  : true; // Sin token configurado = dev mode, todos los logs visibles
+// Seguro por defecto: solo mostrar logs si hay token configurado Y provisto correctamente
+const hasValidToken = expectedToken && providedToken === expectedToken;
 
 const showLogs = hasValidToken;
 

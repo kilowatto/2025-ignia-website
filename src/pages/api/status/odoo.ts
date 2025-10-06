@@ -28,14 +28,14 @@ export const GET: APIRoute = async ({ url, locals }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const runtimeEnv = (locals as any).runtime?.env || {};
     const expectedToken = runtimeEnv.STATUS_PAGE_TOKEN || import.meta.env.STATUS_PAGE_TOKEN;
-    const showLogs = expectedToken ? providedToken === expectedToken : true;
+    // Seguro por defecto: solo mostrar logs si hay token configurado Y provisto correctamente
+    const showLogs = expectedToken && providedToken === expectedToken;
 
     try {
         // 2. Validar configuración de Odoo
         //    Si faltan variables de entorno, retornamos error informativo
-        //    IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const validation = validateOdooConfig({ env: (locals as any).runtime?.env });
+        //    IMPORTANTE: Pasar runtimeEnv (ya tiene fallback a {})
+        const validation = validateOdooConfig({ env: runtimeEnv });
         if (!validation.valid) {
             return new Response(
                 JSON.stringify({
@@ -64,7 +64,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         }
 
         // Paso 2: Obtener config y crear cliente
-        const config = getOdooConfig();
+        const config = getOdooConfig({ env: runtimeEnv });
         const client = new OdooClient(config, 5000); // 5s timeout
 
         // Paso 3: Intentar autenticación
@@ -113,7 +113,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         // Obtener config para details (puede fallar si no está configurado)
         let attemptedUrl: string | undefined;
         try {
-            attemptedUrl = getOdooConfig()?.url;
+            attemptedUrl = getOdooConfig({ env: runtimeEnv })?.url;
         } catch {
             attemptedUrl = undefined;
         }
