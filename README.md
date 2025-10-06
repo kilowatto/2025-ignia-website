@@ -13,6 +13,7 @@
 - [Arquitectura General](#-arquitectura-general)
 - [Stack Técnico](#-stack-técnico)
 - [Sistema de Internacionalización](#-sistema-de-internacionalización)
+- [Integración Odoo](#-integración-odoo)
 - [Estructura de Directorios](#-estructura-de-directorios)
 - [Instalación y Desarrollo](#-instalación-y-desarrollo)
 - [Comandos Disponibles](#-comandos-disponibles)
@@ -66,8 +67,247 @@ Este proyecto sigue una arquitectura **utility-first, semántica, mobile-first**
 ### Búsqueda
 - **[minisearch](https://github.com/lucaong/minisearch)** v7.2+ - Motor de búsqueda client-side (solo en `/search`)
 
+### Integración CRM
+- **Odoo SaaS 18** - API XML-RPC para gestión de contactos (`res.partner` model)
+
 ### Fuentes
 - **Raleway** (Light/Medium/Regular) - WOFF2 con subset Latin, `font-display: swap`
+
+---
+
+## 🔗 Integración Odoo
+
+Este proyecto integra **Odoo SaaS 18** para capturar y gestionar contactos desde el formulario web del footer.
+
+### Arquitectura de Integración
+
+```
+Browser (contact-form.ts)
+    ↓ POST /api/contact/submit
+Edge Worker (Cloudflare)
+    ↓ OdooService → OdooClient (XML-RPC)
+Odoo SaaS (res.partner model)
+```
+
+### Campos Capturados
+
+El formulario de contacto captura y envía a Odoo:
+
+#### Campos Básicos (del formulario)
+- ✅ **name** - Nombre completo del contacto
+- ✅ **email** - Email (usado para detectar duplicados)
+- ✅ **phone** - Teléfono principal
+
+#### Metadata Automática (contexto del navegador)
+- ✅ **locale** (`en`/`es`/`fr`) → Se mapea a `lang` de Odoo (`en_US`/`es_MX`/`fr_FR`)
+- ✅ **source** - Origen del contacto (hardcoded: `'website_footer'`)
+- ✅ **page** - Ruta de la página (`/`, `/es/`, `/fr/solutions/`, etc.)
+
+#### Parámetros UTM (campañas de marketing)
+Si la URL contiene query parameters UTM, se capturan automáticamente:
+- ✅ **utm_source** - Origen de campaña (ej: `google`, `facebook`, `linkedin`)
+- ✅ **utm_medium** - Medio (ej: `cpc`, `email`, `social`, `organic`)
+- ✅ **utm_campaign** - Nombre de campaña (ej: `winter_2024`, `product_launch`)
+- ✅ **utm_content** - Variante de contenido (ej: `footer_form`, `hero_cta`)
+- ✅ **utm_term** - Término de búsqueda SEM (ej: `cloud+backup`)
+
+### Cómo se Guardan los Datos en Odoo
+
+Los datos se almacenan en el modelo `res.partner` de Odoo:
+
+| Campo Odoo | Tipo | Valor de Ejemplo | Descripción |
+|------------|------|------------------|-------------|
+| `name` | Char | `"Juan Pérez"` | Nombre completo (campo nativo) |
+| `email` | Char | `"juan@example.com"` | Email (campo nativo) |
+| `phone` | Char | `"+52 555 1234 5678"` | Teléfono (campo nativo) |
+| `lang` | Selection | `"es_MX"` | Idioma para comunicaciones (campo nativo) |
+| `type` | Selection | `"contact"` | Tipo de contacto (campo nativo) |
+| `is_company` | Boolean | `false` | Es empresa? (campo nativo) |
+| `comment` | Text | *(ver JSON abajo)* | Metadata estructurada (campo nativo) |
+
+#### Estructura del Campo `comment` (JSON)
+
+Toda la metadata adicional (source, page, UTMs) se guarda como JSON en el campo `comment`:
+
+```json
+{
+  "source": "website_footer",
+  "page": "/es/",
+  "locale": "es",
+  "utm_source": "google",
+  "utm_medium": "cpc",
+  "utm_campaign": "winter_2024",
+  "utm_content": "footer_form",
+  "utm_term": "cloud+backup",
+  "submitted_at": "2025-10-05T15:30:00.000Z"
+}
+```
+
+**Ventajas de este enfoque:**
+- ✅ No requiere modificar Odoo (sin módulos personalizados)
+- ✅ Implementación rápida (6-8 horas)
+- ✅ Flexible para agregar nuevos campos sin cambios en Odoo
+- ⚠️ Desventaja: No filtrable directamente en UI de Odoo (requiere export/parsing manual)
+
+### Manejo de Duplicados
+
+El sistema detecta duplicados por email:
+- **Si email NO existe** → Se crea un nuevo partner (`action: 'created'`)
+- **Si email YA existe** → Se actualiza el partner existente (`action: 'updated'`)
+
+En actualizaciones, el JSON del campo `comment` se extiende con un array `updates[]` para mantener historial:
+
+```json
+{
+  "source": "website_footer",
+  "page": "/es/",
+  "submitted_at": "2025-10-05T15:30:00.000Z",
+  "updates": [
+    {
+      "source": "contact_page",
+      "page": "/en/contact/",
+      "submitted_at": "2025-10-06T10:15:00.000Z"
+    }
+  ]
+}
+```
+
+### Configuración de Variables de Entorno
+
+Para que la integración funcione, debes configurar 4 variables de entorno:
+
+#### Desarrollo Local (archivo `.env`)
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```bash
+# Odoo SaaS Configuration
+ODOO_URL=https://ignia-cloud.odoo.com
+ODOO_DB=ignia-cloud
+ODOO_USERNAME=api@ignia.cloud
+ODOO_PASSWORD=tu_password_seguro_aqui
+```
+
+**Importante:**
+- ✅ Asegúrate que `.env` está en `.gitignore` (NUNCA commitear credenciales)
+- ✅ Reinicia el servidor de desarrollo después de crear/modificar `.env`
+
+#### Producción (Cloudflare Pages)
+
+1. Ve a **Cloudflare Dashboard** → tu sitio → **Settings**
+2. Navega a **Environment Variables**
+3. Agrega las 4 variables (Production y/o Preview):
+   - `ODOO_URL` = `https://ignia-cloud.odoo.com`
+   - `ODOO_DB` = `ignia-cloud`
+   - `ODOO_USERNAME` = `api@ignia.cloud`
+   - `ODOO_PASSWORD` = `tu_password` (marcarlo como secreto)
+4. Guarda y redeploy el sitio
+
+### Archivos Relacionados
+
+```
+src/
+├── lib/odoo/                           # SDK centralizado de Odoo
+│   ├── types.ts                        # Interfaces TypeScript
+│   ├── config.ts                       # Validación de env vars
+│   ├── OdooClient.ts                   # Cliente XML-RPC (bajo nivel)
+│   └── OdooService.ts                  # Capa de servicio (alto nivel)
+├── pages/api/contact/
+│   └── submit.ts                       # API endpoint SSR
+└── scripts/
+    └── contact-form.ts                 # Script cliente (captura UTMs, envía POST)
+```
+
+### Testing de la Integración
+
+#### 1. Health Check del Endpoint
+
+```bash
+curl https://ignia.cloud/api/contact/submit
+```
+
+**Response esperada:**
+```json
+{
+  "status": "ok",
+  "odoo": "configured",
+  "url": "https://ignia-cloud.odoo.com"
+}
+```
+
+#### 2. Test de Envío Completo
+
+```bash
+curl -X POST https://ignia.cloud/api/contact/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "+1 555 0123",
+    "locale": "en",
+    "source": "api_test",
+    "page": "/test/"
+  }'
+```
+
+**Response esperada (success):**
+```json
+{
+  "success": true,
+  "message": "Gracias por tu mensaje. Te contactaremos pronto.",
+  "partnerId": 123,
+  "action": "created"
+}
+```
+
+#### 3. Verificar en Odoo UI
+
+1. Login a tu instancia Odoo: `https://ignia-cloud.odoo.com`
+2. Ve a **Contacts** (módulo)
+3. Busca el email de prueba (`test@example.com`)
+4. Abre el contacto y verifica:
+   - Nombre, email, teléfono
+   - Campo `Language` = `English (US)`
+   - Campo `Notes` debe contener el JSON con metadata
+
+### Troubleshooting
+
+#### Error: "Faltan variables de entorno de Odoo"
+
+**Causa:** No se configuraron las env vars.
+**Solución:** Ver sección [Configuración de Variables de Entorno](#configuración-de-variables-de-entorno)
+
+#### Error: "Autenticación fallida"
+
+**Causa:** Usuario/password incorrectos o sin permisos.
+**Solución:** 
+1. Verifica que el usuario tenga acceso API en Odoo
+2. Verifica que el password sea correcto
+3. Revisa que `ODOO_DB` coincida con el nombre de tu base de datos
+
+#### Error: "Request timeout después de 30000ms"
+
+**Causa:** Odoo no responde o hay problemas de red.
+**Solución:**
+1. Verifica que `ODOO_URL` sea correcta (sin trailing slash)
+2. Verifica conectividad desde tu servidor a Odoo
+3. Considera aumentar el timeout en `OdooClient` constructor
+
+#### Formulario no envía datos
+
+**Causa:** JavaScript del formulario tiene errores.
+**Solución:**
+1. Abre DevTools → Console y busca errores `[ContactForm]`
+2. Verifica que el endpoint `/api/contact/submit` esté accesible
+3. Revisa Network tab para ver el request/response completo
+
+### Mejoras Futuras (Roadmap)
+
+- [ ] **Campos personalizados en Odoo** - Crear módulo custom con campos UTM dedicados
+- [ ] **Rate limiting avanzado** - Usar Cloudflare KV para rate limiting por IP
+- [ ] **Webhooks** - Notificaciones a Slack/Teams cuando llega un nuevo lead
+- [ ] **Analytics** - Dashboard con métricas de conversión por source/campaign
+- [ ] **A/B Testing** - Diferentes versiones del formulario con tracking
 
 ---
 

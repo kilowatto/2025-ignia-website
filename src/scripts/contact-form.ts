@@ -512,22 +512,65 @@ async function handleFormSubmit(event: Event): Promise<void> {
     setButtonLoadingState(true);
 
     try {
-        // Simular delay de red (eliminar en producción)
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Capturar metadata adicional
+        const locale = document.documentElement.lang || 'en'; // Idioma del sitio (en/es/fr)
+        const page = window.location.pathname; // Página actual (/, /es/, /fr/solutions/)
+        const source = 'website_footer'; // Origen fijo (footer del sitio)
+        
+        // Capturar parámetros UTM de la URL (campañas de marketing)
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || undefined;
+        const utm_medium = urlParams.get('utm_medium') || undefined;
+        const utm_campaign = urlParams.get('utm_campaign') || undefined;
+        const utm_content = urlParams.get('utm_content') || undefined;
+        const utm_term = urlParams.get('utm_term') || undefined;
 
-        // TODO: Aquí integrar con Odoo SaaS API
-        // const response = await fetch('/api/contact', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(formData),
-        // });
-
-        // Por ahora: solo console.log (dummy action)
-        console.log('[ContactForm] Form data:', {
+        // Construir payload completo para API
+        const payload = {
+            // Campos básicos del formulario
             name: formData.name,
             phone: formData.phone,
             email: formData.email,
-            timestamp: new Date().toISOString(),
+            
+            // Metadata del contexto
+            locale,
+            source,
+            page,
+            
+            // UTM parameters (solo si existen)
+            ...(utm_source && { utm_source }),
+            ...(utm_medium && { utm_medium }),
+            ...(utm_campaign && { utm_campaign }),
+            ...(utm_content && { utm_content }),
+            ...(utm_term && { utm_term }),
+            
+            // Anti-spam: timestamp de carga del formulario
+            timestamp: formLoadTimestamp,
+        };
+
+        console.log('[ContactForm] Sending to API:', {
+            ...payload,
+            email: formData.email.substring(0, 3) + '***', // Log parcial para privacidad
+        });
+
+        // Enviar a API de Odoo
+        const response = await fetch('/api/contact/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        // Parsear respuesta JSON
+        const result = await response.json();
+
+        // Validar respuesta exitosa
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || `HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        console.log('[ContactForm] API Success:', {
+            action: result.action, // 'created' o 'updated'
+            partnerId: result.partnerId,
         });
 
         // Guardar en localStorage
@@ -539,7 +582,15 @@ async function handleFormSubmit(event: Event): Promise<void> {
     } catch (error) {
         console.error('[ContactForm] Submit error:', error);
         setButtonLoadingState(false);
-        alert('Ocurrió un error. Por favor intenta de nuevo.'); // TODO: usar mensaje traducido
+        
+        // Mensaje de error traducido según idioma del sitio
+        const locale = document.documentElement.lang || 'en';
+        const errorMessages: Record<string, string> = {
+            'en': 'An error occurred. Please try again.',
+            'es': 'Ocurrió un error. Por favor intenta de nuevo.',
+            'fr': 'Une erreur s\'est produite. Veuillez réessayer.',
+        };
+        alert(errorMessages[locale] || errorMessages['en']);
     }
 }
 

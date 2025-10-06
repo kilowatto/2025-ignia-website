@@ -251,20 +251,20 @@ function metadataToSearchItem(metadata: PageMetadata): SearchItem {
  * @returns Array de paths absolutos de archivos .astro
  */
 function scanAstroFiles(dir: string, fileList: string[] = []): string[] {
-  const files = fs.readdirSync(dir);
-  
-  files.forEach((file: string) => {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-    
-    if (stat.isDirectory()) {
-      scanAstroFiles(filePath, fileList);
-    } else if (file.endsWith('.astro')) {
-      fileList.push(filePath);
-    }
-  });
-  
-  return fileList;
+    const files = fs.readdirSync(dir);
+
+    files.forEach((file: string) => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+
+        if (stat.isDirectory()) {
+            scanAstroFiles(filePath, fileList);
+        } else if (file.endsWith('.astro')) {
+            fileList.push(filePath);
+        }
+    });
+
+    return fileList;
 }
 
 /**
