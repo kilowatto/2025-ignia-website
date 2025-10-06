@@ -1,0 +1,485 @@
+---
+/**
+ * /status - Página de Estado del Sistema (System Status)
+ * 
+ * PROPÓSITO:
+ * Monitorea el estado de servicios críticos del sitio en tiempo real:
+ * - Website (self-check)
+ * - Odoo API (conectividad + autenticación con XML-RPC)
+ * 
+ * SISTEMA DE SEMÁFOROS:
+ * 🟢 Operational - Servicio funcionando correctamente
+ * 🟡 Degraded - Rendimiento degradado
+ * 🔴 Down - Servicio no disponible
+ * 
+ * SEGURIDAD:
+ * - Sin token: Solo muestra semáforos públicos (🟢🟡🔴)
+ * - Con token: Muestra logs completos y datos de debugging
+ * 
+ * USO:
+ * - Público: https://ignia.cloud/status
+ * - Con logs: https://ignia.cloud/status?token=tu_token_secreto
+ * 
+ * CONFIGURACIÓN:
+ * - Variable de entorno: STATUS_PAGE_TOKEN (opcional)
+ * - Si no existe el token, todos los logs son públicos (dev mode)
+ * 
+ * CUMPLIMIENTO arquitectura.md:
+ * - §2: BaseLayout para herencia SEO/GEO ✅
+ * - §2: JavaScript mínimo (solo copy-to-clipboard) ✅
+ * - §3: TypeScript como base ✅
+ * - §5: i18n con astro-i18n (función t()) ✅
+ * - §7: Accesibilidad WCAG 2.2 AA ✅
+ * - §8: Tailwind CSS exclusivamente ✅
+ * - §9: SEO con JSON-LD ✅
+ * 
+ * @see src/lib/odoo/OdooClient.ts - Cliente XML-RPC para Odoo
+ * @see src/lib/odoo/config.ts - Configuración y validación de Odoo
+ * @see src/layouts/BaseLayout.astro - Layout base con SEO/GEO
+ * @see README.md - Documentación completa del sistema de monitoreo
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from 'astro-i18n';
+import { getOdooConfig, validateOdooConfig } from '../../lib/odoo/config';
+import { OdooClient } from '../../lib/odoo/OdooClient';
+
+// ==========================================
+// i18n - Obtener locale actual
+// ==========================================
+// Forzar locale francés para /fr/status
+const locale = 'fr' as 'en' | 'es' | 'fr';
+
+// Tipos para status de servicios
+type ServiceStatus = 'operational' | 'degraded' | 'down';
+
+interface Service {
+  name: string;
+  status: ServiceStatus;
+  responseTime?: number;
+  message?: string;
+  lastChecked: string;
+  details?: Record<string, any>;
+  error?: {
+    message: string;
+    code?: string;
+    stack?: string;
+    raw?: any;
+  };
+}
+
+// Verificar si tiene token válido para ver logs
+const url = new URL(Astro.request.url);
+const providedToken = url.searchParams.get('token');
+const expectedToken = import.meta.env.STATUS_PAGE_TOKEN;
+
+// Si no hay token configurado, mostrar warning pero permitir acceso (dev mode)
+const hasValidToken = expectedToken 
+  ? providedToken === expectedToken 
+  : true; // Sin token configurado = dev mode, todos los logs visibles
+
+const showLogs = hasValidToken;
+
+// Array de servicios monitoreados
+const services: Service[] = [];
+
+// ============================================================================
+// CHECK 1: WEBSITE (Self-check)
+// ============================================================================
+const websiteStart = Date.now();
+try {
+  services.push({
+    name: 'Website',
+    status: 'operational',
+    responseTime: Date.now() - websiteStart,
+    message: 'Astro SSR responding correctly',
+    lastChecked: new Date().toISOString(),
+    details: {
+      runtime: import.meta.env.PROD ? 'production' : 'development',
+      adapter: 'Cloudflare Workers',
+    },
+  });
+} catch (error) {
+  services.push({
+    name: 'Website',
+    status: 'down',
+    responseTime: Date.now() - websiteStart,
+    message: 'Failed to render page',
+    lastChecked: new Date().toISOString(),
+    error: {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: 'WEBSITE_ERROR',
+      stack: error instanceof Error ? error.stack : undefined,
+    },
+  });
+}
+
+// ============================================================================
+// CHECK 2: ODOO API
+// ============================================================================
+const odooStart = Date.now();
+let odooService: Service = {
+  name: 'Odoo API',
+  status: 'down',
+  message: 'Not configured',
+  lastChecked: new Date().toISOString(),
+};
+
+try {
+  // Paso 1: Validar que existen las env vars
+  const validation = validateOdooConfig();
+  
+  if (!validation.valid) {
+    odooService = {
+      name: 'Odoo API',
+      status: 'down',
+      responseTime: Date.now() - odooStart,
+      message: 'Configuration missing',
+      lastChecked: new Date().toISOString(),
+      error: {
+        message: `Missing environment variables: ${validation.missingVars.join(', ')}`,
+        code: 'CONFIG_MISSING',
+      },
+      details: showLogs ? {
+        missingVars: validation.missingVars,
+        hint: 'Add variables to .env.local or Cloudflare Pages settings',
+      } : undefined,
+    };
+  } else {
+    // Paso 2: Obtener config y crear cliente
+    const config = getOdooConfig();
+    const client = new OdooClient(config, 5000); // 5s timeout
+    
+    // Paso 3: Intentar autenticación
+    const authStart = Date.now();
+    const auth = await client.authenticate();
+    const authTime = Date.now() - authStart;
+    
+    // Paso 4: Success - conexión establecida
+    const totalTime = Date.now() - odooStart;
+    
+    odooService = {
+      name: 'Odoo API',
+      status: totalTime < 2000 ? 'operational' : 'degraded',
+      responseTime: totalTime,
+      message: totalTime < 2000 
+        ? 'Connected and authenticated' 
+        : 'Connected but slow response',
+      lastChecked: new Date().toISOString(),
+      details: showLogs ? {
+        url: config.url,
+        database: config.db,
+        username: config.username,
+        uid: auth.uid,
+        authTime: `${authTime}ms`,
+      } : {
+        url: config.url.replace(/https?:\/\//, '').split('/')[0], // Solo dominio
+        database: config.db,
+      },
+    };
+  }
+} catch (error) {
+  const totalTime = Date.now() - odooStart;
+  
+  // Type guard para error
+  const errorObj = error as any;
+  
+  odooService = {
+    name: 'Odoo API',
+    status: 'down',
+    responseTime: totalTime,
+    message: error instanceof Error ? error.message : 'Connection failed',
+    lastChecked: new Date().toISOString(),
+    error: showLogs ? {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: errorObj.code || 'CONNECTION_ERROR',
+      stack: error instanceof Error ? error.stack : undefined,
+      raw: errorObj,
+    } : {
+      message: 'Authentication or connection error',
+      code: 'ODOO_ERROR',
+    },
+    details: showLogs ? {
+      attemptedUrl: getOdooConfig()?.url,
+      timeout: '5000ms',
+    } : undefined,
+  };
+}
+
+services.push(odooService);
+
+// ============================================================================
+// OVERALL STATUS
+// ============================================================================
+const allOperational = services.every(s => s.status === 'operational');
+const anyDown = services.some(s => s.status === 'down');
+
+const overallStatus: ServiceStatus = allOperational 
+  ? 'operational' 
+  : anyDown 
+  ? 'down' 
+  : 'degraded';
+
+const overallMessage = allOperational
+  ? 'All systems operational'
+  : anyDown
+  ? 'Some systems are down'
+  : 'Systems running with degraded performance';
+
+// Emojis de semáforo
+const statusEmoji = {
+  operational: '🟢',
+  degraded: '🟡',
+  down: '🔴',
+};
+
+const statusColor = {
+  operational: 'text-green-600 bg-green-50 border-green-200',
+  degraded: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+  down: 'text-red-600 bg-red-50 border-red-200',
+};
+
+// ============================================================================
+// LOGS (solo si tiene token válido)
+// ============================================================================
+const hasErrors = services.some(s => s.error);
+const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
+
+// ==========================================
+// SEO & STRUCTURED DATA
+// ==========================================
+// Metadatos para BaseLayout (i18n)
+// Cumplimiento: arquitectura.md §5 (uso de función t() para i18n)
+const pageTitle = t('status.meta.title', undefined, { locale });
+const pageDescription = t('status.meta.description', undefined, { locale });
+
+// JSON-LD para WebPage
+// Cumplimiento: arquitectura.md §9 (Datos Estructurados)
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: Astro.url.href,
+    inLanguage: locale,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Ignia Cloud',
+      url: Astro.url.origin,
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={structuredData}
+  pageType="WebPage"
+>
+  <!-- 
+    Página de Status con BaseLayout
+    Cumplimiento arquitectura.md:
+    - §2: BaseLayout único (sin encadenamiento) ✅
+    - §5: i18n con función t() ✅
+    - §7: Accesibilidad WCAG 2.2 AA ✅
+    - §8: Tailwind CSS para estilos ✅
+    - §9: SEO con JSON-LD ✅
+  -->
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <!-- Header de la Página -->
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">
+        {t('status.title', undefined, { locale })}
+      </h1>
+      <p class="text-lg text-gray-600">
+        {t('status.subtitle', undefined, { locale })}
+      </p>
+      <p class="text-sm text-gray-500 mt-4">
+        {t('status.last_check', undefined, { locale })}: {new Date().toLocaleString(locale)}
+      </p>
+    </header>
+
+    <!-- Servicios Monitoreados -->
+    <section 
+      aria-labelledby="services-heading"
+      aria-label={t('status.aria.services_list', undefined, { locale })}
+      class="mb-12"
+    >
+      <h2 id="services-heading" class="text-2xl font-bold text-gray-900 mb-6">
+        {t('status.services.title', undefined, { locale })}
+      </h2>
+
+      <!-- Grid de Servicios -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {services.map((service) => (
+          <article 
+            class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            aria-label={t('status.aria.service_card', { service: service.name }, { locale })}
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center">
+                <span 
+                  class="text-3xl mr-3" 
+                  role="img" 
+                  aria-label={t(`status.aria.${service.status}_icon`, undefined, { locale })}
+                >
+                  {statusEmoji[service.status]}
+                </span>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    {service.name}
+                  </h3>
+                  <p class="text-sm text-gray-600">
+                    {service.message}
+                  </p>
+                </div>
+              </div>
+              <span class={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                service.status === 'operational' ? 'bg-green-100 text-green-800' :
+                service.status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {t(`status.status.${service.status}`, undefined, { locale })}
+              </span>
+            </div>
+
+            <!-- Detalles del Servicio -->
+            <dl class="mt-4 border-t border-gray-100 pt-4 space-y-2">
+              {service.responseTime !== undefined && (
+                <div class="flex justify-between text-sm">
+                  <dt class="text-gray-600">{t('status.details.response_time', undefined, { locale })}:</dt>
+                  <dd class="text-gray-900 font-medium">{service.responseTime}ms</dd>
+                </div>
+              )}
+              
+              {service.details && showLogs && Object.entries(service.details).map(([key, value]) => (
+                <div class="flex justify-between text-sm">
+                  <dt class="text-gray-600 capitalize">{key}:</dt>
+                  <dd class="text-gray-900 font-mono text-xs">{String(value)}</dd>
+                </div>
+              ))}
+
+              {service.error && (
+                <>
+                  <div class="flex justify-between text-sm pt-2 border-t border-red-100">
+                    <dt class="text-gray-600">{t('status.details.error', undefined, { locale })}:</dt>
+                    <dd class="text-red-600 font-medium text-right flex-1 ml-4">{service.error.message}</dd>
+                  </div>
+                  {service.error.code && (
+                    <div class="flex justify-between text-sm">
+                      <dt class="text-gray-600">{t('status.details.code', undefined, { locale })}:</dt>
+                      <dd class="text-gray-900 font-mono text-xs">{service.error.code}</dd>
+                    </div>
+                  )}
+                </>
+              )}
+            </dl>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Sección de Logs (Protegida por Token) -->
+    <section 
+      aria-labelledby="logs-heading"
+      aria-label={t('status.aria.logs_section', undefined, { locale })}
+      class="mt-12"
+    >
+      <h2 id="logs-heading" class="text-2xl font-bold text-gray-900 mb-6">
+        {t('status.logs.title', undefined, { locale })}
+      </h2>
+
+      {showLogs ? (
+        <div class="bg-gray-900 rounded-lg p-6">
+          <!-- Toolbar -->
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-green-400 text-sm font-mono">
+              {t('status.logs.protected', undefined, { locale })}
+            </span>
+            <div class="flex gap-2">
+              <button
+                id="copyLogsBtn"
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label={t('status.aria.copy_button', undefined, { locale })}
+              >
+                {t('status.logs.copy', undefined, { locale })}
+              </button>
+              <button
+                id="exportJsonBtn"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label={t('status.aria.export_button', undefined, { locale })}
+              >
+                {t('status.logs.export', undefined, { locale })}
+              </button>
+            </div>
+          </div>
+
+          <!-- Logs JSON -->
+          <pre 
+            id="logsContent" 
+            class="bg-black text-green-400 p-4 rounded text-sm overflow-x-auto font-mono"
+            role="log"
+            aria-live="polite"
+          ><code>{JSON.stringify({ timestamp: new Date().toISOString(), services }, null, 2)}</code></pre>
+        </div>
+      ) : (
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+          <p class="text-yellow-800 font-medium mb-2">
+            🔒 {t('status.logs.auth_required', undefined, { locale })}
+          </p>
+          <p class="text-yellow-700 text-sm">
+            {t('status.logs.auth_hint', undefined, { locale })}
+          </p>
+        </div>
+      )}
+    </section>
+
+  </div>
+
+  <!-- 
+    Scripts Mínimos (Solo para Funcionalidad de Logs)
+    Cumplimiento: arquitectura.md §2 (JS mínimo o nulo)
+    Solo se cargan si el usuario está autenticado
+  -->
+  {showLogs && (
+    <script define:vars={{ locale }}>
+      // Copy logs to clipboard
+      document.getElementById('copyLogsBtn')?.addEventListener('click', async () => {
+        const logsContent = document.getElementById('logsContent')?.textContent || '';
+        try {
+          await navigator.clipboard.writeText(logsContent);
+          const btn = document.getElementById('copyLogsBtn');
+          if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = locale === 'es' ? '¡Copiado!' : locale === 'fr' ? 'Copié!' : 'Copied!';
+            setTimeout(() => {
+              btn.textContent = originalText;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('Failed to copy:', err);
+          alert('Failed to copy logs to clipboard');
+        }
+      });
+
+      // Export JSON
+      document.getElementById('exportJsonBtn')?.addEventListener('click', () => {
+        const logsContent = document.getElementById('logsContent')?.textContent || '';
+        const dataBlob = new Blob([logsContent], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ignia-status-${new Date().toISOString()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    </script>
+  )}
+
+</BaseLayout>
