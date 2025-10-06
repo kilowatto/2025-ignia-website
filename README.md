@@ -2608,6 +2608,352 @@ adapter: cloudflare({
 
 ---
 
+
+
+## 🚦 Página de Status: Monitoreo de Servicios
+
+### 📋 Descripción General
+
+La **página de status** (`/status`) es un dashboard de monitoreo en tiempo real que verifica la salud de los servicios críticos del sitio en cada carga de página (SSR).
+
+**URL:** `/status`  
+**Ubicación:** `src/pages/status.astro`  
+**Método:** SSR (Server-Side Rendering) - Checks en cada request  
+**Idioma:** Inglés (página técnica, no traducida)
+
+### ✨ Características Principales
+
+| Característica | Descripción |
+|----------------|-------------|
+| **🚦 Sistema de Semáforos** | 🟢 Operational · 🟡 Degraded · 🔴 Down |
+| **⏱️ Response Time Tracking** | Mide latencia de cada servicio en milisegundos |
+| **🔒 Logs Protegidos** | Diagnóstico completo solo con `?token=SECRET` |
+| **📊 Overall Status** | Calcula estado general (todos operativos vs alguno caído) |
+| **🔄 Auto-Refresh** | Meta refresh cada 30s (opcional, deshabilitado por defecto) |
+| **📋 Export JSON** | Botón para exportar diagnóstico completo |
+| **📑 Copy Logs** | Copiar logs al portapapeles con un click |
+| **📱 Responsive Design** | Tailwind CSS, mobile-first |
+
+### 🏗️ Arquitectura
+
+#### Servicios Monitoreados
+
+| Servicio | Check | Timeout | Criterio de Éxito |
+|----------|-------|---------|-------------------|
+| **Website** | Self-check (Astro SSR responde) | N/A | Siempre `operational` (si carga página) |
+| **Odoo API** | XML-RPC authentication test | 5000ms | `authenticate()` retorna `uid` válido |
+
+#### Flujo de Verificación
+
+```
+Usuario visita /status
+    ↓
+SSR ejecuta checks (paralelo)
+    ├─ Website Check (instant)
+    └─ Odoo API Check (5s timeout)
+          ├─ validateOdooConfig()
+          ├─ getOdooConfig()
+          ├─ new OdooClient(5s timeout)
+          └─ client.authenticate()
+    ↓
+Calcula overall status:
+    ├─ All operational → 🟢 operational
+    ├─ Some down → 🔴 down
+    └─ Some degraded → 🟡 degraded
+    ↓
+Renderiza HTML con resultados
+    ↓
+Usuario ve status en tiempo real
+```
+
+#### Estados de Servicio
+
+```typescript
+type ServiceStatus = 'operational' | 'degraded' | 'down';
+
+interface ServiceCheck {
+  name: string;
+  status: ServiceStatus;
+  responseTime: number;        // En milisegundos
+  message: string;
+  lastChecked: string;         // ISO 8601 timestamp
+  icon: '🟢' | '🟡' | '🔴';   // Visual indicator
+  error?: {                    // Solo si status = 'down'
+    message: string;
+    code: string;
+    stack?: string;            // Solo con token
+  };
+  details?: Record<string, any>; // Solo con token
+}
+```
+
+### 🔒 Sistema de Protección de Logs
+
+La página tiene **dos modos de visualización**:
+
+#### Modo Público (Sin Token)
+
+```
+URL: /status
+```
+
+**Información visible:**
+- ✅ Status de cada servicio (🟢🟡🔴)
+- ✅ Response time (milisegundos)
+- ✅ Overall status
+- ❌ Detalles técnicos ocultos
+- ❌ Stack traces no visibles
+- ❌ Información de configuración oculta
+
+**Uso:** Monitoreo público para usuarios finales
+
+#### Modo Protegido (Con Token)
+
+```
+URL: /status?token=YOUR_SECRET_TOKEN
+```
+
+**Información adicional visible:**
+- ✅ Logs detallados con timestamps
+- ✅ Stack traces completos de errores
+- ✅ Configuración de servicios (URLs, database names, etc.)
+- ✅ Raw error objects
+- ✅ Diagnostic information completa
+- ✅ Botones Export JSON y Copy Logs
+
+**Uso:** Debugging por desarrolladores/sysadmins
+
+### 🔧 Configuración
+
+#### Variables de Entorno
+
+```bash
+# .env.local (desarrollo)
+STATUS_PAGE_TOKEN=secret123
+
+# .env.example (template público)
+STATUS_PAGE_TOKEN=generate_random_token_here
+```
+
+**Generar token seguro:**
+
+```bash
+# Opción 1: Node.js (recomendado)
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Opción 2: OpenSSL
+openssl rand -hex 32
+
+# Opción 3: PowerShell (Windows)
+-join ((65..90) + (97..122) + (48..57) | Get-Random -Count 32 | % {[char]$_})
+```
+
+#### Cloudflare Pages
+
+```bash
+# Dashboard → Settings → Environment Variables
+
+Production:
+  STATUS_PAGE_TOKEN = [token generado arriba]
+  # Tipo: Secret (text field)
+  
+Preview/Staging (opcional):
+  STATUS_PAGE_TOKEN = [otro token para staging]
+```
+
+### 📊 Interpretación de Estados
+
+| Icono | Estado | Condición | Acción Recomendada |
+|-------|--------|-----------|-------------------|
+| 🟢 | `operational` | Todos los checks pasaron | ✅ Ninguna (todo OK) |
+| 🟡 | `degraded` | Algunos warnings, ningún down | ⚠️ Investigar logs |
+| 🔴 | `down` | Al menos un servicio caído | 🚨 Investigar urgente |
+
+#### Códigos de Error Comunes (Odoo API)
+
+| Code | Descripción | Causa Común | Solución |
+|------|-------------|-------------|----------|
+| `CONNECTION_ERROR` | No puede conectar a Odoo | Red, firewall, URL incorrecta | Verificar `ODOO_URL` |
+| `TIMEOUT` | Timeout después de 5s | Odoo lento o no responde | Aumentar timeout o revisar Odoo |
+| `AUTH_FAILED` | Autenticación rechazada | Credenciales incorrectas | Verificar `ODOO_USERNAME` y `ODOO_PASSWORD` |
+| `MISSING_CONFIG` | Env vars no configuradas | Variables de entorno faltantes | Configurar en `.env.local` o Cloudflare |
+
+### 🎨 UI y Diseño
+
+**Paleta de Colores:**
+
+```css
+/* Semáforos */
+🟢 operational: bg-green-100, text-green-800, border-green-500
+🟡 degraded:    bg-yellow-100, text-yellow-800, border-yellow-500
+🔴 down:        bg-red-100, text-red-800, border-red-500
+
+/* Cards */
+Fondo: bg-white
+Borde: border-2 (color según status)
+Sombra: shadow-lg
+Esquinas: rounded-lg
+```
+
+**Layout:**
+
+```
+┌─────────────────────────────────────────┐
+│ 🔵 System Status                       │ ← Header con overall status
+│ Overall: 🟢 All Systems Operational    │
+│ Last Check: 2025-10-06 15:30:00 UTC   │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ 🟢 Website                             │ ← Service Card
+│ ├─ Status: Operational                 │
+│ ├─ Response Time: 5ms                  │
+│ └─ Message: Astro SSR responding       │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ 🟢 Odoo API                            │
+│ ├─ Status: Operational                 │
+│ ├─ Response Time: 847ms                │
+│ ├─ UID: 2                              │ ← Solo con token
+│ ├─ URL: https://ignia-cloud.odoo.com  │ ← Solo con token
+│ └─ Database: ignia-cloud               │ ← Solo con token
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│ 📋 Diagnostic Logs (Protected)         │ ← Solo con token
+│ [10:30:01] [info] Website check passed │
+│ [10:30:02] [info] Odoo authenticated   │
+│                                         │
+│ [Export JSON] [Copy Logs] [Refresh]   │ ← Botones de acción
+└─────────────────────────────────────────┘
+```
+
+### 🧪 Testing
+
+#### Test Manual en Desarrollo
+
+```bash
+# 1. Configurar token en .env.local
+echo "STATUS_PAGE_TOKEN=test123" >> .env.local
+
+# 2. Iniciar servidor
+pnpm run dev
+
+# 3. Test público (sin logs)
+open http://localhost:4321/status
+
+# 4. Test protegido (con logs)
+open http://localhost:4321/status?token=test123
+
+# 5. Test con token incorrecto (sin logs)
+open http://localhost:4321/status?token=wrong
+```
+
+#### Test de Errores (Odoo API)
+
+```bash
+# Test 1: Sin credenciales (MISSING_CONFIG)
+# Comentar variables de Odoo en .env.local
+# ODOO_URL=...
+# ODOO_DB=...
+# ...
+
+# Restart server
+pnpm run dev
+
+# Resultado esperado: 🔴 Odoo API - Down
+#                     Error: Missing env vars
+
+# Test 2: Credenciales incorrectas (AUTH_FAILED)
+# Configurar password incorrecto
+ODOO_PASSWORD=wrong_password
+
+# Restart server
+# Resultado esperado: 🔴 Odoo API - Down
+#                     Error: Authentication failed
+
+# Test 3: Timeout (TIMEOUT)
+# Configurar URL inexistente
+ODOO_URL=https://nonexistent-odoo-instance.odoo.com
+
+# Restart server
+# Resultado esperado: 🔴 Odoo API - Down
+#                     Error: Timeout after 5000ms
+```
+
+#### Test en Producción
+
+```bash
+# Test público
+curl https://ignia.cloud/status
+
+# Test protegido (usar token real de Cloudflare)
+curl "https://ignia.cloud/status?token=REAL_TOKEN_HERE"
+
+# Verificar JSON export
+curl -H "Accept: application/json" "https://ignia.cloud/status?token=REAL_TOKEN_HERE"
+```
+
+### 📝 Cumplimiento Arquitectónico
+
+| Requisito (arquitecture.md) | Estado | Implementación |
+|------------------------------|--------|----------------|
+| **§2: JS mínimo o nulo** | ✅ | SSR, sin JS client-side (solo HTML) |
+| **§3: Astro SSR** | ✅ | Página dinámica con checks server-side |
+| **§8: Tailwind CSS** | ✅ | 100% utilities, responsive design |
+| **§14: Performance** | ✅ | Checks paralelos, timeout 5s, no bloquea |
+
+### 🔗 Archivos Relacionados
+
+- **`src/pages/status.astro`** - Página principal (645 líneas)
+- **`src/lib/odoo/config.ts`** - Validación y obtención de config
+- **`src/lib/odoo/OdooClient.ts`** - Cliente XML-RPC para testing
+- **`.env.local`** - Token local (no commitear)
+- **`.env.example`** - Template público con documentación
+
+### 🆘 Troubleshooting
+
+#### Página muestra "403 Forbidden"
+
+**Causa:** Cloudflare bloqueando página por firewall rules.  
+**Solución:** Whitelist `/status` en Cloudflare Firewall Rules.
+
+#### Logs no aparecen con token correcto
+
+**Causa 1:** Token no configurado en Cloudflare.  
+**Solución:** Verificar env var `STATUS_PAGE_TOKEN` en Cloudflare Dashboard.
+
+**Causa 2:** Token con espacios o caracteres especiales.  
+**Solución:** Regenerar token sin caracteres problemáticos.
+
+#### Odoo API siempre muestra "Down"
+
+**Causa 1:** Variables de entorno no configuradas.  
+**Solución:** Verificar 4 variables Odoo (URL, DB, USERNAME, PASSWORD).
+
+**Causa 2:** Firewall bloqueando conexión de Cloudflare Workers a Odoo.  
+**Solución:** Whitelist IPs de Cloudflare en firewall de Odoo.
+
+**Causa 3:** Timeout muy corto (5s insuficiente).  
+**Solución:** Aumentar timeout en `OdooClient` constructor (línea 148 de status.astro):
+
+```typescript
+const client = new OdooClient(config, 10000); // 10 segundos
+```
+
+#### "Request timeout" en Odoo check
+
+**Causa:** Odoo tarda más de 5s en responder.  
+**Solución:** Revisar performance de instancia Odoo o aumentar timeout.
+
+### 📚 Recursos
+
+- 🔧 [Cloudflare Workers KV](https://developers.cloudflare.com/kv/) - Para rate limiting futuro
+- 📊 [Uptime Monitoring Best Practices](https://www.datadoghq.com/knowledge-center/uptime-monitoring/)
+- 🚦 [Status Page Examples](https://www.atlassian.com/software/statuspage/examples)
+
+---
 ## �📚 Documentación Adicional
 
 ### Archivos Clave
