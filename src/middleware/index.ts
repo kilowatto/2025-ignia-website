@@ -40,6 +40,7 @@ if (!globalThis.__astroI18nMiddleware) {
  * - /robots.txt (endpoint dinámico SEO)
  * - /sitemap*.xml (sitemaps multiidioma)
  * - /status (página de monitoreo, sin i18n)
+ * - /api/* (API endpoints)
  * - /_* (rutas internas de Astro)
  * 
  * Estas rutas deben procesarse sin i18n para funcionar correctamente
@@ -48,10 +49,11 @@ if (!globalThis.__astroI18nMiddleware) {
 const excludeFromI18n = defineMiddleware(async (context, next) => {
     const { pathname } = context.url;
 
-    // Excluir robots.txt, sitemaps, status page y rutas internas del procesamiento i18n
+    // Excluir rutas específicas del procesamiento i18n
     if (
         pathname === '/robots.txt' ||
         pathname === '/status' ||
+        pathname.startsWith('/api/') ||
         pathname.startsWith('/sitemap') ||
         pathname.endsWith('.xml') ||
         pathname.startsWith('/_')
@@ -59,9 +61,19 @@ const excludeFromI18n = defineMiddleware(async (context, next) => {
         return next();
     }
 
-    // Usar la instancia de astro-i18n ya inicializada
-    // NO reinicializar en cada request
-    return astroI18nMiddleware(context, next);
+    // Wrap astro-i18n middleware en try-catch para prevenir crashes
+    try {
+        // Usar la instancia de astro-i18n ya inicializada
+        // NO reinicializar en cada request
+        return await astroI18nMiddleware(context, next);
+    } catch (error) {
+        // Si astro-i18n falla, log el error y continuar sin i18n
+        console.error('[astro-i18n] Middleware error:', error);
+        console.error('[astro-i18n] Pathname:', pathname);
+        
+        // Continuar sin procesamiento i18n
+        return next();
+    }
 });
 
 export const onRequest = sequence(excludeFromI18n);
