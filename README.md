@@ -2959,6 +2959,7 @@ const client = new OdooClient(config, 10000); // 10 segundos
 ### Archivos Clave
 
 - **[`arquitecture.md`](./arquitecture.md)** - Arquitectura completa del proyecto (principios, stack, estructura, guías)
+- **[`PIPELINE_NEW_PAGE.md`](./PIPELINE_NEW_PAGE.md)** - ⚠️ Checklist obligatorio al crear nuevas páginas (SEO, i18n, sitemap)
 - **[`astro.config.mjs`](./astro.config.mjs)** - Configuración Astro (i18n nativo, integraciones, adapter)
 - **[`astro-i18n.config.mjs`](./astro-i18n.config.mjs)** - Configuración astro-i18n (traducciones)
 - **[`tailwind.config.mjs`](./tailwind.config.mjs)** - Configuración Tailwind (colores, breakpoints)

@@ -19,9 +19,18 @@ export const prerender = false;
 
 // Definir todas las páginas del sitio
 // TODO: Actualizar esta lista cada vez que se agreguen nuevas páginas (arquitecture.md)
+// 
+// ⚠️ PIPELINE OBLIGATORIO: Al crear una nueva página:
+// 1. Agregar la ruta aquí con changefreq y priority apropiados
+// 2. Verificar que aparece en /sitemap-[lang].xml para los 3 idiomas
+// 3. Testear con: curl http://localhost:4321/sitemap-en.xml | grep "nueva-pagina"
+// 4. Commit con mensaje: "feat(sitemap): add /nueva-pagina to XML sitemaps"
+// 
+// Páginas actuales:
 const pages = [
     { path: '', changefreq: 'daily', priority: 1.0 },           // Home
     { path: '/search', changefreq: 'monthly', priority: 0.5 },  // Búsqueda
+    { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page (añadido: 2025-10-06)
     // Agregar aquí nuevas páginas según se creen
 ];
 
