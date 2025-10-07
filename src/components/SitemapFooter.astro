@@ -537,8 +537,28 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                 <p id="email-error" class="text-sm text-red-100 font-medium mt-1.5 hidden" role="alert"></p>
               </div>
 
-              <!-- Cloudflare Turnstile (opcional) -->
-              <div id="turnstile-widget" class="hidden"></div>
+              <!-- 
+                Cloudflare Turnstile (CAPTCHA invisible)
+                
+                PROPÓSITO: Protección anti-bot invisible que no impacta UX
+                Widget se renderiza automáticamente al cargar el script
+                Token se envía en campo 'cf-turnstile-response' del FormData
+                
+                CONFIGURACIÓN REQUERIDA:
+                - PUBLIC_TURNSTILE_SITE_KEY en env vars (público, va al cliente)
+                - TURNSTILE_SECRET_KEY en env vars (secreto, solo server)
+                
+                CUMPLIMIENTO:
+                - §11 arquitecture.md: Anti-spam server-side
+                - §2 arquitecture.md: Script defer (no bloquea rendering)
+                - §14 arquitecture.md: No impacta LCP
+              -->
+              <div 
+                class="cf-turnstile my-3" 
+                data-sitekey={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY}
+                data-theme="light"
+                data-size="normal"
+              ></div>
 
               <!-- Botón compacto -->
               <button

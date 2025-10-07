@@ -317,8 +317,8 @@ export class OdooClient {
     kwargs: Record<string, unknown>
   ): string {
     const argsXML = this.valueToXML(args);
-    const kwargsXML = Object.keys(kwargs).length > 0 
-      ? this.valueToXML(kwargs) 
+    const kwargsXML = Object.keys(kwargs).length > 0
+      ? this.valueToXML(kwargs)
       : '<value><struct></struct></value>';
 
     return `<?xml version="1.0"?>
@@ -502,7 +502,7 @@ export class OdooClient {
    */
   private parseArray(arrayXML: string): unknown[] {
     const values: unknown[] = [];
-    
+
     // Extraer contenido de <data>...</data>
     const dataMatch = arrayXML.match(/<data>(.*?)<\/data>/s);
     if (!dataMatch) {

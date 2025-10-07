@@ -67,6 +67,209 @@ import { OdooService } from '../../../lib/odoo/OdooService';
 import { getOdooConfig } from '../../../lib/odoo/config';
 import type { ContactFormData } from '../../../lib/odoo/types';
 
+// ============================================================================
+// RATE LIMITING (§11 arquitecture.md - Anti-spam server-side)
+// ============================================================================
+
+/**
+ * Rate limiting map: IP → { count, resetAt }
+ * Almacena intentos de envío por IP en memoria durante runtime
+ * Se limpia automáticamente después de RATE_WINDOW
+ */
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+/**
+ * Configuración de rate limiting
+ */
+const RATE_LIMIT = 3; // Máximo 3 envíos por IP
+const RATE_WINDOW = 15 * 60 * 1000; // Ventana de 15 minutos
+
+/**
+ * Verifica si una IP ha excedido el rate limit
+ * 
+ * @param ip - IP del cliente (de CF-Connecting-IP o X-Forwarded-For)
+ * @returns true si puede enviar, false si excedió el límite
+ */
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  // Limpiar registros expirados (garbage collection)
+  if (record && now > record.resetAt) {
+    rateLimitMap.delete(ip);
+  }
+
+  // Primera vez o registro expirado
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+    return true;
+  }
+
+  const currentRecord = rateLimitMap.get(ip)!;
+
+  // Verificar si excedió el límite
+  if (currentRecord.count >= RATE_LIMIT) {
+    return false;
+  }
+
+  // Incrementar contador
+  currentRecord.count++;
+  return true;
+}
+
+// ============================================================================
+// CLOUDFLARE TURNSTILE VALIDATION (§11 arquitecture.md - Anti-spam)
+// ============================================================================
+
+/**
+ * Valida token de Cloudflare Turnstile con API de Cloudflare
+ * 
+ * @param token - Token generado por widget Turnstile en cliente
+ * @param secretKey - TURNSTILE_SECRET_KEY de env vars
+ * @param ip - IP del cliente (opcional, para validación adicional)
+ * @returns true si token válido, false si inválido o expirado
+ */
+async function validateTurnstileToken(
+  token: string,
+  secretKey: string,
+  ip?: string
+): Promise<boolean> {
+  try {
+    const formData = new FormData();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+    if (ip) {
+      formData.append('remoteip', ip);
+    }
+
+    const response = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    return result.success === true;
+  } catch (error) {
+    console.error('[Turnstile] Error al validar token:', error);
+    return false;
+  }
+}
+
+// ============================================================================
+// DETECCIÓN DE PATRONES SOSPECHOSOS (§11 arquitecture.md - Validación server-side)
+// ============================================================================
+
+/**
+ * Detecta patrones sospechosos en datos del formulario que indican bot/spam
+ * 
+ * PATRONES DETECTADOS:
+ * - Caracteres repetidos (ej: "aaaaaaa", "111111")
+ * - URLs en campo nombre
+ * - Emails temporales conocidos
+ * - Nombres demasiado cortos o solo números
+ * - Teléfonos con secuencias consecutivas
+ * 
+ * @param data - Datos del formulario
+ * @returns Código de error si es sospechoso, null si parece legítimo
+ */
+function detectSuspiciousPatterns(data: ContactFormData): string | null {
+  const { name, email, phone } = data;
+
+  // 1. Caracteres repetidos (6 o más del mismo carácter)
+  if (/(.)\1{5,}/.test(name) || /(.)\1{5,}/.test(phone)) {
+    return 'REPEATED_CHARS';
+  }
+
+  // 2. URLs en nombre
+  if (/(https?:\/\/|www\.|\.com|\.net|\.org)/i.test(name)) {
+    return 'URL_IN_NAME';
+  }
+
+  // 3. Emails temporales conocidos (dominios comunes de spam)
+  const tempEmailDomains = [
+    'mailinator.com',
+    '10minutemail.com',
+    'guerrillamail.com',
+    'tempmail.com',
+    'throwaway.email',
+    'maildrop.cc',
+    'getnada.com',
+    'trashmail.com',
+  ];
+  const emailDomain = email.split('@')[1]?.toLowerCase() || '';
+  if (tempEmailDomains.includes(emailDomain)) {
+    return 'TEMP_EMAIL';
+  }
+
+  // 4. Nombre muy corto o solo números
+  const trimmedName = name.trim();
+  if (trimmedName.length < 3) {
+    return 'NAME_TOO_SHORT';
+  }
+  if (/^\d+$/.test(trimmedName)) {
+    return 'NAME_ONLY_DIGITS';
+  }
+
+  // 5. Teléfono con secuencias consecutivas obvias
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (phoneDigits.length >= 10) {
+    // Detectar secuencias ascendentes/descendentes (ej: 0123456789, 9876543210)
+    if (
+      /0123456789|1234567890|9876543210|0987654321/.test(phoneDigits) ||
+      /^(\d)\1{9,}$/.test(phoneDigits) // Mismo dígito repetido (ej: 1111111111)
+    ) {
+      return 'SEQUENTIAL_PHONE';
+    }
+  }
+
+  return null; // Parece legítimo
+}
+
+// ============================================================================
+// LOGGING ESTRUCTURADO (§15 arquitecture.md - Seguridad)
+// ============================================================================
+
+/**
+ * Hash simple de string para logs (privacidad)
+ * Usa btoa() para encode base64 (disponible en Workers)
+ * 
+ * @param str - String a hashear
+ * @returns Hash base64
+ */
+function simpleHash(str: string): string {
+  try {
+    return btoa(str.substring(0, 10)); // Solo primeros 10 chars por privacidad
+  } catch {
+    return 'hash_error';
+  }
+}
+
+/**
+ * Registra intento bloqueado en logs con formato JSON estructurado
+ * Facilita análisis posterior con herramientas de observabilidad
+ * 
+ * @param reason - Código de razón del bloqueo
+ * @param data - Datos del intento (IP, email parcial, nombre)
+ */
+function logBlockedAttempt(
+  reason: string,
+  data: { ip: string; email?: string; name?: string }
+): void {
+  console.warn(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      event: 'form_submission_blocked',
+      reason,
+      ip: data.ip,
+      email_hash: data.email ? simpleHash(data.email) : null,
+      name_length: data.name?.length || 0,
+    })
+  );
+}
+
 /**
  * Endpoint POST para enviar formulario de contacto
  * 
@@ -97,8 +300,18 @@ import type { ContactFormData } from '../../../lib/odoo/types';
  * - 500: Error interno del servidor o Odoo
  */
 export const POST: APIRoute = async ({ request, locals }) => {
+  // =========================================================================
+  // PASO 0: OBTENER IP DEL CLIENTE (Cloudflare Workers)
+  // =========================================================================
+  const clientIP =
+    request.headers.get('CF-Connecting-IP') ||
+    request.headers.get('X-Forwarded-For')?.split(',')[0] ||
+    'unknown';
+
   try {
-    // 1. Parsear body JSON
+    // =======================================================================
+    // PASO 1: PARSEAR BODY JSON
+    // =======================================================================
     let body: any;
     try {
       body = await request.json();
@@ -116,10 +329,96 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 2. Anti-spam: Honeypot check
-    // El formulario incluye un campo oculto que los bots llenan pero humanos no
+    // =======================================================================
+    // PASO 2: RATE LIMITING POR IP (§11 arquitecture.md)
+    // =======================================================================
+    if (!checkRateLimit(clientIP)) {
+      logBlockedAttempt('RATE_LIMIT_EXCEEDED', {
+        ip: clientIP,
+        email: body.email,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Demasiados intentos. Por favor intenta más tarde.',
+          code: 'RATE_LIMIT_EXCEEDED',
+        }),
+        {
+          status: 429,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // =======================================================================
+    // PASO 3: VALIDAR CLOUDFLARE TURNSTILE (§11 arquitecture.md)
+    // =======================================================================
+    const turnstileToken = body['cf-turnstile-response'];
+
+    // Obtener secret key de env vars
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const runtimeEnv = (locals as any).runtime?.env || {};
+    const turnstileSecretKey = runtimeEnv.TURNSTILE_SECRET_KEY || import.meta.env.TURNSTILE_SECRET_KEY;
+
+    if (!turnstileToken) {
+      logBlockedAttempt('TURNSTILE_TOKEN_MISSING', {
+        ip: clientIP,
+        email: body.email,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Verificación de seguridad requerida',
+          code: 'TURNSTILE_REQUIRED',
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Validar token con Cloudflare API
+    if (turnstileSecretKey) {
+      const isValidToken = await validateTurnstileToken(
+        turnstileToken,
+        turnstileSecretKey,
+        clientIP
+      );
+
+      if (!isValidToken) {
+        logBlockedAttempt('TURNSTILE_VALIDATION_FAILED', {
+          ip: clientIP,
+          email: body.email,
+        });
+
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Verificación de seguridad falló. Por favor intenta de nuevo.',
+            code: 'TURNSTILE_INVALID',
+          }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    } else {
+      console.warn('[API /contact/submit] TURNSTILE_SECRET_KEY no configurada, saltando validación');
+    }
+
+    // =======================================================================
+    // PASO 4: HONEYPOT CHECK (anti-spam básico)
+    // =======================================================================
     if (body.honeypot && body.honeypot.trim() !== '') {
-      console.warn('[API /contact/submit] Honeypot triggered:', body.email);
+      logBlockedAttempt('HONEYPOT_TRIGGERED', {
+        ip: clientIP,
+        email: body.email,
+      });
+
       // Responder con success para no alertar al bot
       return new Response(
         JSON.stringify({
@@ -133,15 +432,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 3. Anti-spam: Tiempo mínimo desde que se cargó el formulario
-    // Los bots suelen enviar formularios instantáneamente
+    // =======================================================================
+    // PASO 5: TIME-BASED VALIDATION (anti-spam)
+    // =======================================================================
     if (body.timestamp) {
       const now = Date.now();
       const timeDiff = now - body.timestamp;
       const minTime = 3000; // 3 segundos mínimo
 
       if (timeDiff < minTime) {
-        console.warn('[API /contact/submit] Too fast submission:', body.email, `${timeDiff}ms`);
+        logBlockedAttempt('SUBMISSION_TOO_FAST', {
+          ip: clientIP,
+          email: body.email,
+        });
+
         return new Response(
           JSON.stringify({
             success: false,
@@ -156,9 +460,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // 4. Validar campos requeridos
+    // =======================================================================
+    // PASO 6: VALIDAR CAMPOS REQUERIDOS
+    // =======================================================================
     const requiredFields = ['name', 'email', 'phone'];
-    const missingFields = requiredFields.filter(field => !body[field] || body[field].trim() === '');
+    const missingFields = requiredFields.filter(
+      (field) => !body[field] || body[field].trim() === ''
+    );
 
     if (missingFields.length > 0) {
       return new Response(
@@ -175,7 +483,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 5. Validar formato de email (básico)
+    // =======================================================================
+    // PASO 7: VALIDAR FORMATO DE EMAIL
+    // =======================================================================
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(body.email)) {
       return new Response(
@@ -191,7 +501,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 6. Sanitizar inputs (remover HTML tags, scripts)
+    // =======================================================================
+    // PASO 8: SANITIZAR INPUTS (prevenir XSS)
+    // =======================================================================
     const sanitize = (str: string): string => {
       return str
         .replace(/<[^>]*>/g, '') // Remover HTML tags
@@ -199,7 +511,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
         .trim();
     };
 
-    // 7. Construir ContactFormData
+    // =======================================================================
+    // PASO 9: CONSTRUIR ContactFormData (pre-validación)
+    // =======================================================================
     const formData: ContactFormData = {
       name: sanitize(body.name),
       email: sanitize(body.email).toLowerCase(),
@@ -214,7 +528,33 @@ export const POST: APIRoute = async ({ request, locals }) => {
       utm_term: body.utm_term ? sanitize(body.utm_term) : undefined,
     };
 
-    // 8. Obtener configuración de Odoo
+    // =======================================================================
+    // PASO 10: DETECCIÓN DE PATRONES SOSPECHOSOS (§11 arquitecture.md)
+    // =======================================================================
+    const suspiciousPattern = detectSuspiciousPatterns(formData);
+    if (suspiciousPattern) {
+      logBlockedAttempt(suspiciousPattern, {
+        ip: clientIP,
+        email: formData.email,
+        name: formData.name,
+      });
+
+      // Responder con success para no alertar al bot
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Gracias por tu mensaje',
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // =======================================================================
+    // PASO 11: OBTENER CONFIGURACIÓN DE ODOO
+    // =======================================================================
     let config;
     try {
       // IMPORTANTE: Pasar locals.runtime.env para Cloudflare Workers
@@ -236,11 +576,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 9. Inicializar OdooService y enviar datos
+    // =======================================================================
+    // PASO 12: INICIALIZAR ODOOSERVICE Y ENVIAR DATOS
+    // =======================================================================
     const odooService = new OdooService(config);
     const result = await odooService.upsertPartnerFromForm(formData);
 
-    // 10. Manejar resultado
+    // =======================================================================
+    // PASO 13: MANEJAR RESULTADO
+    // =======================================================================
     if (!result.success) {
       console.error('[API /contact/submit] Odoo error:', result.error);
 
