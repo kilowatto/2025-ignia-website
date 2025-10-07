@@ -186,8 +186,8 @@ export class OdooService {
         type: ODOO_DEFAULTS.DEFAULT_CONTACT_TYPE,
         is_company: ODOO_DEFAULTS.DEFAULT_IS_COMPANY,
         comment: JSON.stringify(metadata, null, 2),
-        // Agregar tag si se obtuvo correctamente
-        ...(tagId && { category_id: [6, 0, [tagId]] as [number, number, number[]] }),
+        // Agregar tag si se obtuvo correctamente (formato XML-RPC: array de comandos)
+        ...(tagId && { category_id: [[6, 0, [tagId]]] }),
       };
 
       // Crear partner en Odoo

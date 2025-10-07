@@ -516,7 +516,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
         const locale = document.documentElement.lang || 'en'; // Idioma del sitio (en/es/fr)
         const page = window.location.pathname; // Página actual (/, /es/, /fr/solutions/)
         const source = 'website_footer'; // Origen fijo (footer del sitio)
-        
+
         // Capturar parámetros UTM de la URL (campañas de marketing)
         const urlParams = new URLSearchParams(window.location.search);
         const utm_source = urlParams.get('utm_source') || undefined;
@@ -536,7 +536,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
         const maxWaitTime = 5000; // 5 segundos máximo de espera
         const checkInterval = 100; // Verificar cada 100ms
         let elapsedTime = 0;
-        
+
         // Intentar capturar token con retry logic
         while (!turnstileToken && elapsedTime < maxWaitTime) {
             const turnstileWidget = document.querySelector('.cf-turnstile');
@@ -544,7 +544,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
                 const turnstileResponse = turnstileWidget.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
                 turnstileToken = turnstileResponse?.value || '';
             }
-            
+
             // Si no hay token, esperar un poco más
             if (!turnstileToken) {
                 await new Promise(resolve => setTimeout(resolve, checkInterval));
@@ -553,7 +553,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
         }
 
         console.log('[ContactForm] Turnstile token captured:', turnstileToken ? 'Yes (length: ' + turnstileToken.length + ')' : 'No');
-        
+
         if (!turnstileToken) {
             console.warn('[ContactForm] Turnstile token not available after', elapsedTime, 'ms');
         }
@@ -564,22 +564,22 @@ async function handleFormSubmit(event: Event): Promise<void> {
             name: formData.name,
             phone: formData.phone,
             email: formData.email,
-            
+
             // Metadata del contexto
             locale,
             source,
             page,
-            
+
             // Cloudflare Turnstile token (requerido para anti-spam)
             'cf-turnstile-response': turnstileToken,
-            
+
             // UTM parameters (solo si existen)
             ...(utm_source && { utm_source }),
             ...(utm_medium && { utm_medium }),
             ...(utm_campaign && { utm_campaign }),
             ...(utm_content && { utm_content }),
             ...(utm_term && { utm_term }),
-            
+
             // Anti-spam: timestamp de carga del formulario
             timestamp: formLoadTimestamp,
         };
@@ -618,7 +618,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
     } catch (error) {
         console.error('[ContactForm] Submit error:', error);
         setButtonLoadingState(false);
-        
+
         // Mensaje de error traducido según idioma del sitio
         const locale = document.documentElement.lang || 'en';
         const errorMessages: Record<string, string> = {

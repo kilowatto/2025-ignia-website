@@ -25,13 +25,13 @@
 export interface OdooConfig {
   /** URL base de la instancia Odoo (ej: https://ignia-cloud.odoo.com) */
   url: string;
-  
+
   /** Nombre de la base de datos Odoo */
   db: string;
-  
+
   /** Usuario con permisos de API (recomendado: usuario dedicado) */
   username: string;
-  
+
   /** Contraseña del usuario API (DEBE ser variable de entorno) */
   password: string;
 }
@@ -47,7 +47,7 @@ export interface OdooConfig {
 export interface OdooAuth {
   /** User ID único de Odoo (obtenido tras autenticación exitosa) */
   uid: number;
-  
+
   /** Password original (necesario para cada llamada XML-RPC) */
   password: string;
 }
@@ -70,26 +70,26 @@ export interface OdooAuth {
 export interface OdooPartner {
   /** ID del partner (solo presente en registros existentes) */
   id?: number;
-  
+
   /** Nombre completo (REQUERIDO) */
   name: string;
-  
+
   /** Email (REQUERIDO, usado para detectar duplicados) */
   email: string;
-  
+
   /** Teléfono principal (opcional pero recomendado) */
   phone?: string;
-  
+
   /** Teléfono móvil (alternativa a phone) */
   mobile?: string;
-  
+
   /** 
    * Idioma del contacto (campo nativo Odoo)
    * Valores válidos: 'en_US', 'es_MX', 'fr_FR', etc.
    * Se usa para emails, documentos PDF, comunicaciones
    */
   lang?: 'en_US' | 'es_MX' | 'fr_FR' | string;
-  
+
   /** 
    * Notas/comentarios (campo Text ilimitado)
    * USAMOS PARA: Guardar metadata estructurada en JSON
@@ -100,7 +100,7 @@ export interface OdooPartner {
    * - submitted_at: timestamp ISO 8601
    */
   comment?: string;
-  
+
   /** 
    * Tipo de contacto
    * - 'contact': Persona individual (DEFAULT para formularios web)
@@ -109,26 +109,26 @@ export interface OdooPartner {
    * - 'other': Otro tipo
    */
   type?: 'contact' | 'invoice' | 'delivery' | 'other';
-  
+
   /** 
    * ¿Es una empresa?
    * - false: Persona individual (DEFAULT para formularios web)
    * - true: Empresa/organización
    */
   is_company?: boolean;
-  
+
   /**
    * Tags/categorías del contacto (relación Many2Many con res.partner.category)
-   * Formato: Array de IDs de categorías
-   * Ejemplo: [6, 0, [1, 2, 3]] = Reemplazar con IDs 1, 2, 3
+   * Formato para XML-RPC: Array plano con comando Odoo
+   * Ejemplo: [[6, 0, [1, 2, 3]]] = Reemplazar con IDs 1, 2, 3
    * Comando (6, 0, ids): Reemplazar todas las categorías
    * Comando (4, id): Agregar categoría
    */
-  category_id?: [number, number, number[]];
-  
+  category_id?: Array<[number, number, number[]]>;
+
   /** Fecha de creación (auto-generado por Odoo) */
   create_date?: string;
-  
+
   /** Fecha de última modificación (auto-generado por Odoo) */
   write_date?: string;
 }
@@ -147,13 +147,13 @@ export interface OdooPartner {
 export interface ContactFormData {
   /** Nombre completo capturado del formulario */
   name: string;
-  
+
   /** Teléfono capturado del formulario */
   phone: string;
-  
+
   /** Email capturado del formulario */
   email: string;
-  
+
   /** 
    * Idioma del sitio web donde se envió el formulario
    * Valores: 'en', 'es', 'fr'
@@ -161,49 +161,49 @@ export interface ContactFormData {
    * Se mapea a lang de Odoo: en → en_US, es → es_MX, fr → fr_FR
    */
   locale?: string;
-  
+
   /** 
    * Origen del contacto (dónde se envió el formulario)
    * Valores comunes: 'website_footer', 'contact_page', 'pricing_page'
    * Captura: Hardcoded según el componente (Footer.astro → 'website_footer')
    */
   source?: string;
-  
+
   /** 
    * Página específica donde se envió el formulario
    * Captura: window.location.pathname
    * Ejemplos: '/', '/es/', '/fr/solutions/'
    */
   page?: string;
-  
+
   /** 
    * UTM Source - Origen de la campaña
    * Ejemplos: 'google', 'facebook', 'linkedin', 'email'
    * Captura: new URLSearchParams(window.location.search).get('utm_source')
    */
   utm_source?: string;
-  
+
   /** 
    * UTM Medium - Medio de la campaña
    * Ejemplos: 'cpc', 'email', 'social', 'organic'
    * Captura: new URLSearchParams(window.location.search).get('utm_medium')
    */
   utm_medium?: string;
-  
+
   /** 
    * UTM Campaign - Nombre de la campaña
    * Ejemplos: 'winter_2024', 'product_launch', 'black_friday'
    * Captura: new URLSearchParams(window.location.search).get('utm_campaign')
    */
   utm_campaign?: string;
-  
+
   /** 
    * UTM Content - Variante de contenido (opcional)
    * Ejemplos: 'footer_form', 'hero_cta', 'sidebar_banner'
    * Captura: new URLSearchParams(window.location.search).get('utm_content')
    */
   utm_content?: string;
-  
+
   /** 
    * UTM Term - Término de búsqueda (opcional, usado en SEM)
    * Ejemplos: 'cloud+backup', 'private+cloud'
@@ -226,10 +226,10 @@ export interface ContactFormData {
 export interface OdooResponse<T = unknown> {
   /** Indica si la operación fue exitosa */
   success: boolean;
-  
+
   /** Datos de respuesta (solo presente si success = true) */
   data?: T;
-  
+
   /** 
    * Error detallado (solo presente si success = false)
    * - code: Código de error para manejo programático
@@ -262,28 +262,28 @@ export interface OdooResponse<T = unknown> {
 export interface ContactMetadata {
   /** Origen del contacto */
   source: string;
-  
+
   /** Página donde se envió el formulario */
   page: string;
-  
+
   /** Idioma del sitio web */
   locale: string;
-  
+
   /** UTM Source (opcional) */
   utm_source?: string;
-  
+
   /** UTM Medium (opcional) */
   utm_medium?: string;
-  
+
   /** UTM Campaign (opcional) */
   utm_campaign?: string;
-  
+
   /** UTM Content (opcional) */
   utm_content?: string;
-  
+
   /** UTM Term (opcional) */
   utm_term?: string;
-  
+
   /** Timestamp ISO 8601 de cuando se envió el formulario */
   submitted_at: string;
 }
@@ -312,13 +312,13 @@ export type OdooDomain = Array<[string, string, unknown]>;
 export interface OdooReadOptions {
   /** Campos a devolver (default: todos los campos) */
   fields?: string[];
-  
+
   /** Número máximo de registros a devolver */
   limit?: number;
-  
+
   /** Número de registros a saltar (paginación) */
   offset?: number;
-  
+
   /** Ordenamiento (ej: 'create_date desc', 'name asc') */
   order?: string;
 }
