@@ -117,6 +117,15 @@ export interface OdooPartner {
    */
   is_company?: boolean;
   
+  /**
+   * Tags/categorías del contacto (relación Many2Many con res.partner.category)
+   * Formato: Array de IDs de categorías
+   * Ejemplo: [6, 0, [1, 2, 3]] = Reemplazar con IDs 1, 2, 3
+   * Comando (6, 0, ids): Reemplazar todas las categorías
+   * Comando (4, id): Agregar categoría
+   */
+  category_id?: [number, number, number[]];
+  
   /** Fecha de creación (auto-generado por Odoo) */
   create_date?: string;
   

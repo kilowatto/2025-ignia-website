@@ -73,6 +73,56 @@ export class OdooService {
   }
 
   /**
+   * Busca o crea un tag (categoría de partner) en Odoo
+   * 
+   * PROPÓSITO:
+   * Los tags en Odoo se almacenan en el modelo res.partner.category.
+   * Este método busca un tag por nombre, y si no existe, lo crea.
+   * 
+   * @param tagName - Nombre del tag (ej: 'Footer-Website', 'Newsletter', 'VIP')
+   * @returns {Promise<OdooResponse<number>>} ID del tag
+   */
+  async findOrCreateTag(tagName: string): Promise<OdooResponse<number>> {
+    try {
+      // Buscar tag existente por nombre
+      const domain: OdooDomain = [['name', '=', tagName]];
+      const tagIds = await this.client.execute<number[]>(
+        'res.partner.category',
+        'search',
+        [domain]
+      );
+
+      // Si existe, retornar el ID
+      if (tagIds && tagIds.length > 0) {
+        return {
+          success: true,
+          data: tagIds[0],
+        };
+      }
+
+      // Si no existe, crear nuevo tag
+      const tagId = await this.client.execute<number>(
+        'res.partner.category',
+        'create',
+        [{ name: tagName }]
+      );
+
+      return {
+        success: true,
+        data: tagId,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: 'FIND_OR_CREATE_TAG_FAILED',
+          message: error instanceof Error ? error.message : 'Error desconocido al buscar/crear tag',
+        },
+      };
+    }
+  }
+
+  /**
    * Crea un partner en Odoo desde datos de formulario web
    * 
    * TRANSFORMACIONES:
@@ -80,6 +130,7 @@ export class OdooService {
    * 2. Construye metadata JSON con source, page, UTMs
    * 3. Guarda metadata en campo comment
    * 4. Establece type='contact' e is_company=false
+   * 5. Agrega tag 'Footer-Website' automáticamente
    * 
    * METADATA GUARDADA EN COMMENT:
    * ```json
@@ -122,6 +173,10 @@ export class OdooService {
       if (data.utm_content) metadata.utm_content = data.utm_content;
       if (data.utm_term) metadata.utm_term = data.utm_term;
 
+      // Buscar o crear tag 'Footer-Website'
+      const tagResult = await this.findOrCreateTag('Footer-Website');
+      const tagId = tagResult.success ? tagResult.data : undefined;
+
       // Construir objeto partner para Odoo
       const partnerData: Partial<OdooPartner> = {
         name: data.name.trim(),
@@ -131,6 +186,8 @@ export class OdooService {
         type: ODOO_DEFAULTS.DEFAULT_CONTACT_TYPE,
         is_company: ODOO_DEFAULTS.DEFAULT_IS_COMPANY,
         comment: JSON.stringify(metadata, null, 2),
+        // Agregar tag si se obtuvo correctamente
+        ...(tagId && { category_id: [6, 0, [tagId]] as [number, number, number[]] }),
       };
 
       // Crear partner en Odoo
