@@ -158,8 +158,9 @@ export class OdooService {
       // Mapear locale web a lang Odoo
       const odooLang = this.mapLocaleToOdooLang(data.locale || 'en');
 
-      // Normalizar teléfono a formato internacional E.164 (+código país + número)
-      const normalizedPhone = this.normalizePhoneNumber(data.phone, data.locale || 'en');
+      // IMPORTANTE: El teléfono ya viene normalizado desde el servidor (submit.ts)
+      // en formato E.164 (+código país + número limpio), listo para usar
+      // Ejemplo: '+525551234567', '+15551234567', '+33612345678'
 
       // Construir metadata para campo comment
       const metadata: ContactMetadata = {
@@ -184,7 +185,7 @@ export class OdooService {
       const partnerData: Partial<OdooPartner> = {
         name: data.name.trim(),
         email: data.email.trim().toLowerCase(),
-        phone: normalizedPhone,  // Usar teléfono normalizado
+        phone: data.phone.trim(),  // Ya viene normalizado en formato E.164
         lang: odooLang,
         type: ODOO_DEFAULTS.DEFAULT_CONTACT_TYPE,
         is_company: ODOO_DEFAULTS.DEFAULT_IS_COMPANY,
@@ -392,12 +393,12 @@ export class OdooService {
         }
         existingMetadata.updates.push(updateMetadata);
 
-        // Normalizar teléfono antes de actualizar
-        const normalizedPhone = this.normalizePhoneNumber(data.phone, data.locale || 'en');
+        // IMPORTANTE: El teléfono ya viene normalizado desde el servidor (submit.ts)
+        // en formato E.164, no necesita transformación adicional
 
         // Actualizar partner
         const updateData: Partial<OdooPartner> = {
-          phone: normalizedPhone,  // Usar teléfono normalizado
+          phone: data.phone.trim(),  // Ya viene normalizado en formato E.164
           comment: JSON.stringify(existingMetadata, null, 2),
         };
 
@@ -488,46 +489,6 @@ export class OdooService {
    * EJEMPLOS:
    * - Input: "555 1234 5678" (locale: es) → Output: "+525551234567"
    * - Input: "+1-555-1234" → Output: "+15551234"
-   * - Input: "0612345678" (locale: fr) → Output: "+33612345678"
-   * 
-   * @param phone - Número de teléfono crudo
-   * @param locale - Idioma del sitio web (en/es/fr)
-   * @returns Teléfono normalizado en formato E.164
-   */
-  private normalizePhoneNumber(phone: string, locale: string = 'en'): string {
-    // Limpiar: quitar espacios, guiones, paréntesis, puntos
-    let cleaned = phone.replace(/[\s\-\(\)\.]/g, '');
-
-    // Si ya tiene +, mantenerlo y retornar
-    if (cleaned.startsWith('+')) {
-      return cleaned;
-    }
-
-    // Mapeo de locale a código de país
-    const countryCodeMap: Record<string, string> = {
-      'es': '52',  // México
-      'fr': '33',  // Francia
-      'en': '1',   // USA/Canadá (default)
-    };
-
-    // Obtener código de país según locale
-    const countryCode = countryCodeMap[locale] || countryCodeMap['en'];
-
-    // Si el número empieza con el código de país sin +, solo agregar +
-    if (cleaned.startsWith(countryCode)) {
-      return `+${cleaned}`;
-    }
-
-    // Si el número empieza con 0 (formato local europeo), quitarlo
-    // Ejemplo: 0612345678 (Francia) → 612345678 → +33612345678
-    if (cleaned.startsWith('0') && (locale === 'fr' || locale === 'es')) {
-      cleaned = cleaned.substring(1);
-    }
-
-    // Agregar código de país
-    return `+${countryCode}${cleaned}`;
-  }
-
   /**
    * Mapea locale web (en/es/fr) a lang de Odoo (en_US/es_MX/fr_FR)
    * 
