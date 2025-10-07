@@ -280,7 +280,8 @@ function logBlockedAttempt(
  * {
  *   name: string (requerido)
  *   email: string (requerido)
- *   phone: string (requerido)
+ *   countryCode: string (requerido, formato: '+XX', ej: '+1', '+52', '+33')
+ *   phone: string (requerido, solo números sin código país)
  *   locale?: string (opcional, default: 'en')
  *   source?: string (opcional)
  *   page?: string (opcional)
@@ -291,7 +292,13 @@ function logBlockedAttempt(
  *   utm_term?: string (opcional)
  *   honeypot?: string (anti-spam, debe estar vacío)
  *   timestamp?: number (anti-spam, debe ser > 3 segundos atrás)
+ *   cf-turnstile-response?: string (Cloudflare Turnstile token)
  * }
+ * 
+ * PROCESAMIENTO:
+ * - Teléfono se normaliza combinando countryCode + phone → formato E.164
+ * - Ejemplo: countryCode='+52' + phone='5551234567' → '+525551234567'
+ * - Validación E.164: debe empezar con + y tener 8-15 dígitos
  * 
  * RESPONSES:
  * - 200: Contacto creado/actualizado exitosamente
@@ -463,7 +470,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // =======================================================================
     // PASO 6: VALIDAR CAMPOS REQUERIDOS
     // =======================================================================
-    const requiredFields = ['name', 'email', 'phone'];
+    const requiredFields = ['name', 'email', 'countryCode', 'phone'];
     const missingFields = requiredFields.filter(
       (field) => !body[field] || body[field].trim() === ''
     );
@@ -512,12 +519,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
     };
 
     // =======================================================================
-    // PASO 9: CONSTRUIR ContactFormData (pre-validación)
+    // PASO 9: NORMALIZAR TELÉFONO (combinar countryCode + phone)
+    // =======================================================================
+    const countryCode = sanitize(body.countryCode); // Ej: '+1', '+52', '+33'
+    const phoneNumber = sanitize(body.phone);       // Ej: '5551234567'
+    
+    // Limpiar teléfono: quitar espacios, guiones, paréntesis
+    const cleanedPhone = phoneNumber.replace(/[\s\-\(\)\.]/g, '');
+    
+    // Combinar código país + número = formato E.164
+    const normalizedPhone = `${countryCode}${cleanedPhone}`;
+    
+    // Validar formato E.164 resultante: debe empezar con + y tener entre 8-15 dígitos
+    const e164Regex = /^\+[1-9]\d{7,14}$/;
+    if (!e164Regex.test(normalizedPhone)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Formato de teléfono inválido',
+          code: 'INVALID_PHONE_FORMAT',
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // =======================================================================
+    // PASO 10: CONSTRUIR ContactFormData (pre-validación)
     // =======================================================================
     const formData: ContactFormData = {
       name: sanitize(body.name),
       email: sanitize(body.email).toLowerCase(),
-      phone: sanitize(body.phone),
+      phone: normalizedPhone,  // Usar teléfono normalizado en formato E.164
       locale: body.locale || 'en',
       source: body.source || 'website',
       page: body.page || '/',
