@@ -185,7 +185,7 @@ export class OdooService {
       const partnerData: Partial<OdooPartner> = {
         name: data.name.trim(),
         email: data.email.trim().toLowerCase(),
-        mobile: data.phone.trim(),  // IMPORTANTE: Se guarda en 'mobile', no 'phone' (campo WhatsApp en Odoo)
+        x_studio_celular: data.phone.trim(),  // Campo custom de Odoo Studio para WhatsApp
         lang: odooLang,
         type: ODOO_DEFAULTS.DEFAULT_CONTACT_TYPE,
         is_company: ODOO_DEFAULTS.DEFAULT_IS_COMPANY,
@@ -195,7 +195,7 @@ export class OdooService {
       };
 
       // Debug: Log del teléfono que se va a guardar
-      console.log('[OdooService] Creating partner with mobile:', partnerData.mobile);
+      console.log('[OdooService] Creating partner with x_studio_celular:', partnerData.x_studio_celular);
 
       // Crear partner en Odoo
       const partnerId = await this.client.execute<number>(
@@ -401,12 +401,12 @@ export class OdooService {
 
         // Actualizar partner
         const updateData: Partial<OdooPartner> = {
-          mobile: data.phone.trim(),  // IMPORTANTE: Se guarda en 'mobile', no 'phone' (campo WhatsApp en Odoo)
+          x_studio_celular: data.phone.trim(),  // Campo custom de Odoo Studio para WhatsApp
           comment: JSON.stringify(existingMetadata, null, 2),
         };
 
         // Debug: Log del teléfono que se va a actualizar
-        console.log('[OdooService] Updating partner', partnerId, 'with mobile:', updateData.mobile);
+        console.log('[OdooService] Updating partner', partnerId, 'with x_studio_celular:', updateData.x_studio_celular);
 
         const updateResult = await this.updatePartner(partnerId, updateData);
 

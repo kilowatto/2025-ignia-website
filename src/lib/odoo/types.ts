@@ -84,6 +84,13 @@ export interface OdooPartner {
   mobile?: string;
 
   /** 
+   * Celular (campo custom de Odoo Studio)
+   * Campo técnico: x_studio_celular
+   * Este es el campo de WhatsApp en la instancia de Odoo de Ignia
+   */
+  x_studio_celular?: string;
+
+  /** 
    * Idioma del contacto (campo nativo Odoo)
    * Valores válidos: 'en_US', 'es_MX', 'fr_FR', etc.
    * Se usa para emails, documentos PDF, comunicaciones
