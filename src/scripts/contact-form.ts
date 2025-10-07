@@ -525,6 +525,39 @@ async function handleFormSubmit(event: Event): Promise<void> {
         const utm_content = urlParams.get('utm_content') || undefined;
         const utm_term = urlParams.get('utm_term') || undefined;
 
+        // Capturar token de Cloudflare Turnstile
+        // El widget con class="cf-turnstile" genera automáticamente un campo hidden
+        // con name="cf-turnstile-response" que contiene el token
+        // 
+        // IMPORTANTE: El widget puede tardar en renderizarse (async/defer), por lo que
+        // intentamos capturar el token justo antes del envío del formulario.
+        // Si el token no está disponible inmediatamente, esperamos hasta 5 segundos.
+        let turnstileToken = '';
+        const maxWaitTime = 5000; // 5 segundos máximo de espera
+        const checkInterval = 100; // Verificar cada 100ms
+        let elapsedTime = 0;
+        
+        // Intentar capturar token con retry logic
+        while (!turnstileToken && elapsedTime < maxWaitTime) {
+            const turnstileWidget = document.querySelector('.cf-turnstile');
+            if (turnstileWidget) {
+                const turnstileResponse = turnstileWidget.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
+                turnstileToken = turnstileResponse?.value || '';
+            }
+            
+            // Si no hay token, esperar un poco más
+            if (!turnstileToken) {
+                await new Promise(resolve => setTimeout(resolve, checkInterval));
+                elapsedTime += checkInterval;
+            }
+        }
+
+        console.log('[ContactForm] Turnstile token captured:', turnstileToken ? 'Yes (length: ' + turnstileToken.length + ')' : 'No');
+        
+        if (!turnstileToken) {
+            console.warn('[ContactForm] Turnstile token not available after', elapsedTime, 'ms');
+        }
+
         // Construir payload completo para API
         const payload = {
             // Campos básicos del formulario
@@ -536,6 +569,9 @@ async function handleFormSubmit(event: Event): Promise<void> {
             locale,
             source,
             page,
+            
+            // Cloudflare Turnstile token (requerido para anti-spam)
+            'cf-turnstile-response': turnstileToken,
             
             // UTM parameters (solo si existen)
             ...(utm_source && { utm_source }),
