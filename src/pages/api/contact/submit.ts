@@ -360,43 +360,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // =======================================================================
     // PASO 3: VALIDAR CLOUDFLARE TURNSTILE (§11 arquitecture.md)
+    // Solo en producción - skip en desarrollo local
     // =======================================================================
-    const turnstileToken = body['cf-turnstile-response'];
-
+    
     // Obtener secret key de env vars
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const runtimeEnv = (locals as any).runtime?.env || {};
     const turnstileSecretKey = runtimeEnv.TURNSTILE_SECRET_KEY || import.meta.env.TURNSTILE_SECRET_KEY;
 
-    if (!turnstileToken) {
-      logBlockedAttempt('TURNSTILE_TOKEN_MISSING', {
-        ip: clientIP,
-        email: body.email,
-      });
+    // Solo validar Turnstile en producción
+    if (import.meta.env.PROD) {
+      const turnstileToken = body['cf-turnstile-response'];
 
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Verificación de seguridad requerida',
-          code: 'TURNSTILE_REQUIRED',
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    // Validar token con Cloudflare API
-    if (turnstileSecretKey) {
-      const isValidToken = await validateTurnstileToken(
-        turnstileToken,
-        turnstileSecretKey,
-        clientIP
-      );
-
-      if (!isValidToken) {
-        logBlockedAttempt('TURNSTILE_VALIDATION_FAILED', {
+      if (!turnstileToken) {
+        logBlockedAttempt('TURNSTILE_TOKEN_MISSING', {
           ip: clientIP,
           email: body.email,
         });
@@ -404,8 +381,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response(
           JSON.stringify({
             success: false,
-            error: 'Verificación de seguridad falló. Por favor intenta de nuevo.',
-            code: 'TURNSTILE_INVALID',
+            error: 'Verificación de seguridad requerida',
+            code: 'TURNSTILE_REQUIRED',
           }),
           {
             status: 400,
@@ -413,8 +390,38 @@ export const POST: APIRoute = async ({ request, locals }) => {
           }
         );
       }
+
+      // Validar token con Cloudflare API
+      if (turnstileSecretKey) {
+        const isValidToken = await validateTurnstileToken(
+          turnstileToken,
+          turnstileSecretKey,
+          clientIP
+        );
+
+        if (!isValidToken) {
+          logBlockedAttempt('TURNSTILE_VALIDATION_FAILED', {
+            ip: clientIP,
+            email: body.email,
+          });
+
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: 'Verificación de seguridad falló. Por favor intenta de nuevo.',
+              code: 'TURNSTILE_INVALID',
+            }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
+        }
+      } else {
+        console.warn('[API /contact/submit] TURNSTILE_SECRET_KEY no configurada, saltando validación');
+      }
     } else {
-      console.warn('[API /contact/submit] TURNSTILE_SECRET_KEY no configurada, saltando validación');
+      console.log('[API /contact/submit] Turnstile skipped - Modo desarrollo');
     }
 
     // =======================================================================

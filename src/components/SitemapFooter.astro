@@ -530,17 +530,16 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
 
               <!-- Campo teléfono con selector de país -->
               <div>
-                <div class="grid grid-cols-[auto_1fr] gap-2">
-                  <!-- Dropdown de código de país -->
+                <div class="grid grid-cols-[4rem_1fr] gap-2">
+                  <!-- Dropdown de código de país COMPACTO (solo muestra +XX) -->
                   <select
                     id="country-code"
                     name="countryCode"
                     required
-                    class="px-2 py-2 text-sm rounded bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-1 focus:ring-orange-500 transition-all appearance-none cursor-pointer hover:bg-white/15"
+                    class="w-16 px-2 py-2 text-sm rounded bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-1 focus:ring-orange-500 transition-all appearance-none cursor-pointer hover:bg-white/15 text-center font-mono"
                     aria-label={translate('footer.contact_form.fields.country_code.label')}
-                    style="min-width: 110px; max-width: 130px;"
                   >
-                    <!-- Países prioritarios (top 4) -->
+                    <!-- Países prioritarios (top 4) - Muestra texto completo en dropdown -->
                     {priorityCountries.map((country) => (
                       <option 
                         value={country.dialCode}
@@ -611,13 +610,17 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                 - §11 arquitecture.md: Anti-spam server-side
                 - §2 arquitecture.md: Script defer (no bloquea rendering)
                 - §14 arquitecture.md: No impacta LCP
+                
+                NOTA: Solo se renderiza en producción/staging, no en desarrollo local
               -->
-              <div 
-                class="cf-turnstile my-3" 
-                data-sitekey={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY}
-                data-theme="light"
-                data-size="normal"
-              ></div>
+              {!import.meta.env.DEV && (
+                <div 
+                  class="cf-turnstile my-3" 
+                  data-sitekey={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY}
+                  data-theme="light"
+                  data-size="normal"
+                ></div>
+              )}
 
               <!-- Botón compacto -->
               <button
@@ -692,5 +695,7 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
   import '../scripts/contact-form.ts';
 </script>
 
-<!-- Cloudflare Turnstile (opcional) -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- Cloudflare Turnstile - Solo en producción/staging, no en desarrollo local -->
+{!import.meta.env.DEV && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}

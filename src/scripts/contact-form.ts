@@ -544,30 +544,40 @@ async function handleFormSubmit(event: Event): Promise<void> {
         // IMPORTANTE: El widget puede tardar en renderizarse (async/defer), por lo que
         // intentamos capturar el token justo antes del envío del formulario.
         // Si el token no está disponible inmediatamente, esperamos hasta 5 segundos.
+        // 
+        // NOTA: Solo se captura en producción. En desarrollo (import.meta.env.DEV)
+        // el widget Turnstile no se renderiza, así que este código se skipea.
         let turnstileToken = '';
-        const maxWaitTime = 5000; // 5 segundos máximo de espera
-        const checkInterval = 100; // Verificar cada 100ms
-        let elapsedTime = 0;
+        
+        // Solo intentar capturar token si NO estamos en desarrollo
+        // @ts-ignore - import.meta.env existe en Astro/Vite
+        if (!import.meta.env.DEV) {
+            const maxWaitTime = 5000; // 5 segundos máximo de espera
+            const checkInterval = 100; // Verificar cada 100ms
+            let elapsedTime = 0;
 
-        // Intentar capturar token con retry logic
-        while (!turnstileToken && elapsedTime < maxWaitTime) {
-            const turnstileWidget = document.querySelector('.cf-turnstile');
-            if (turnstileWidget) {
-                const turnstileResponse = turnstileWidget.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
-                turnstileToken = turnstileResponse?.value || '';
+            // Intentar capturar token con retry logic
+            while (!turnstileToken && elapsedTime < maxWaitTime) {
+                const turnstileWidget = document.querySelector('.cf-turnstile');
+                if (turnstileWidget) {
+                    const turnstileResponse = turnstileWidget.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
+                    turnstileToken = turnstileResponse?.value || '';
+                }
+
+                // Si no hay token, esperar un poco más
+                if (!turnstileToken) {
+                    await new Promise(resolve => setTimeout(resolve, checkInterval));
+                    elapsedTime += checkInterval;
+                }
             }
 
-            // Si no hay token, esperar un poco más
+            console.log('[ContactForm] Turnstile token captured:', turnstileToken ? 'Yes (length: ' + turnstileToken.length + ')' : 'No');
+
             if (!turnstileToken) {
-                await new Promise(resolve => setTimeout(resolve, checkInterval));
-                elapsedTime += checkInterval;
+                console.warn('[ContactForm] Turnstile token not available after', elapsedTime, 'ms');
             }
-        }
-
-        console.log('[ContactForm] Turnstile token captured:', turnstileToken ? 'Yes (length: ' + turnstileToken.length + ')' : 'No');
-
-        if (!turnstileToken) {
-            console.warn('[ContactForm] Turnstile token not available after', elapsedTime, 'ms');
+        } else {
+            console.log('[ContactForm] Turnstile skipped - Modo desarrollo');
         }
 
         // Construir payload completo para API
