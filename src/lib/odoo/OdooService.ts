@@ -194,6 +194,9 @@ export class OdooService {
         ...(tagId && { category_id: [[6, 0, [tagId]]] }),
       };
 
+      // Debug: Log del teléfono que se va a guardar
+      console.log('[OdooService] Creating partner with mobile:', partnerData.mobile);
+
       // Crear partner en Odoo
       const partnerId = await this.client.execute<number>(
         'res.partner',
@@ -401,6 +404,9 @@ export class OdooService {
           mobile: data.phone.trim(),  // IMPORTANTE: Se guarda en 'mobile', no 'phone' (campo WhatsApp en Odoo)
           comment: JSON.stringify(existingMetadata, null, 2),
         };
+
+        // Debug: Log del teléfono que se va a actualizar
+        console.log('[OdooService] Updating partner', partnerId, 'with mobile:', updateData.mobile);
 
         const updateResult = await this.updatePartner(partnerId, updateData);
 
