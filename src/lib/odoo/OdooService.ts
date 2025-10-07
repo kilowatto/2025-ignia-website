@@ -185,7 +185,7 @@ export class OdooService {
       const partnerData: Partial<OdooPartner> = {
         name: data.name.trim(),
         email: data.email.trim().toLowerCase(),
-        phone: data.phone.trim(),  // Ya viene normalizado en formato E.164
+        mobile: data.phone.trim(),  // IMPORTANTE: Se guarda en 'mobile', no 'phone' (campo WhatsApp en Odoo)
         lang: odooLang,
         type: ODOO_DEFAULTS.DEFAULT_CONTACT_TYPE,
         is_company: ODOO_DEFAULTS.DEFAULT_IS_COMPANY,
@@ -398,7 +398,7 @@ export class OdooService {
 
         // Actualizar partner
         const updateData: Partial<OdooPartner> = {
-          phone: data.phone.trim(),  // Ya viene normalizado en formato E.164
+          mobile: data.phone.trim(),  // IMPORTANTE: Se guarda en 'mobile', no 'phone' (campo WhatsApp en Odoo)
           comment: JSON.stringify(existingMetadata, null, 2),
         };
 
