@@ -523,13 +523,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // =======================================================================
     const countryCode = sanitize(body.countryCode); // Ej: '+1', '+52', '+33'
     const phoneNumber = sanitize(body.phone);       // Ej: '5551234567'
-    
+
     // Limpiar teléfono: quitar espacios, guiones, paréntesis
     const cleanedPhone = phoneNumber.replace(/[\s\-\(\)\.]/g, '');
-    
+
     // Combinar código país + número = formato E.164
     const normalizedPhone = `${countryCode}${cleanedPhone}`;
-    
+
     // Validar formato E.164 resultante: debe empezar con + y tener entre 8-15 dígitos
     const e164Regex = /^\+[1-9]\d{7,14}$/;
     if (!e164Regex.test(normalizedPhone)) {

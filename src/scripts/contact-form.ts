@@ -577,25 +577,25 @@ async function handleFormSubmit(event: Event): Promise<void> {
             countryCode: formData.countryCode,  // Código internacional (ej: '+1', '+52')
             phone: formData.phone,              // Número sin código país
             email: formData.email,
-            
+
             // Metadata del contexto
             locale,
             source,
             page,
-            
+
             // Cloudflare Turnstile token (requerido para anti-spam)
             'cf-turnstile-response': turnstileToken,
-            
+
             // UTM parameters (solo si existen)
             ...(utm_source && { utm_source }),
             ...(utm_medium && { utm_medium }),
             ...(utm_campaign && { utm_campaign }),
             ...(utm_content && { utm_content }),
             ...(utm_term && { utm_term }),
-            
+
             // Anti-spam: timestamp de carga del formulario
             timestamp: formLoadTimestamp,
-        };        console.log('[ContactForm] Sending to API:', {
+        }; console.log('[ContactForm] Sending to API:', {
             ...payload,
             email: formData.email.substring(0, 3) + '***', // Log parcial para privacidad
         });

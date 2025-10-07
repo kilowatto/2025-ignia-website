@@ -53,6 +53,9 @@ const baseUrl = getSiteUrl(Astro);
 const currentPath = Astro.url.pathname;
 const currentUrl = canonicalUrl || `${baseUrl}${currentPath}`;
 
+// OG Image dinámica según ambiente
+const ogImageUrl = ogImage || `${baseUrl}/og-image.png`;
+
 // Hostname para resource hints (preconnect/dns-prefetch)
 const siteHost = getSiteHost(Astro);
 
@@ -87,21 +90,20 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
 
     <link rel="icon" href="/icons/favicon.ico" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    {ogImage && <meta property="og:image" content={ogImage} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={pageType} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:locale" content={locale} />
     <meta property="og:site_name" content="Ignia Cloud" />
-    <meta property="og:image" content="https://ignia.cloud/og-image.png" />
+    <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:url" content={currentUrl} />
     <meta name="twitter:locale" content={locale} />
     <meta name="twitter:site" content="@igniacloud" />
-    <meta name="twitter:image" content="https://ignia.cloud/og-image.png" />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     {
       structuredData.map((schema) => (
