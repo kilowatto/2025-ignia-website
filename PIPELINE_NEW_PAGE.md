@@ -44,13 +44,42 @@
   - `0.5-0.7`: Páginas secundarias (search, contact)
   - `0.3-0.5`: Páginas terciarias (legal, archive)
 
-### 5️⃣ **Navegación & Enlaces** (arquitectura.md §7)
+### 5️⃣ **Índice de Búsqueda** ⚠️ CRÍTICO (arquitectura.md §8)
+- [ ] Agregar página en `/src/data/searchData.ts` en los 3 idiomas
+- [ ] Crear ID único con sufijo de idioma: `page-nueva-pagina`, `page-nueva-pagina-es`, `page-nueva-pagina-fr`
+- [ ] Definir `title` conciso y descriptivo (max 60 caracteres)
+- [ ] Escribir `description` clara y SEO-friendly (120-160 caracteres)
+- [ ] Redactar `content` completo con keywords naturales (200-500 palabras)
+- [ ] Configurar `url` correcta con locale: `/nueva-pagina`, `/es/nueva-pagina`, `/fr/nueva-pagina`
+- [ ] Elegir `type` apropiado: `service`, `product`, `article`, o `page`
+- [ ] Definir `category` descriptiva (1-2 palabras)
+- [ ] **Agregar 5-10 tags con sinónimos y variaciones**:
+  - ✅ Término principal (ej: `status`)
+  - ✅ Sinónimos en el mismo idioma (ej: `estado`, `monitoring`, `monitoreo`)
+  - ✅ Variaciones largas (ej: `system status`, `estado del sistema`)
+  - ✅ Acrónimos comunes (ej: `BCP`, `DR`, `K8s`)
+  - ✅ Términos relacionados (ej: `uptime`, `availability`, `health`)
+- [ ] Configurar `priority` según importancia (1-10):
+  - `10`: Servicios/productos core
+  - `9`: Servicios premium
+  - `8`: Productos secundarios
+  - `7`: Páginas importantes (status, pricing)
+  - `6`: Documentación destacada
+  - `5`: Páginas estándar
+- [ ] Testear búsqueda con múltiples variaciones:
+  ```bash
+  # Ejemplo: Si agregaste página "Status"
+  # Probar queries: "status", "estado", "monitoring", "uptime", "health"
+  ```
+- [ ] **Ver documentación completa**: [`SEARCH.md`](./SEARCH.md)
+
+### 6️⃣ **Navegación & Enlaces** (arquitectura.md §7)
 - [ ] Agregar link en Header.astro si es página principal
 - [ ] Agregar link en Footer.astro si aplica
 - [ ] Verificar que todos los `<a>` tienen texto descriptivo (no "click aquí")
 - [ ] Testear navegación por teclado (Tab, Enter)
 
-### 6️⃣ **Accesibilidad** (arquitectura.md §7 - WCAG 2.2 AA)
+### 7️⃣ **Accesibilidad** (arquitectura.md §7 - WCAG 2.2 AA)
 - [ ] Usar HTML semántico (`<main>`, `<section>`, `<article>`)
 - [ ] Un solo `<h1>` por página
 - [ ] Jerarquía lógica de headings (H1 → H2 → H3)
@@ -59,14 +88,14 @@
 - [ ] Contraste de color ≥ 4.5:1 (texto normal) o ≥ 3:1 (texto grande)
 - [ ] Focus visible en todos los elementos interactivos
 
-### 7️⃣ **Performance** (arquitectura.md §14)
+### 8️⃣ **Performance** (arquitectura.md §14)
 - [ ] Imágenes optimizadas (AVIF/WebP)
 - [ ] `loading="lazy"` en imágenes below-the-fold
 - [ ] `fetchpriority="high"` en LCP candidates (hero, logo)
 - [ ] Sin JS bloqueante (usar `defer` si es necesario)
 - [ ] Budget: Verificar que la página pesa <300KB
 
-### 8️⃣ **Testing Local**
+### 9️⃣ **Testing Local**
 - [ ] Abrir `http://localhost:4321/nueva-pagina` (EN)
 - [ ] Abrir `http://localhost:4321/es/nueva-pagina` (ES)
 - [ ] Abrir `http://localhost:4321/fr/nueva-pagina` (FR)
@@ -86,24 +115,26 @@
   # Objetivo: >90 en todas las métricas
   ```
 
-### 9️⃣ **TypeScript & Errors**
+### 🔟 **TypeScript & Errors**
 - [ ] `npm run build` sin errores ✅
 - [ ] VS Code: 0 errores TypeScript ✅
 - [ ] Astro language server: 0 warnings ✅
 
-### 🔟 **Git Commit**
+### 1️⃣1️⃣ **Git Commit**
 - [ ] Commit con mensaje descriptivo:
   ```bash
   git add src/pages/nueva-pagina.astro \
           src/pages/es/nueva-pagina.astro \
           src/pages/fr/nueva-pagina.astro \
           src/i18n/*.json \
+          src/data/searchData.ts \
           src/pages/sitemap-[lang].xml.ts
   
-  git commit -m "feat(pages): add /nueva-pagina with i18n and sitemap
+  git commit -m "feat(pages): add /nueva-pagina with i18n, search, and sitemap
   
   - Created EN/ES/FR versions
   - Added translations to i18n/*.json
+  - Registered in searchData.ts with rich tags and synonyms
   - Registered in sitemap-[lang].xml.ts (changefreq: weekly, priority: 0.7)
   - SEO metadata with JSON-LD
   - WCAG 2.2 AA compliant
@@ -135,6 +166,8 @@
 | Error | Impacto | Solución |
 |-------|---------|----------|
 | ❌ Olvidar sitemap XML | SEO -50% | Usar este checklist |
+| ❌ No agregar a searchData.ts | Búsqueda interna -100% | Ver sección 5️⃣ y SEARCH.md |
+| ❌ Tags insuficientes (<3) | Descubribilidad baja | Agregar 5-10 tags con sinónimos |
 | ❌ Texto hardcoded (no i18n) | Mantenibilidad | Usar función `t()` |
 | ❌ Sin versión ES/FR | Alcance limitado | Crear espejo de archivos |
 | ❌ JS bloqueante | LCP >5s | Usar `defer` o SSR |
@@ -148,6 +181,7 @@
 ## 📚 Referencias
 
 - **arquitectura.md**: Documento maestro de arquitectura
+- **SEARCH.md**: Guía completa para agregar contenido al índice de búsqueda
 - **README.md**: Setup y comandos de desarrollo
 - **sitemap-[lang].xml.ts**: Generador de sitemaps multiidioma
 - **robots.txt.ts**: Configuración de crawling

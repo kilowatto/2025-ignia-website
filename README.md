@@ -66,6 +66,7 @@ Este proyecto sigue una arquitectura **utility-first, semántica, mobile-first**
 
 ### Búsqueda
 - **[minisearch](https://github.com/lucaong/minisearch)** v7.2+ - Motor de búsqueda client-side (solo en `/search`)
+- **Documentación completa:** Ver [`SEARCH.md`](./SEARCH.md) para guía detallada de cómo agregar contenido al índice de búsqueda
 
 ### Integración CRM
 - **Odoo SaaS 18** - API XML-RPC para gestión de contactos (`res.partner` model)
