@@ -93,10 +93,15 @@ const skipToContentLabel = t("layout.skip_link", undefined, { locale });
     <meta property="og:type" content={pageType} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:locale" content={locale} />
+    <meta property="og:site_name" content="Ignia Cloud" />
+    <meta property="og:image" content="https://ignia.cloud/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:url" content={currentUrl} />
+    <meta name="twitter:locale" content={locale} />
+    <meta name="twitter:site" content="@igniacloud" />
+    <meta name="twitter:image" content="https://ignia.cloud/og-image.png" />
 
     {
       structuredData.map((schema) => (

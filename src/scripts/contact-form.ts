@@ -65,6 +65,7 @@ const SELECTORS = {
     submitButton: '#submit-button',
     honeypot: '#website-field',
     nameField: '#name',
+    countryCodeField: '#country-code',  // Nuevo: selector de código de país
     phoneField: '#phone',
     emailField: '#email',
 } as const;
@@ -94,7 +95,8 @@ interface SubmissionData {
  */
 interface ContactFormData {
     name: string;
-    phone: string;
+    countryCode: string;  // Código internacional (ej: '+1', '+52', '+33')
+    phone: string;        // Número sin código país (ej: '5551234567')
     email: string;
 }
 
@@ -416,16 +418,18 @@ function hideAllErrors(): void {
  */
 function getFormData(): ContactFormData | null {
     const nameField = getElement<HTMLInputElement>(SELECTORS.nameField);
+    const countryCodeField = getElement<HTMLSelectElement>(SELECTORS.countryCodeField);
     const phoneField = getElement<HTMLInputElement>(SELECTORS.phoneField);
     const emailField = getElement<HTMLInputElement>(SELECTORS.emailField);
 
-    if (!nameField || !phoneField || !emailField) {
+    if (!nameField || !countryCodeField || !phoneField || !emailField) {
         console.error('[ContactForm] Form fields not found');
         return null;
     }
 
     const name = nameField.value.trim();
-    const phone = phoneField.value.trim();
+    const countryCode = countryCodeField.value.trim(); // Ej: '+1', '+52', '+33'
+    const phone = phoneField.value.trim();              // Ej: '5551234567'
     const email = emailField.value.trim();
 
     // Ocultar errores previos
@@ -440,6 +444,14 @@ function getFormData(): ContactFormData | null {
         return null;
     }
 
+    // Validar que se seleccionó un código de país válido
+    if (!countryCode || !countryCode.startsWith('+')) {
+        showFieldError('phone', errors.phone);
+        countryCodeField.focus();
+        return null;
+    }
+
+    // Validar formato de teléfono (solo números, espacios, guiones)
     if (!isValidPhone(phone)) {
         showFieldError('phone', errors.phone);
         phoneField.focus();
@@ -452,7 +464,7 @@ function getFormData(): ContactFormData | null {
         return null;
     }
 
-    return { name, phone, email };
+    return { name, countryCode, phone, email };
 }
 
 // ============================================================================
@@ -562,29 +574,28 @@ async function handleFormSubmit(event: Event): Promise<void> {
         const payload = {
             // Campos básicos del formulario
             name: formData.name,
-            phone: formData.phone,
+            countryCode: formData.countryCode,  // Código internacional (ej: '+1', '+52')
+            phone: formData.phone,              // Número sin código país
             email: formData.email,
-
+            
             // Metadata del contexto
             locale,
             source,
             page,
-
+            
             // Cloudflare Turnstile token (requerido para anti-spam)
             'cf-turnstile-response': turnstileToken,
-
+            
             // UTM parameters (solo si existen)
             ...(utm_source && { utm_source }),
             ...(utm_medium && { utm_medium }),
             ...(utm_campaign && { utm_campaign }),
             ...(utm_content && { utm_content }),
             ...(utm_term && { utm_term }),
-
+            
             // Anti-spam: timestamp de carga del formulario
             timestamp: formLoadTimestamp,
-        };
-
-        console.log('[ContactForm] Sending to API:', {
+        };        console.log('[ContactForm] Sending to API:', {
             ...payload,
             email: formData.email.substring(0, 3) + '***', // Log parcial para privacidad
         });
