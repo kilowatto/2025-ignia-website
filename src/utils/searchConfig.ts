@@ -71,6 +71,7 @@ export function performSearch(options: SearchOptions): any[] {
     }
 
     const searchIndex = getSearchIndex(locale);
+    const searchData = getSearchDataByLocale(locale);
 
     // Realizar búsqueda
     let results = searchIndex.search(query, {
@@ -83,6 +84,15 @@ export function performSearch(options: SearchOptions): any[] {
         },
         prefix: true,
         fuzzy: 0.2
+    });
+
+    // MiniSearch pierde el array de tags al indexar, así que lo restauramos desde searchData
+    results = results.map(result => {
+        const originalItem = searchData.find(item => item.id === result.id);
+        return {
+            ...result,
+            tags: originalItem?.tags || [] // Restaurar tags como array
+        };
     });
 
     // Aplicar filtros

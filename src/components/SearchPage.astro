@@ -514,7 +514,7 @@ const structuredData = [
                 </p>
                 
                 ${
-                  result.tags
+                  result.tags && Array.isArray(result.tags) && result.tags.length > 0
                     ? `
                 <div class="flex flex-wrap gap-2 mb-4">
                   ${result.tags
