@@ -375,6 +375,28 @@
     "results_title": "Résultats de recherche",
     "search_button": "Rechercher",
     "suggestions": "Suggestions rapides :",
+    "quick_searches": [
+      {
+        "label": "Solutions Cloud",
+        "query": "cloud privé public hybride"
+      },
+      {
+        "label": "Kubernetes et DevOps",
+        "query": "kubernetes devops conteneurs"
+      },
+      {
+        "label": "Sauvegarde et Récupération",
+        "query": "sauvegarde récupération catastrophe pra draas"
+      },
+      {
+        "label": "Conformité et Sécurité",
+        "query": "conformité sécurité rgpd hipaa pci"
+      },
+      {
+        "label": "IA et Machine Learning",
+        "query": "intelligence artificielle llm machine learning rag"
+      }
+    ],
     "stats": {
       "page": "Page actuelle :",
       "time": "Temps de recherche :",

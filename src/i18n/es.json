@@ -365,6 +365,28 @@
     "results_title": "Resultados de búsqueda",
     "search_button": "Buscar",
     "suggestions": "Sugerencias rápidas:",
+    "quick_searches": [
+      {
+        "label": "Soluciones en la Nube",
+        "query": "nube privada publica hibrida cloud"
+      },
+      {
+        "label": "Kubernetes y DevOps",
+        "query": "kubernetes devops contenedores"
+      },
+      {
+        "label": "Respaldo y Recuperación",
+        "query": "respaldo recuperacion desastres bcp draas"
+      },
+      {
+        "label": "Cumplimiento y Seguridad",
+        "query": "cumplimiento seguridad gdpr hipaa pci"
+      },
+      {
+        "label": "IA y Aprendizaje Automático",
+        "query": "inteligencia artificial llm machine learning rag"
+      }
+    ],
     "stats": {
       "page": "Página actual:",
       "time": "Tiempo de búsqueda:",

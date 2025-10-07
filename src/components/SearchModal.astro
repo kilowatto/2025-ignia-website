@@ -23,6 +23,12 @@ const locale = rawLocale.split("-")[0];
 
 // URL de la página de resultados según el idioma detectado
 const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
+
+// Cargar sugerencias de búsqueda rápida desde i18n (cumple §5 arquitecture.md)
+const quickSearches = t("search.quick_searches", undefined, { locale }) as unknown as Array<{
+  label: string;
+  query: string;
+}>;
 ---
 
 <!-- 
@@ -116,27 +122,15 @@ const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
           {t("search.suggestions", undefined, { locale })}
         </p>
         <div class="flex flex-wrap gap-2">
-          <!-- Cada tag rellena el input con su texto al hacer click -->
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
-          >
-            {t("nav.solutions", undefined, { locale })}
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
-          >
-            {t("nav.products", undefined, { locale })}
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
-          >
-            {t("nav.AI", undefined, { locale })}
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
-          >
-            {t("nav.support", undefined, { locale })}
-          </button>
+          <!-- Loop dinámico sobre quick_searches desde i18n (cumple §5 arquitecture.md) -->
+          {quickSearches.map((search) => (
+            <button
+              class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
+              data-query={search.query}
+            >
+              {search.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -267,15 +261,16 @@ const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
 
     /**
      * Event Listeners: Tags de sugerencias
-     * Al hacer click en un tag, rellena el input con ese texto
-     * y enfoca el input para que usuario pueda editar/buscar
+     * Al hacer click en un tag, rellena el input con el query optimizado
+     * para SEO (data-query) en lugar del label visual
+     * Esto mejora la relevancia de resultados (arquitecture.md §8: User-friendly)
      */
     suggestionTags.forEach((tag) => {
       tag.addEventListener("click", () => {
-        const suggestionText = tag.textContent?.trim() || "";
-        searchInput.value = suggestionText;
+        const searchQuery = (tag as HTMLElement).dataset.query || "";
+        searchInput.value = searchQuery;
         searchInput.focus();
-        console.log(`💡 Sugerencia clickeada: "${suggestionText}"`);
+        console.log(`💡 Sugerencia clickeada: "${searchQuery}"`);
       });
     });
 

@@ -359,6 +359,28 @@
       "title": "No results found"
     },
     "placeholder": "Search...",
+    "quick_searches": [
+      {
+        "label": "Cloud Solutions",
+        "query": "cloud private public hybrid"
+      },
+      {
+        "label": "Kubernetes & DevOps",
+        "query": "kubernetes devops containers"
+      },
+      {
+        "label": "Backup & Recovery",
+        "query": "backup disaster recovery bcp draas"
+      },
+      {
+        "label": "Compliance & Security",
+        "query": "compliance security gdpr hipaa pci"
+      },
+      {
+        "label": "AI & Machine Learning",
+        "query": "ai llm machine learning rag"
+      }
+    ],
     "related_title": "Related Searches",
     "results_description": "Showing {{from}}-{{to}} of {{total}} results for \"{{query}}\"",
     "results_for": "Results for",
