@@ -31,6 +31,7 @@ Idiomas: EN (default), ES, FR.
 *  **Documentacio en linea** debe estar en linea en los archivos co mucho detalle en Español de que hace y porque lo hace asi.
 *  **Documentacion en readme.md** se debe documentar todo el sitie en README.md con detalle de las referencias, librerias usadas, como pueden copiar el sitio, etc.
 * **Actualizacion de Sitemap** Cada vez que agregues una nueva página, debes actualizar el array pages en sitemap-[lang].xml.ts con la nueva ruta, changefreq y priority.
+* **Checkliast** se revisa el documento Pipeline_new_page cada vez que se genera una nueva pagina y se debe cumplir con todo lo que ahi se dice.
 
 
 

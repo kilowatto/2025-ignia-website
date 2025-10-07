@@ -65,6 +65,31 @@ export const searchDataEN: SearchItem[] = [
         locale: 'en',
         priority: 8
     },
+    // Páginas informativas
+    {
+        id: 'page-system-status',
+        title: 'System Status',
+        description: 'Real-time monitoring of Ignia Cloud services',
+        content: 'Check the current operational status of all Ignia Cloud services. Monitor website availability, Odoo API health, and infrastructure uptime in real-time. This page refreshes automatically every 5 minutes to provide the latest service status.',
+        url: '/status',
+        type: 'page',
+        category: 'Infrastructure',
+        tags: ['status', 'monitoring', 'uptime', 'health', 'availability', 'system status', 'service status', 'infrastructure status'],
+        locale: 'en',
+        priority: 7
+    },
+    {
+        id: 'page-contact',
+        title: 'Contact Us',
+        description: 'Get in touch with our team',
+        content: 'Contact Ignia Cloud for inquiries, support, or partnership opportunities. Fill out our contact form and our team will respond within 24 hours.',
+        url: '/#contact',
+        type: 'page',
+        category: 'Support',
+        tags: ['contact', 'support', 'help', 'inquiry', 'sales'],
+        locale: 'en',
+        priority: 6
+    },
 
 ];
 
@@ -106,6 +131,31 @@ export const searchDataES: SearchItem[] = [
         locale: 'es',
         priority: 8
     },
+    // Páginas informativas
+    {
+        id: 'page-system-status-es',
+        title: 'Estado del Sistema',
+        description: 'Monitoreo en tiempo real de los servicios de Ignia Cloud',
+        content: 'Consulta el estado operacional actual de todos los servicios de Ignia Cloud. Monitorea la disponibilidad del sitio web, la salud de la API de Odoo y el tiempo de actividad de la infraestructura en tiempo real. Esta página se actualiza automáticamente cada 5 minutos para proporcionar el estado más reciente.',
+        url: '/es/status',
+        type: 'page',
+        category: 'Infraestructura',
+        tags: ['estado', 'monitoreo', 'disponibilidad', 'salud', 'uptime', 'estado del sistema', 'estado de servicios', 'estado de infraestructura'],
+        locale: 'es',
+        priority: 7
+    },
+    {
+        id: 'page-contact-es',
+        title: 'Contáctanos',
+        description: 'Ponte en contacto con nuestro equipo',
+        content: 'Contacta a Ignia Cloud para consultas, soporte u oportunidades de asociación. Completa nuestro formulario de contacto y nuestro equipo te responderá en 24 horas.',
+        url: '/es/#contact',
+        type: 'page',
+        category: 'Soporte',
+        tags: ['contacto', 'soporte', 'ayuda', 'consulta', 'ventas'],
+        locale: 'es',
+        priority: 6
+    },
 
 ];
 
@@ -135,6 +185,31 @@ export const searchDataFR: SearchItem[] = [
         tags: ['IA', 'machine learning', 'automatisation', 'conseil', 'intelligence artificielle'],
         locale: 'fr',
         priority: 9
+    },
+    // Páginas informativas
+    {
+        id: 'page-system-status-fr',
+        title: 'État du Système',
+        description: 'Surveillance en temps réel des services Ignia Cloud',
+        content: 'Consultez l\'état opérationnel actuel de tous les services Ignia Cloud. Surveillez la disponibilité du site web, la santé de l\'API Odoo et le temps de fonctionnement de l\'infrastructure en temps réel. Cette page se rafraîchit automatiquement toutes les 5 minutes.',
+        url: '/fr/status',
+        type: 'page',
+        category: 'Infrastructure',
+        tags: ['état', 'surveillance', 'disponibilité', 'santé', 'uptime', 'état du système', 'état des services'],
+        locale: 'fr',
+        priority: 7
+    },
+    {
+        id: 'page-contact-fr',
+        title: 'Contactez-nous',
+        description: 'Contactez notre équipe',
+        content: 'Contactez Ignia Cloud pour des demandes de renseignements, du support ou des opportunités de partenariat. Remplissez notre formulaire de contact et notre équipe répondra dans les 24 heures.',
+        url: '/fr/#contact',
+        type: 'page',
+        category: 'Support',
+        tags: ['contact', 'support', 'aide', 'demande', 'ventes'],
+        locale: 'fr',
+        priority: 6
     }
 ];
 
