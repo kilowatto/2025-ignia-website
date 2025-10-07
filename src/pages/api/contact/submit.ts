@@ -362,7 +362,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // PASO 3: VALIDAR CLOUDFLARE TURNSTILE (§11 arquitecture.md)
     // Solo en producción - skip en desarrollo local
     // =======================================================================
-    
+
     // Obtener secret key de env vars
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const runtimeEnv = (locals as any).runtime?.env || {};

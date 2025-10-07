@@ -548,7 +548,7 @@ async function handleFormSubmit(event: Event): Promise<void> {
         // NOTA: Solo se captura en producción. En desarrollo (import.meta.env.DEV)
         // el widget Turnstile no se renderiza, así que este código se skipea.
         let turnstileToken = '';
-        
+
         // Solo intentar capturar token si NO estamos en desarrollo
         // @ts-ignore - import.meta.env existe en Astro/Vite
         if (!import.meta.env.DEV) {

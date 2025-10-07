@@ -34,9 +34,13 @@ import type { AstroGlobal } from 'astro';
  * Obtiene la URL base del sitio de forma dinámica según el ambiente.
  * 
  * Prioridad de detección:
- * 1. **Astro.site** - Valor de `site` en astro.config.mjs (lee PUBLIC_SITE_URL)
- * 2. **Astro.url.origin** - Dominio de la request actual (protocol + host)
+ * 1. **Astro.url.origin** - Dominio de la request actual (protocol + host) - PRIORITARIO
+ * 2. **Astro.site** - Valor de `site` en astro.config.mjs (lee PUBLIC_SITE_URL)
  * 3. **Fallback** - https://ignia.cloud (solo si fallan 1 y 2)
+ * 
+ * NOTA: Se invirtió la prioridad para detectar automáticamente el dominio
+ * sin necesidad de configurar PUBLIC_SITE_URL en Cloudflare Pages.
+ * Esto asegura que OG images siempre usen el dominio correcto (staging/prod).
  * 
  * @param Astro - Objeto global de Astro con contexto de la request
  * @returns URL base sin trailing slash (ej: "https://ignia.cloud")
@@ -49,15 +53,15 @@ import type { AstroGlobal } from 'astro';
  * ```
  */
 export function getSiteUrl(Astro: AstroGlobal): string {
-    // Prioridad 1: Usar Astro.site de config (incluye PUBLIC_SITE_URL)
-    if (Astro.site) {
-        return Astro.site.toString().replace(/\/$/, '');
-    }
-
-    // Prioridad 2: Detectar del request actual (SSR)
-    // Funciona automáticamente en cualquier dominio
+    // Prioridad 1: Detectar del request actual (SSR) - AUTOMÁTICO
+    // Funciona sin configuración en cualquier dominio
     if (Astro.url && Astro.url.origin) {
         return Astro.url.origin;
+    }
+
+    // Prioridad 2: Usar Astro.site de config (incluye PUBLIC_SITE_URL)
+    if (Astro.site) {
+        return Astro.site.toString().replace(/\/$/, '');
     }
 
     // Prioridad 3: Fallback a production (solo si fallan las anteriores)
