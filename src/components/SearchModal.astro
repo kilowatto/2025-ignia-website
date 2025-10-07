@@ -25,10 +25,13 @@ const locale = rawLocale.split("-")[0];
 const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
 
 // Cargar sugerencias de búsqueda rápida desde i18n (cumple §5 arquitecture.md)
-const quickSearches = t("search.quick_searches", undefined, { locale }) as unknown as Array<{
-  label: string;
-  query: string;
-}>;
+const quickSearchesRaw = t("search.quick_searches", undefined, { locale });
+const quickSearches = typeof quickSearchesRaw === 'string' 
+  ? JSON.parse(quickSearchesRaw) 
+  : quickSearchesRaw as Array<{
+      label: string;
+      query: string;
+    }>;
 ---
 
 <!-- 
@@ -123,7 +126,7 @@ const quickSearches = t("search.quick_searches", undefined, { locale }) as unkno
         </p>
         <div class="flex flex-wrap gap-2">
           <!-- Loop dinámico sobre quick_searches desde i18n (cumple §5 arquitecture.md) -->
-          {quickSearches.map((search) => (
+          {quickSearches.map((search: { label: string; query: string }) => (
             <button
               class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors suggestion-tag"
               data-query={search.query}
