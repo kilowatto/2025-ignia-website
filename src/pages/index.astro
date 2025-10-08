@@ -130,42 +130,69 @@ const jsonLdFAQ = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdService)} />
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdFAQ)} />
 
-  <!-- Hero Section -->
+  <!-- Scroll Animations Script (defer, progressive enhancement) -->
+  <script src="/scripts/scroll-animations.js" defer></script>
+
+  <!-- Hero Section (Above-the-fold: NO animar) -->
   <HeroSection locale={locale} />
 
   <!-- Trust Bar (Clients & Certifications) -->
-  <TrustBar locale={locale} />
+  <div class="animate-on-scroll">
+    <TrustBar locale={locale} />
+  </div>
 
   <!-- Why Ignia (4 Pillars) -->
-  <WhyIgniaGrid locale={locale} />
+  <div class="animate-on-scroll">
+    <WhyIgniaGrid locale={locale} />
+  </div>
 
   <!-- Pricing CTA (Simple panel) -->
-  <PricingCTA locale={locale} />
+  <div class="animate-on-scroll">
+    <PricingCTA locale={locale} />
+  </div>
 
   <!-- Solutions (4 Packaged Solutions) -->
-  <SolutionsCards locale={locale} />
+  <div class="animate-on-scroll">
+    <SolutionsCards locale={locale} />
+  </div>
 
   <!-- Products (7 Core Products) -->
-  <ProductsGrid locale={locale} />
+  <div class="animate-on-scroll">
+    <ProductsGrid locale={locale} />
+  </div>
 
   <!-- Multi-Cloud Diagram -->
-  <MulticloudDiagram locale={locale} />
+  <div class="animate-on-scroll">
+    <MulticloudDiagram locale={locale} />
+  </div>
 
   <!-- AI & ML Cards -->
-  <AICards locale={locale} />
+  <div class="animate-on-scroll">
+    <AICards locale={locale} />
+  </div>
 
   <!-- Use Cases Tabs (Fintech, Retail, Media) -->
-  <UseCasesTabs locale={locale} />
+  <div class="animate-on-scroll">
+    <UseCasesTabs locale={locale} />
+  </div>
 
   <!-- SLA Commitments -->
-  <SLABlock locale={locale} />
+  <div class="animate-on-scroll">
+    <SLABlock locale={locale} />
+  </div>
 
   <!-- Compliance Certifications -->
-  <ComplianceBlock locale={locale} />
+  <div class="animate-on-scroll">
+    <ComplianceBlock locale={locale} />
+  </div>
 
   <!-- Testimonials Carousel -->
-  <TestimonialsCarousel locale={locale} />
+  <div class="animate-on-scroll">
+    <TestimonialsCarousel locale={locale} />
+  </div>
 
   <!-- Final CTA -->
-  <FinalCTA locale={locale} />
+  <div class="animate-on-scroll">
+    <FinalCTA locale={locale} />
+  </div>
 </BaseLayout>
