@@ -1,0 +1,147 @@
+---
+/**
+ * PricingCTA.astro
+ *
+ * Panel simple con bullets y CTA a calculadora.
+ * Sin formulario, sin JavaScript, solo link estático.
+ *
+ * Cumplimiento arquitecture.md:
+ * - §2: 100% CSS, sin JS
+ * - §5: Traducciones desde i18n/*.json
+ * - §7: WCAG 2.2 AA (contraste, focus, ARIA)
+ *
+ * @see src/i18n/en.json → home.pricingCTA
+ * @see src/pages/calculadora.astro (pendiente implementar)
+ */
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+import { t } from "astro-i18n";
+---
+
+<section
+  class="pricing-cta py-16 md:py-24 bg-gradient-to-b from-white to-gray-50"
+  aria-labelledby="pricing-cta-title"
+>
+  <div class="container mx-auto px-4 max-w-4xl">
+    <!-- Título y subtítulo -->
+    <div class="text-center mb-12">
+      <h2
+        id="pricing-cta-title"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.pricingCTA.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg md:text-xl text-gray-600">
+        {t("home.pricingCTA.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- Panel con bullets -->
+    <div
+      class="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+    >
+      <!-- Bullets -->
+      <ul class="space-y-4 mb-8" role="list">
+        <li class="flex items-start gap-3">
+          <svg
+            class="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-gray-700 text-base md:text-lg leading-relaxed">
+            {t("home.pricingCTA.bullets.transparent", undefined, { locale })}
+          </span>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <svg
+            class="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-gray-700 text-base md:text-lg leading-relaxed">
+            {t("home.pricingCTA.bullets.comparison", undefined, { locale })}
+          </span>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <svg
+            class="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-gray-700 text-base md:text-lg leading-relaxed">
+            {
+              t("home.pricingCTA.bullets.recommendations", undefined, {
+                locale,
+              })
+            }
+          </span>
+        </li>
+
+        <li class="flex items-start gap-3">
+          <svg
+            class="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-gray-700 text-base md:text-lg leading-relaxed">
+            {t("home.pricingCTA.bullets.breakdown", undefined, { locale })}
+          </span>
+        </li>
+      </ul>
+
+      <!-- CTA primario centrado -->
+      <div class="text-center">
+        <a
+          href={`/${locale === "en" ? "" : locale + "/"}calculadora`}
+          class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          aria-label={t("home.pricingCTA.cta", undefined, { locale })}
+        >
+          {t("home.pricingCTA.cta", undefined, { locale })}
+          <svg
+            class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

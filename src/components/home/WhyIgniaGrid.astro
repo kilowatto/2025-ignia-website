@@ -1,0 +1,164 @@
+---
+/**
+ * WhyIgniaGrid Component
+ * Displays 4 key differentiators of Ignia Cloud
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #3 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+---
+
+<section class="py-20 bg-white" aria-labelledby="why-ignia-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2
+        id="why-ignia-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.whyIgnia.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.whyIgnia.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- 4 Pillars Grid -->
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
+      <!-- Pillar 1: Transparent Pricing -->
+      <div
+        class="relative p-8 bg-gradient-to-br from-orange-50 to-white rounded-lg border border-orange-100 hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg
+              class="h-10 w-10 text-orange-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              {t("home.whyIgnia.pillar1_title", undefined, { locale })}
+            </h3>
+            <p class="text-base text-gray-600 leading-relaxed">
+              {t("home.whyIgnia.pillar1_description", undefined, { locale })}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pillar 2: 24/7 Human Support -->
+      <div
+        class="relative p-8 bg-gradient-to-br from-blue-50 to-white rounded-lg border border-blue-100 hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg
+              class="h-10 w-10 text-blue-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              {t("home.whyIgnia.pillar2_title", undefined, { locale })}
+            </h3>
+            <p class="text-base text-gray-600 leading-relaxed">
+              {t("home.whyIgnia.pillar2_description", undefined, { locale })}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pillar 3: Enterprise Ready -->
+      <div
+        class="relative p-8 bg-gradient-to-br from-green-50 to-white rounded-lg border border-green-100 hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg
+              class="h-10 w-10 text-green-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              {t("home.whyIgnia.pillar3_title", undefined, { locale })}
+            </h3>
+            <p class="text-base text-gray-600 leading-relaxed">
+              {t("home.whyIgnia.pillar3_description", undefined, { locale })}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pillar 4: Multi-Cloud Flexibility -->
+      <div
+        class="relative p-8 bg-gradient-to-br from-purple-50 to-white rounded-lg border border-purple-100 hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg
+              class="h-10 w-10 text-purple-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              {t("home.whyIgnia.pillar4_title", undefined, { locale })}
+            </h3>
+            <p class="text-base text-gray-600 leading-relaxed">
+              {t("home.whyIgnia.pillar4_description", undefined, { locale })}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

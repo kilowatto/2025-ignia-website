@@ -1,0 +1,144 @@
+---
+/**
+ * FinalCTA Component
+ * Final call-to-action section before footer
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #13 of Home (Final)
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+
+const getUrl = (path: string) => {
+  return locale === "en" ? path : `/${locale}${path}`;
+};
+---
+
+<section
+  class="py-20 bg-gradient-to-br from-orange-500 to-red-500"
+  aria-labelledby="final-cta-heading"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-4xl mx-auto">
+      <!-- Heading -->
+      <h2
+        id="final-cta-heading"
+        class="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-6"
+      >
+        {t("home.finalCTA.title", undefined, { locale })}
+      </h2>
+
+      <!-- Subtitle -->
+      <p class="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl mx-auto">
+        {t("home.finalCTA.subtitle", undefined, { locale })}
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <!-- Primary CTA: Cotizador -->
+        <a
+          href={getUrl("/calculadora")}
+          class="inline-flex items-center px-8 py-4 bg-white text-orange-500 font-semibold text-lg rounded-lg shadow-lg hover:bg-gray-50 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+        >
+          {t("home.finalCTA.cta_primary", undefined, { locale })}
+          <svg
+            class="ml-3 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+
+        <!-- Secondary CTA: Contact -->
+        <a
+          href="#contact"
+          class="inline-flex items-center px-8 py-4 bg-transparent text-white font-semibold text-lg rounded-lg border-2 border-white hover:bg-white hover:text-orange-500 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+        >
+          {t("home.finalCTA.cta_secondary", undefined, { locale })}
+          <svg
+            class="ml-3 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            ></path>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Trust Signals -->
+      <div
+        class="mt-12 flex flex-wrap justify-center items-center gap-8 text-white"
+      >
+        <div class="flex items-center">
+          <svg
+            class="h-6 w-6 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium"
+            >{t("home.finalCTA.trust1", undefined, { locale })}</span
+          >
+        </div>
+
+        <div class="flex items-center">
+          <svg
+            class="h-6 w-6 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium"
+            >{t("home.finalCTA.trust2", undefined, { locale })}</span
+          >
+        </div>
+
+        <div class="flex items-center">
+          <svg
+            class="h-6 w-6 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium"
+            >{t("home.finalCTA.trust3", undefined, { locale })}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

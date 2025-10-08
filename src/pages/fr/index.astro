@@ -1,23 +1,174 @@
 ---
+/**
+ * Home Page - French
+ * Main landing page with 12 sections
+ * Architecture: SSG, zero blocking JS, WCAG 2.2 AA
+ */
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { t } from "astro-i18n";
+import HeroSection from "../../components/home/HeroSection.astro";
+import TrustBar from "../../components/home/TrustBar.astro";
+import WhyIgniaGrid from "../../components/home/WhyIgniaGrid.astro";
+import PricingCTA from "../../components/home/PricingCTA.astro";
+import SolutionsCards from "../../components/home/SolutionsCards.astro";
+import ProductsGrid from "../../components/home/ProductsGrid.astro";
+import MulticloudDiagram from "../../components/home/MulticloudDiagram.astro";
+import AICards from "../../components/home/AICards.astro";
+import UseCasesTabs from "../../components/home/UseCasesTabs.astro";
+import SLABlock from "../../components/home/SLABlock.astro";
+import ComplianceBlock from "../../components/home/ComplianceBlock.astro";
+import TestimonialsCarousel from "../../components/home/TestimonialsCarousel.astro";
+import FinalCTA from "../../components/home/FinalCTA.astro";
 
-// Obtener locale usando API nativa de Astro 5.x
-// currentLocale retorna el idioma actual del contexto i18n (ej: "en", "es-MX", "fr")
-const locale = Astro.currentLocale?.split("-")[0] ?? "fr";
+const locale = "fr";
 
-// Traducir metadatos para SEO (arquitecture.md §5 - Gestión de Contenido i18n)
-const title = t("home.meta.title", undefined, { locale });
-const description = t("home.meta.description", undefined, { locale });
+// JSON-LD Structured Data
+const jsonLdOrganization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Ignia Cloud",
+  url: "https://ignia.cloud",
+  logo: "https://ignia.cloud/Ignia-blanco.svg",
+  description:
+    "Cloud d'entreprise avec tarification transparente et support humain 24/7",
+  inLanguage: "fr",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+1-XXX-XXX-XXXX",
+    contactType: "Service Client",
+    availableLanguage: ["English", "Spanish", "French"],
+    areaServed: "Worldwide",
+  },
+  sameAs: [
+    "https://www.linkedin.com/company/ignia-cloud",
+    "https://twitter.com/igniacloud",
+    "https://github.com/igniacloud",
+  ],
+};
+
+const jsonLdService = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Cloud Computing",
+  provider: {
+    "@type": "Organization",
+    name: "Ignia Cloud",
+  },
+  inLanguage: "fr",
+  areaServed: "Worldwide",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Services Cloud",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Machines Virtuelles",
+          description: "VMs évolutives avec configurations flexibles",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Kubernetes",
+          description: "Clusters Kubernetes gérés",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Stockage d'Objets",
+          description: "Stockage compatible S3",
+        },
+      },
+    ],
+  },
+};
+
+const jsonLdFAQ = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  inLanguage: "fr",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Qu'est-ce qui rend Ignia Cloud différent ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Tarification transparente sans coûts cachés, support humain 24/7, infrastructure d'entreprise avec certifications ISO 27001, SOC 2, PCI DSS et conformité RGPD.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quels services propose Ignia Cloud ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Nous proposons des VMs, Kubernetes, Stockage d'Objets, Réseau, Sauvegarde et DR, Sécurité et solutions de Surveillance.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quelle est la garantie SLA ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Nous garantissons 99,99 % de disponibilité avec surveillance 24/7, alertes proactives et gestionnaires de compte dédiés pour les clients d'entreprise.",
+      },
+    },
+  ],
+};
 ---
 
-<BaseLayout title={title} description={description}>
-  <section class="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-16 text-center">
-    <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">
-      {t("home.hero.heading", undefined, { locale })}
-    </h1>
-    <p class="text-lg text-gray-600">
-      {t("home.hero.subheading", undefined, { locale })}
-    </p>
-  </section>
+<BaseLayout
+  title="Accueil | Ignia Cloud"
+  description="Cloud d'entreprise avec tarification transparente et support humain 24/7. VMs, Kubernetes, Stockage, AI/ML et solutions multi-cloud avec certifications ISO 27001, SOC 2, PCI DSS et conformité RGPD."
+>
+  <!-- JSON-LD Structured Data -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLdOrganization)}
+  />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdService)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdFAQ)} />
+
+  <!-- Hero Section -->
+  <HeroSection locale={locale} />
+
+  <!-- Trust Bar (Clients & Certifications) -->
+  <TrustBar locale={locale} />
+
+  <!-- Why Ignia (4 Pillars) -->
+  <WhyIgniaGrid locale={locale} />
+
+  <!-- Pricing CTA (Simple panel) -->
+  <PricingCTA locale={locale} />
+
+  <!-- Solutions (4 Packaged Solutions) -->
+  <SolutionsCards locale={locale} />
+
+  <!-- Products (7 Core Products) -->
+  <ProductsGrid locale={locale} />
+
+  <!-- Multi-Cloud Diagram -->
+  <MulticloudDiagram locale={locale} />
+
+  <!-- AI & ML Cards -->
+  <AICards locale={locale} />
+
+  <!-- Use Cases Tabs (Fintech, Retail, Media) -->
+  <UseCasesTabs locale={locale} />
+
+  <!-- SLA Commitments -->
+  <SLABlock locale={locale} />
+
+  <!-- Compliance Certifications -->
+  <ComplianceBlock locale={locale} />
+
+  <!-- Testimonials Carousel -->
+  <TestimonialsCarousel locale={locale} />
+
+  <!-- Final CTA -->
+  <FinalCTA locale={locale} />
 </BaseLayout>

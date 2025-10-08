@@ -1,0 +1,123 @@
+---
+/**
+ * HeroSection.astro
+ *
+ * Sección Hero principal del Home con título, subtítulo y 2 CTAs.
+ * Incluye imagen placeholder de placehold.co con fetchpriority="high".
+ *
+ * Cumplimiento arquitecture.md:
+ * - §2: Sin JS bloqueante
+ * - §5: i18n completa
+ * - §7: WCAG 2.2 AA
+ * - §10: fetchpriority="high" para LCP candidate
+ * - §14: Imagen hero <70KB (placeholder)
+ *
+ * @see src/i18n/en.json → home.hero
+ */
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+import { t } from "astro-i18n";
+
+// URL de placeholder con texto descriptivo
+const heroImageUrl =
+  "https://placehold.co/1600x900/1a202c/ffffff/webp?text=Hero%3A+Modern+Datacenter+%2F+Servidor+Moderno+%2F+Centre+de+Donn%C3%A9es+Moderne&font=raleway";
+---
+
+<section
+  class="hero-section relative bg-gradient-to-br from-gray-50 to-white py-20 md:py-32"
+  aria-labelledby="hero-title"
+>
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Columna izquierda: Contenido -->
+      <div class="text-center lg:text-left">
+        <h1
+          id="hero-title"
+          class="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight"
+        >
+          {t("home.hero.title", undefined, { locale })}
+        </h1>
+
+        <p
+          class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+        >
+          {t("home.hero.subtitle", undefined, { locale })}
+        </p>
+
+        <!-- CTAs -->
+        <div
+          class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+        >
+          <!-- CTA Primario -->
+          <a
+            href={`/${locale === "en" ? "" : locale + "/"}calculadora`}
+            class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          >
+            {t("home.hero.cta_primary", undefined, { locale })}
+            <svg
+              class="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+
+          <!-- CTA Secundario -->
+          <a
+            href={`/${locale === "en" ? "" : locale + "/"}#contact`}
+            class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-gray-900 bg-white border-2 border-gray-900 rounded-lg hover:bg-gray-900 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+          >
+            {t("home.hero.cta_secondary", undefined, { locale })}
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Imagen Hero -->
+      <div class="relative">
+        <img
+          src={heroImageUrl}
+          alt={t("home.hero.title", undefined, { locale })}
+          width="1600"
+          height="900"
+          fetchpriority="high"
+          decoding="async"
+          class="rounded-2xl shadow-2xl w-full h-auto"
+        />
+
+        <!-- Badge flotante decorativo -->
+        <div
+          class="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg px-6 py-4 hidden md:block"
+        >
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-8 h-8 text-orange-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <div>
+              <p class="text-sm font-medium text-gray-900">24/7 Support</p>
+              <p class="text-xs text-gray-500">Human engineers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

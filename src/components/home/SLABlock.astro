@@ -1,0 +1,259 @@
+---
+/**
+ * SLABlock Component
+ * Displays SLA commitments in table format
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #10 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+---
+
+<section class="py-20 bg-gray-50" aria-labelledby="sla-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div
+        class="inline-flex items-center justify-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-4"
+      >
+        {t("home.sla.badge", undefined, { locale })}
+      </div>
+      <h2
+        id="sla-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.sla.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.sla.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- SLA Table -->
+    <div class="max-w-5xl mx-auto">
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                >
+                  {t("home.sla.table_header1", undefined, { locale })}
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                >
+                  {t("home.sla.table_header2", undefined, { locale })}
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                >
+                  {t("home.sla.table_header3", undefined, { locale })}
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                >
+                  {t("home.sla.table_header4", undefined, { locale })}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  {t("home.sla.row1_col1", undefined, { locale })}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800"
+                  >
+                    {t("home.sla.row1_col2", undefined, { locale })}
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row1_col3", undefined, { locale })}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row1_col4", undefined, { locale })}
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  {t("home.sla.row2_col1", undefined, { locale })}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800"
+                  >
+                    {t("home.sla.row2_col2", undefined, { locale })}
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row2_col3", undefined, { locale })}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row2_col4", undefined, { locale })}
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  {t("home.sla.row3_col1", undefined, { locale })}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800"
+                  >
+                    {t("home.sla.row3_col2", undefined, { locale })}
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row3_col3", undefined, { locale })}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row3_col4", undefined, { locale })}
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  {t("home.sla.row4_col1", undefined, { locale })}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-orange-100 text-orange-800"
+                  >
+                    {t("home.sla.row4_col2", undefined, { locale })}
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row4_col3", undefined, { locale })}
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center"
+                >
+                  {t("home.sla.row4_col4", undefined, { locale })}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Additional Features -->
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4"
+          >
+            <svg
+              class="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            {t("home.sla.feature1_title", undefined, { locale })}
+          </h3>
+          <p class="text-sm text-gray-600">
+            {t("home.sla.feature1_description", undefined, { locale })}
+          </p>
+        </div>
+
+        <div class="text-center">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mb-4"
+          >
+            <svg
+              class="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            {t("home.sla.feature2_title", undefined, { locale })}
+          </h3>
+          <p class="text-sm text-gray-600">
+            {t("home.sla.feature2_description", undefined, { locale })}
+          </p>
+        </div>
+
+        <div class="text-center">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 text-purple-600 mb-4"
+          >
+            <svg
+              class="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            {t("home.sla.feature3_title", undefined, { locale })}
+          </h3>
+          <p class="text-sm text-gray-600">
+            {t("home.sla.feature3_description", undefined, { locale })}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

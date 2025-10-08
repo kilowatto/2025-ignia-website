@@ -1,0 +1,148 @@
+---
+/**
+ * TrustBar Component
+ * Displays client logos and certifications to build trust
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #2 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+
+// Placeholder logos for clients
+const clientLogos = [
+  {
+    name: "Banco Internacional",
+    url: "https://placehold.co/200x80/1f2937/ffffff/webp?text=Banco+Internacional&font=raleway",
+  },
+  {
+    name: "Fintech Solutions",
+    url: "https://placehold.co/200x80/1f2937/ffffff/webp?text=Fintech+Solutions&font=raleway",
+  },
+  {
+    name: "Retail Corp",
+    url: "https://placehold.co/200x80/1f2937/ffffff/webp?text=Retail+Corp&font=raleway",
+  },
+  {
+    name: "Media Group",
+    url: "https://placehold.co/200x80/1f2937/ffffff/webp?text=Media+Group&font=raleway",
+  },
+  {
+    name: "Healthcare Plus",
+    url: "https://placehold.co/200x80/1f2937/ffffff/webp?text=Healthcare+Plus&font=raleway",
+  },
+];
+
+// Placeholder certifications
+const certifications = [
+  {
+    name: "ISO 27001",
+    url: "https://placehold.co/120x120/f59e0b/1f2937/webp?text=ISO+27001&font=raleway",
+  },
+  {
+    name: "SOC 2 Type II",
+    url: "https://placehold.co/120x120/f59e0b/1f2937/webp?text=SOC+2&font=raleway",
+  },
+  {
+    name: "PCI DSS",
+    url: "https://placehold.co/120x120/f59e0b/1f2937/webp?text=PCI+DSS&font=raleway",
+  },
+  {
+    name: "GDPR Compliant",
+    url: "https://placehold.co/120x120/f59e0b/1f2937/webp?text=GDPR&font=raleway",
+  },
+];
+---
+
+<section class="py-12 bg-gray-50" aria-labelledby="trustbar-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Client Logos Section -->
+    <div class="mb-12">
+      <h2
+        id="trustbar-heading"
+        class="text-sm font-semibold text-gray-500 uppercase tracking-wide text-center mb-8"
+      >
+        {t("home.trustBar.title", undefined, { locale })}
+      </h2>
+
+      <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+        {
+          clientLogos.map((logo) => (
+            <div class="col-span-1 flex justify-center items-center">
+              <img
+                src={logo.url}
+                alt={logo.name}
+                class="h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                loading="lazy"
+                width="200"
+                height="80"
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Certifications Section -->
+    <div class="border-t border-gray-200 pt-12">
+      <h3
+        class="text-sm font-semibold text-gray-500 uppercase tracking-wide text-center mb-8"
+      >
+        {t("home.trustBar.certifications_title", undefined, { locale })}
+      </h3>
+
+      <div class="flex flex-wrap justify-center items-center gap-8">
+        {
+          certifications.map((cert) => (
+            <div class="flex flex-col items-center group">
+              <img
+                src={cert.url}
+                alt={cert.name}
+                class="h-16 w-16 group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+                width="120"
+                height="120"
+              />
+              <span class="text-xs text-gray-600 mt-2">{cert.name}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3 text-center">
+      <div>
+        <div class="text-4xl font-light text-orange-500">
+          {t("home.trustBar.stat1_number", undefined, { locale })}
+        </div>
+        <div class="mt-2 text-sm text-gray-600">
+          {t("home.trustBar.stat1_label", undefined, { locale })}
+        </div>
+      </div>
+
+      <div>
+        <div class="text-4xl font-light text-orange-500">
+          {t("home.trustBar.stat2_number", undefined, { locale })}
+        </div>
+        <div class="mt-2 text-sm text-gray-600">
+          {t("home.trustBar.stat2_label", undefined, { locale })}
+        </div>
+      </div>
+
+      <div>
+        <div class="text-4xl font-light text-orange-500">
+          {t("home.trustBar.stat3_number", undefined, { locale })}
+        </div>
+        <div class="mt-2 text-sm text-gray-600">
+          {t("home.trustBar.stat3_label", undefined, { locale })}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

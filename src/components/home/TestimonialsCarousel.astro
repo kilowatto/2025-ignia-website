@@ -1,0 +1,474 @@
+---
+/**
+ * TestimonialsCarousel Component
+ * CSS-only carousel with scroll-snap
+ * Architecture: Zero JS, scroll-snap, WCAG 2.2 AA
+ * Section: #12 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+---
+
+<section
+  class="py-20 bg-gradient-to-br from-orange-50 to-yellow-50"
+  aria-labelledby="testimonials-heading"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2
+        id="testimonials-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.testimonials.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.testimonials.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- Scroll-Snap Carousel -->
+    <div class="relative">
+      <div
+        class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide"
+        role="region"
+        aria-label={t("home.testimonials.carousel_label", undefined, {
+          locale,
+        })}
+      >
+        <!-- Testimonial 1 -->
+        <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start">
+          <div class="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
+            <div class="flex items-center mb-4">
+              <img
+                src="https://placehold.co/60x60/f59e0b/ffffff/webp?text=JD&font=raleway"
+                alt=""
+                class="h-12 w-12 rounded-full"
+                loading="lazy"
+                width="60"
+                height="60"
+                aria-hidden="true"
+              />
+              <div class="ml-4">
+                <h3 class="text-base font-semibold text-gray-900">
+                  {
+                    t("home.testimonials.testimonial1_name", undefined, {
+                      locale,
+                    })
+                  }
+                </h3>
+                <p class="text-sm text-gray-500">
+                  {
+                    t("home.testimonials.testimonial1_role", undefined, {
+                      locale,
+                    })
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex mb-4" aria-label="5 stars">
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+            </div>
+            <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
+              "{
+                t("home.testimonials.testimonial1_quote", undefined, { locale })
+              }"
+            </blockquote>
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Company+Logo&font=raleway"
+                alt={t("home.testimonials.testimonial1_company", undefined, {
+                  locale,
+                })}
+                class="h-8"
+                loading="lazy"
+                width="100"
+                height="40"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Testimonial 2 -->
+        <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start">
+          <div class="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
+            <div class="flex items-center mb-4">
+              <img
+                src="https://placehold.co/60x60/3b82f6/ffffff/webp?text=MR&font=raleway"
+                alt=""
+                class="h-12 w-12 rounded-full"
+                loading="lazy"
+                width="60"
+                height="60"
+                aria-hidden="true"
+              />
+              <div class="ml-4">
+                <h3 class="text-base font-semibold text-gray-900">
+                  {
+                    t("home.testimonials.testimonial2_name", undefined, {
+                      locale,
+                    })
+                  }
+                </h3>
+                <p class="text-sm text-gray-500">
+                  {
+                    t("home.testimonials.testimonial2_role", undefined, {
+                      locale,
+                    })
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex mb-4" aria-label="5 stars">
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+            </div>
+            <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
+              "{
+                t("home.testimonials.testimonial2_quote", undefined, { locale })
+              }"
+            </blockquote>
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Retail+Corp&font=raleway"
+                alt={t("home.testimonials.testimonial2_company", undefined, {
+                  locale,
+                })}
+                class="h-8"
+                loading="lazy"
+                width="100"
+                height="40"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Testimonial 3 -->
+        <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start">
+          <div class="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
+            <div class="flex items-center mb-4">
+              <img
+                src="https://placehold.co/60x60/059669/ffffff/webp?text=SC&font=raleway"
+                alt=""
+                class="h-12 w-12 rounded-full"
+                loading="lazy"
+                width="60"
+                height="60"
+                aria-hidden="true"
+              />
+              <div class="ml-4">
+                <h3 class="text-base font-semibold text-gray-900">
+                  {
+                    t("home.testimonials.testimonial3_name", undefined, {
+                      locale,
+                    })
+                  }
+                </h3>
+                <p class="text-sm text-gray-500">
+                  {
+                    t("home.testimonials.testimonial3_role", undefined, {
+                      locale,
+                    })
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex mb-4" aria-label="5 stars">
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+            </div>
+            <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
+              "{
+                t("home.testimonials.testimonial3_quote", undefined, { locale })
+              }"
+            </blockquote>
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Media+Group&font=raleway"
+                alt={t("home.testimonials.testimonial3_company", undefined, {
+                  locale,
+                })}
+                class="h-8"
+                loading="lazy"
+                width="100"
+                height="40"
+              />
+            </div>
+          </div>
+        </article>
+
+        <!-- Testimonial 4 -->
+        <article class="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start">
+          <div class="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col">
+            <div class="flex items-center mb-4">
+              <img
+                src="https://placehold.co/60x60/7c3aed/ffffff/webp?text=LP&font=raleway"
+                alt=""
+                class="h-12 w-12 rounded-full"
+                loading="lazy"
+                width="60"
+                height="60"
+                aria-hidden="true"
+              />
+              <div class="ml-4">
+                <h3 class="text-base font-semibold text-gray-900">
+                  {
+                    t("home.testimonials.testimonial4_name", undefined, {
+                      locale,
+                    })
+                  }
+                </h3>
+                <p class="text-sm text-gray-500">
+                  {
+                    t("home.testimonials.testimonial4_role", undefined, {
+                      locale,
+                    })
+                  }
+                </p>
+              </div>
+            </div>
+            <div class="flex mb-4" aria-label="5 stars">
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+            </div>
+            <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
+              "{
+                t("home.testimonials.testimonial4_quote", undefined, { locale })
+              }"
+            </blockquote>
+            <div class="flex items-center">
+              <img
+                src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Healthcare+Plus&font=raleway"
+                alt={t("home.testimonials.testimonial4_company", undefined, {
+                  locale,
+                })}
+                class="h-8"
+                loading="lazy"
+                width="100"
+                height="40"
+              />
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Scroll Indicators (Visual only, no JS) -->
+      <div class="flex justify-center mt-6 gap-2">
+        <div class="h-2 w-2 rounded-full bg-orange-500"></div>
+        <div class="h-2 w-2 rounded-full bg-gray-300"></div>
+        <div class="h-2 w-2 rounded-full bg-gray-300"></div>
+        <div class="h-2 w-2 rounded-full bg-gray-300"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

@@ -1,0 +1,398 @@
+---
+/**
+ * UseCasesTabs Component
+ * CSS-only tabs for Fintech, Retail, Media use cases
+ * Architecture: Zero JS, :checked pattern, WCAG 2.2 AA
+ * Section: #9 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+
+const getUrl = (path: string) => {
+  return locale === "en" ? path : `/${locale}${path}`;
+};
+---
+
+<section class="py-20 bg-white" aria-labelledby="usecases-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2
+        id="usecases-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.useCases.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.useCases.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- CSS-Only Tabs -->
+    <div class="max-w-5xl mx-auto">
+      <!-- Hidden Radio Inputs -->
+      <input
+        type="radio"
+        id="tab-fintech"
+        name="usecase-tabs"
+        class="hidden peer/fintech"
+        checked
+      />
+      <input
+        type="radio"
+        id="tab-retail"
+        name="usecase-tabs"
+        class="hidden peer/retail"
+      />
+      <input
+        type="radio"
+        id="tab-media"
+        name="usecase-tabs"
+        class="hidden peer/media"
+      />
+
+      <!-- Tab Buttons -->
+      <div
+        class="flex border-b border-gray-200 mb-8"
+        role="tablist"
+        aria-label={t("home.useCases.tabs_aria_label", undefined, { locale })}
+      >
+        <label
+          for="tab-fintech"
+          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/fintech:text-orange-500 peer-checked/fintech:border-orange-500"
+          role="tab"
+          aria-selected="true"
+          tabindex="0"
+        >
+          {t("home.useCases.tab1_title", undefined, { locale })}
+        </label>
+        <label
+          for="tab-retail"
+          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/retail:text-orange-500 peer-checked/retail:border-orange-500"
+          role="tab"
+          aria-selected="false"
+          tabindex="0"
+        >
+          {t("home.useCases.tab2_title", undefined, { locale })}
+        </label>
+        <label
+          for="tab-media"
+          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/media:text-orange-500 peer-checked/media:border-orange-500"
+          role="tab"
+          aria-selected="false"
+          tabindex="0"
+        >
+          {t("home.useCases.tab3_title", undefined, { locale })}
+        </label>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div class="relative">
+        <!-- Fintech Panel -->
+        <div
+          class="hidden peer-checked/fintech:block"
+          role="tabpanel"
+          aria-labelledby="tab-fintech"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                {t("home.useCases.tab1_heading", undefined, { locale })}
+              </h3>
+              <p class="text-base text-gray-600 mb-6">
+                {t("home.useCases.tab1_description", undefined, { locale })}
+              </p>
+              <ul class="space-y-4 mb-6">
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab1_outcome1", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab1_outcome2", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab1_outcome3", undefined, { locale })}
+                  </span>
+                </li>
+              </ul>
+              <a
+                href={getUrl("/casos-de-uso/fintech")}
+                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
+              >
+                {t("home.useCases.cta", undefined, { locale })}
+                <svg
+                  class="ml-2 h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="flex items-center justify-center">
+              <img
+                src="https://placehold.co/500x400/f59e0b/ffffff/webp?text=Fintech+Infrastructure&font=raleway"
+                alt={t("home.useCases.tab1_image_alt", undefined, { locale })}
+                class="rounded-lg shadow-lg"
+                loading="lazy"
+                width="500"
+                height="400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Retail Panel -->
+        <div
+          class="hidden peer-checked/retail:block"
+          role="tabpanel"
+          aria-labelledby="tab-retail"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                {t("home.useCases.tab2_heading", undefined, { locale })}
+              </h3>
+              <p class="text-base text-gray-600 mb-6">
+                {t("home.useCases.tab2_description", undefined, { locale })}
+              </p>
+              <ul class="space-y-4 mb-6">
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab2_outcome1", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab2_outcome2", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab2_outcome3", undefined, { locale })}
+                  </span>
+                </li>
+              </ul>
+              <a
+                href={getUrl("/casos-de-uso/retail")}
+                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
+              >
+                {t("home.useCases.cta", undefined, { locale })}
+                <svg
+                  class="ml-2 h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="flex items-center justify-center">
+              <img
+                src="https://placehold.co/500x400/3b82f6/ffffff/webp?text=Retail+E-commerce&font=raleway"
+                alt={t("home.useCases.tab2_image_alt", undefined, { locale })}
+                class="rounded-lg shadow-lg"
+                loading="lazy"
+                width="500"
+                height="400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Media Panel -->
+        <div
+          class="hidden peer-checked/media:block"
+          role="tabpanel"
+          aria-labelledby="tab-media"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                {t("home.useCases.tab3_heading", undefined, { locale })}
+              </h3>
+              <p class="text-base text-gray-600 mb-6">
+                {t("home.useCases.tab3_description", undefined, { locale })}
+              </p>
+              <ul class="space-y-4 mb-6">
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab3_outcome1", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab3_outcome2", undefined, { locale })}
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <svg
+                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="ml-3 text-sm text-gray-700">
+                    {t("home.useCases.tab3_outcome3", undefined, { locale })}
+                  </span>
+                </li>
+              </ul>
+              <a
+                href={getUrl("/casos-de-uso/media")}
+                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
+              >
+                {t("home.useCases.cta", undefined, { locale })}
+                <svg
+                  class="ml-2 h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="flex items-center justify-center">
+              <img
+                src="https://placehold.co/500x400/8b5cf6/ffffff/webp?text=Media+Streaming&font=raleway"
+                alt={t("home.useCases.tab3_image_alt", undefined, { locale })}
+                class="rounded-lg shadow-lg"
+                loading="lazy"
+                width="500"
+                height="400"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Focus states for keyboard navigation */
+  label[role="tab"]:focus {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+  }
+</style>

@@ -1,0 +1,312 @@
+---
+/**
+ * AICards Component
+ * Displays AI & ML capabilities
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #8 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+
+const getUrl = (path: string) => {
+  return locale === "en" ? path : `/${locale}${path}`;
+};
+---
+
+<section
+  class="py-20 bg-gradient-to-br from-purple-50 to-blue-50"
+  aria-labelledby="ai-heading"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div
+        class="inline-flex items-center justify-center px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-4"
+      >
+        {t("home.ai.badge", undefined, { locale })}
+      </div>
+      <h2
+        id="ai-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.ai.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.ai.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- 3 AI Cards -->
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <!-- Card 1: GPU Instances -->
+      <article
+        class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div
+            class="flex items-center justify-center h-20 w-20 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-white mb-6 mx-auto"
+          >
+            <svg
+              class="h-10 w-10"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
+            {t("home.ai.card1_title", undefined, { locale })}
+          </h3>
+          <p class="text-base text-gray-600 text-center mb-6">
+            {t("home.ai.card1_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card1_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card1_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card1_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/productos/gpu")}
+            class="block w-full text-center px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+          >
+            {t("home.ai.cta", undefined, { locale })}
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 2: ML Pipelines -->
+      <article
+        class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div
+            class="flex items-center justify-center h-20 w-20 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-6 mx-auto"
+          >
+            <svg
+              class="h-10 w-10"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
+            {t("home.ai.card2_title", undefined, { locale })}
+          </h3>
+          <p class="text-base text-gray-600 text-center mb-6">
+            {t("home.ai.card2_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card2_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card2_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card2_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/ml-pipelines")}
+            class="block w-full text-center px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-200"
+          >
+            {t("home.ai.cta", undefined, { locale })}
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 3: Model Deployment -->
+      <article
+        class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div
+            class="flex items-center justify-center h-20 w-20 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 text-white mb-6 mx-auto"
+          >
+            <svg
+              class="h-10 w-10"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
+            {t("home.ai.card3_title", undefined, { locale })}
+          </h3>
+          <p class="text-base text-gray-600 text-center mb-6">
+            {t("home.ai.card3_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card3_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card3_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.ai.card3_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/model-deployment")}
+            class="block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-medium rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-all duration-200"
+          >
+            {t("home.ai.cta", undefined, { locale })}
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

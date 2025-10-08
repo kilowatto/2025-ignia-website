@@ -1,0 +1,417 @@
+---
+/**
+ * SolutionsCards Component
+ * Displays 4 packaged solutions
+ * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA
+ * Section: #5 of Home
+ */
+
+import { t } from "astro-i18n";
+
+interface Props {
+  locale?: "en" | "es" | "fr";
+}
+
+const { locale = "en" } = Astro.props;
+
+// Build URL helper for CTAs
+const getUrl = (path: string) => {
+  return locale === "en" ? path : `/${locale}${path}`;
+};
+---
+
+<section class="py-20 bg-gray-50" aria-labelledby="solutions-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2
+        id="solutions-heading"
+        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+      >
+        {t("home.solutions.title", undefined, { locale })}
+      </h2>
+      <p class="text-lg text-gray-600">
+        {t("home.solutions.subtitle", undefined, { locale })}
+      </p>
+    </div>
+
+    <!-- 4 Solution Cards -->
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">
+      <!-- Solution 1: DR & Backup -->
+      <article
+        class="relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div class="flex items-center mb-4">
+            <img
+              src="https://placehold.co/80x80/dc2626/ffffff/webp?text=DR&font=raleway"
+              alt=""
+              class="h-16 w-16 rounded-lg"
+              loading="lazy"
+              width="80"
+              height="80"
+              aria-hidden="true"
+            />
+            <h3 class="ml-4 text-2xl font-semibold text-gray-900">
+              {t("home.solutions.solution1_title", undefined, { locale })}
+            </h3>
+          </div>
+          <p class="text-base text-gray-600 mb-6">
+            {t("home.solutions.solution1_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution1_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution1_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution1_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/dr-backup")}
+            class="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors duration-200"
+          >
+            {t("home.solutions.cta", undefined, { locale })}
+            <svg
+              class="ml-2 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Solution 2: Kubernetes Managed -->
+      <article
+        class="relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div class="flex items-center mb-4">
+            <img
+              src="https://placehold.co/80x80/2563eb/ffffff/webp?text=K8s&font=raleway"
+              alt=""
+              class="h-16 w-16 rounded-lg"
+              loading="lazy"
+              width="80"
+              height="80"
+              aria-hidden="true"
+            />
+            <h3 class="ml-4 text-2xl font-semibold text-gray-900">
+              {t("home.solutions.solution2_title", undefined, { locale })}
+            </h3>
+          </div>
+          <p class="text-base text-gray-600 mb-6">
+            {t("home.solutions.solution2_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution2_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution2_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution2_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/kubernetes")}
+            class="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors duration-200"
+          >
+            {t("home.solutions.cta", undefined, { locale })}
+            <svg
+              class="ml-2 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Solution 3: Multi-Cloud -->
+      <article
+        class="relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div class="flex items-center mb-4">
+            <img
+              src="https://placehold.co/80x80/7c3aed/ffffff/webp?text=Multi&font=raleway"
+              alt=""
+              class="h-16 w-16 rounded-lg"
+              loading="lazy"
+              width="80"
+              height="80"
+              aria-hidden="true"
+            />
+            <h3 class="ml-4 text-2xl font-semibold text-gray-900">
+              {t("home.solutions.solution3_title", undefined, { locale })}
+            </h3>
+          </div>
+          <p class="text-base text-gray-600 mb-6">
+            {t("home.solutions.solution3_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution3_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution3_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution3_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/multicloud")}
+            class="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors duration-200"
+          >
+            {t("home.solutions.cta", undefined, { locale })}
+            <svg
+              class="ml-2 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Solution 4: AI & ML -->
+      <article
+        class="relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      >
+        <div class="p-8">
+          <div class="flex items-center mb-4">
+            <img
+              src="https://placehold.co/80x80/059669/ffffff/webp?text=AI&font=raleway"
+              alt=""
+              class="h-16 w-16 rounded-lg"
+              loading="lazy"
+              width="80"
+              height="80"
+              aria-hidden="true"
+            />
+            <h3 class="ml-4 text-2xl font-semibold text-gray-900">
+              {t("home.solutions.solution4_title", undefined, { locale })}
+            </h3>
+          </div>
+          <p class="text-base text-gray-600 mb-6">
+            {t("home.solutions.solution4_description", undefined, { locale })}
+          </p>
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution4_feature1", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution4_feature2", undefined, { locale })}
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg
+                class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-sm text-gray-700">
+                {t("home.solutions.solution4_feature3", undefined, { locale })}
+              </span>
+            </li>
+          </ul>
+          <a
+            href={getUrl("/soluciones/ai-ml")}
+            class="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors duration-200"
+          >
+            {t("home.solutions.cta", undefined, { locale })}
+            <svg
+              class="ml-2 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
