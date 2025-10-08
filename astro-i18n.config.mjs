@@ -9,6 +9,7 @@ export default defineAstroI18nConfig({
   fallbackLocale: 'en',
   trailingSlash: 'always',
   showPrimaryLocale: false,
+  defaultNamespace: 'common',
   translationDirectory: {
     i18n: 'i18n',
     pages: 'i18n',

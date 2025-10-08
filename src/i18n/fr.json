@@ -519,43 +519,25 @@
     "trustBar": {
       "title": "Approuvé par des entreprises leaders",
       "subtitle": "Infrastructure et support depuis le Mexique pour l'Amérique latine et le monde",
-      "clients": {
-        "bank1": "Banque Principale",
-        "bank2": "Banque Régionale",
-        "fintech1": "Leader Fintech",
-        "fintech2": "Plateforme de Paiement",
-        "retail1": "Géant E-commerce",
-        "retail2": "Chaîne Retail",
-        "media1": "Service Streaming",
-        "media2": "Médias Numériques",
-        "tech1": "Entreprise SaaS",
-        "tech2": "Startup Tech"
-      },
-      "certifications": {
-        "iso": "Certifié ISO 27001",
-        "nist": "Conforme au cadre NIST",
-        "pci": "Certifié PCI-DSS"
-      }
+      "certifications_title": "Certifications et Conformité",
+      "stat1_number": "99,99%",
+      "stat1_label": "SLA de Disponibilité",
+      "stat2_number": "24/7",
+      "stat2_label": "Support Humain",
+      "stat3_number": "500+",
+      "stat3_label": "Clients d'Entreprise"
     },
     "whyIgnia": {
       "title": "Pourquoi Ignia Cloud?",
       "subtitle": "Quatre piliers qui nous différencient",
-      "pillar1": {
-        "title": "Transparence totale",
-        "description": "Tarification simple et prévisible. Pas de frais cachés, pas de surprises en fin de mois."
-      },
-      "pillar2": {
-        "title": "Sécurité toujours active",
-        "description": "Protection anti-DDoS incluse dans tous les services. Votre infrastructure protégée 24/7."
-      },
-      "pillar3": {
-        "title": "Multicloud sans friction",
-        "description": "Connectez Azure, GCP et on-prem sans complexité. Une console pour tout."
-      },
-      "pillar4": {
-        "title": "Support humain 24/7 en espagnol",
-        "description": "Ingénieurs qui résolvent les problèmes, pas de bots. De vraies personnes prêtes à aider."
-      }
+      "pillar1_title": "Transparence totale",
+      "pillar1_description": "Tarification simple et prévisible. Pas de frais cachés, pas de surprises en fin de mois.",
+      "pillar2_title": "Sécurité toujours active",
+      "pillar2_description": "Protection anti-DDoS incluse dans tous les services. Votre infrastructure protégée 24/7.",
+      "pillar3_title": "Multicloud sans friction",
+      "pillar3_description": "Connectez Azure, GCP et on-prem sans complexité. Une console pour tout.",
+      "pillar4_title": "Support humain 24/7 en espagnol",
+      "pillar4_description": "Ingénieurs qui résolvent les problèmes, pas de bots. De vraies personnes prêtes à aider."
     },
     "pricingCTA": {
       "title": "Découvrez nos prix et optimisez vos dépenses cloud",
@@ -571,202 +553,185 @@
     "solutions": {
       "title": "Solutions adaptées à votre entreprise",
       "subtitle": "Plus qu'une infrastructure: des résultats mesurables",
-      "bcp": {
-        "title": "BCP/DRaaS",
-        "problem": "Les temps d'arrêt coûtent des milliers par heure",
-        "result": "RTO <15 min avec répliques actives",
-        "cta": "Voir les détails"
-      },
-      "kubernetes": {
-        "title": "Kubernetes DevOps",
-        "problem": "Gestion complexe de clusters",
-        "result": "Clusters prêts + CI/CD + observabilité",
-        "cta": "Voir les détails"
-      },
-      "compliance": {
-        "title": "Conformité Fintech",
-        "problem": "Les audits réglementaires prennent des mois",
-        "result": "WORM + métriques + rapports automatisés",
-        "cta": "Voir les détails"
-      },
-      "backup": {
-        "title": "Backup Réglementaire",
-        "problem": "Perte de données = risque légal",
-        "result": "99.99% durabilité + rétention 7 ans",
-        "cta": "Voir les détails"
-      }
+      "solution1_title": "BCP/DRaaS",
+      "solution1_description": "Continuité d'activité et reprise après sinistre avec répliques actives et bascule automatique",
+      "solution1_feature1": "RTO <15 minutes avec répliques actives",
+      "solution1_feature2": "Bascule et récupération automatisées",
+      "solution1_feature3": "Réplication multi-sites",
+      "solution2_title": "Kubernetes DevOps",
+      "solution2_description": "Kubernetes géré avec pipelines CI/CD intégrés et observabilité complète",
+      "solution2_feature1": "Clusters prêts pour production en minutes",
+      "solution2_feature2": "CI/CD intégré avec GitOps",
+      "solution2_feature3": "Observabilité full-stack",
+      "solution3_title": "Conformité Fintech",
+      "solution3_description": "Respectez les exigences réglementaires avec journalisation WORM et rapports de conformité automatisés",
+      "solution3_feature1": "Journalisation immuable WORM",
+      "solution3_feature2": "Conformité CNBV + PCI-DSS",
+      "solution3_feature3": "Rapports d'audit automatisés",
+      "solution4_title": "Backup Réglementaire",
+      "solution4_description": "Rétention de sauvegarde à long terme pour conformité réglementaire avec 99,99% de durabilité",
+      "solution4_feature1": "Politiques de rétention 7-10 ans",
+      "solution4_feature2": "99,99% de durabilité des données",
+      "solution4_feature3": "Chiffré et immuable",
+      "cta": "Voir les détails"
     },
     "products": {
       "title": "Produits d'infrastructure",
       "subtitle": "Pour les profils techniques qui ont besoin de contrôle",
-      "cta": "Explorer tous les produits",
-      "vm": {
-        "name": "Machines Virtuelles",
-        "specs": "4-64 vCPU, SSD NVMe, 10Gbps"
-      },
-      "kubernetes": {
-        "name": "Kubernetes",
-        "specs": "Clusters gérés, auto-scaling, HA"
-      },
-      "storage": {
-        "name": "Block/Object Storage",
-        "specs": "Compatible S3, 100k IOPS, géo-redondant"
-      },
-      "loadbalancer": {
-        "name": "Load Balancer",
-        "specs": "L4/L7, déchargement SSL, health checks"
-      },
-      "firewall": {
-        "name": "Firewall",
-        "specs": "WAF, protection DDoS, IDS/IPS"
-      },
-      "dns": {
-        "name": "DNS Géré",
-        "specs": "Anycast, GeoDNS, DNSSEC"
-      },
-      "backup": {
-        "name": "Backup as a Service",
-        "specs": "Incrémental, chiffré, récupération instantanée"
-      }
+      "cta": "En savoir plus",
+      "product1_title": "Machines Virtuelles",
+      "product1_description": "VMs haute performance avec 4-64 vCPU, SSD NVMe et réseau 10Gbps",
+      "product2_title": "Kubernetes",
+      "product2_description": "Clusters gérés avec auto-scaling, haute disponibilité et gestion du cycle de vie",
+      "product3_title": "Stockage par Blocs",
+      "product3_description": "Stockage à IOPS élevé pour bases de données et applications critiques",
+      "product4_title": "Stockage d'Objets",
+      "product4_description": "Stockage compatible S3 avec évolutivité massive et géo-redondance",
+      "product5_title": "Load Balancer",
+      "product5_description": "Équilibrage de charge L4/L7 avec déchargement SSL et health checks",
+      "product6_title": "Cloud Firewall",
+      "product6_description": "Pare-feu géré avec WAF, protection DDoS et IDS/IPS",
+      "product7_title": "Backup as a Service",
+      "product7_description": "Sauvegardes incrémentielles avec chiffrement et récupération instantanée"
     },
     "multicloud": {
       "title": "Architecture Multicloud et Hybride",
       "subtitle": "Vos clouds, unifiés",
       "diagram_alt": "Ignia Cloud au centre connectant Azure, Google Cloud et infrastructure on-premise",
-      "bullet1": {
-        "title": "Connectez vos clouds",
-        "description": "Liens dédiés 10/100 Gbps"
-      },
-      "bullet2": {
-        "title": "Console de gestion unique",
-        "description": "Gérez les ressources externes comme Azure Arc"
-      },
-      "bullet3": {
-        "title": "Accélérez DR/HA",
-        "description": "Évitez le vendor lock-in"
-      }
+      "feature1_title": "Connectez vos clouds",
+      "feature1_description": "Liens dédiés 10/100 Gbps",
+      "feature2_title": "Console de gestion unique",
+      "feature2_description": "Gérez les ressources externes comme Azure Arc",
+      "feature3_title": "Accélérez DR/HA",
+      "feature3_description": "Évitez le vendor lock-in"
     },
     "ai": {
       "title": "IA et LLMs prêts pour la production",
       "subtitle": "Déployez des solutions intelligentes en toute sécurité",
-      "hosting": {
-        "title": "Hébergement LLM",
-        "description": "Déployez Llama, Mistral, GPT avec infrastructure GPU"
-      },
-      "rag": {
-        "title": "RAG Blueprints",
-        "description": "Bases de données vectorielles + pipelines de récupération prêts à l'emploi"
-      },
-      "copilot": {
-        "title": "Copilot Studio",
-        "description": "Créez des assistants personnalisés avec vos données métier"
-      },
-      "benefits": {
-        "security": "Sécurité des données garantie",
-        "observability": "Observabilité complète",
-        "scaling": "Auto-scaling selon la demande"
-      },
+      "badge": "IA et Machine Learning",
+      "card1_title": "Hébergement LLM",
+      "card1_description": "Déployez des modèles Llama, Mistral ou GPT personnalisés avec infrastructure GPU dédiée",
+      "card1_feature1": "GPUs NVIDIA A100/H100",
+      "card1_feature2": "Clusters isolés",
+      "card1_feature3": "Auto-scaling selon la demande",
+      "card2_title": "RAG Blueprints",
+      "card2_description": "Bases de données vectorielles et pipelines de récupération prêts à utiliser avec vos données",
+      "card2_feature1": "Bases de données vectorielles gérées",
+      "card2_feature2": "Pipelines de récupération pré-construits",
+      "card2_feature3": "Outils d'ingestion de données",
+      "card3_title": "Copilot Studio",
+      "card3_description": "Créez des assistants IA personnalisés avec vos données et logique métier",
+      "card3_feature1": "Interface copilot avec votre marque",
+      "card3_feature2": "Garde-fous et conformité",
+      "card3_feature3": "Déploiement omnicanal",
       "cta": "Explorer IA et LLMs"
     },
     "useCases": {
       "title": "Cas d'usage par industrie",
       "subtitle": "Nous parlons le langage de votre entreprise",
-      "fintech": {
-        "label": "Fintech / Finserv",
-        "outcome1": "Réduction de 40% des coûts DR",
-        "outcome2": "RTO <15 min en disaster recovery",
-        "outcome3": "Conformité CNBV + PCI-DSS",
-        "cta": "Voir le cas de réussite: ACME Fintech"
-      },
-      "retail": {
-        "label": "Retail / eCommerce",
-        "outcome1": "99.99% uptime pendant la haute saison",
-        "outcome2": "50% d'économies sur le stockage",
-        "outcome3": "Latence <50ms LATAM",
-        "cta": "Voir le cas de réussite: Global Retail"
-      },
-      "media": {
-        "label": "Médias et Apps",
-        "outcome1": "Streaming vers 1M+ utilisateurs simultanés",
-        "outcome2": "CDN + object storage intégrés",
-        "outcome3": "Mise à l'échelle élastique 0-100 en minutes",
-        "cta": "Voir le cas de réussite: Media Corp"
-      }
+      "tabs_aria_label": "Onglets de cas d'usage par industrie",
+      "tab1_title": "Fintech / Finserv",
+      "tab1_heading": "Services Financiers et Fintech",
+      "tab1_description": "Infrastructure critique pour institutions financières",
+      "tab1_outcome1": "Réduction de 40% des coûts DR",
+      "tab1_outcome2": "RTO <15 min en disaster recovery",
+      "tab1_outcome3": "Conformité CNBV + PCI-DSS",
+      "tab1_image_alt": "Diagramme d'infrastructure Fintech",
+      "tab2_title": "Retail / eCommerce",
+      "tab2_heading": "Retail et E-commerce",
+      "tab2_description": "Infrastructure évolutive pour plateformes retail à fort trafic",
+      "tab2_outcome1": "99.99% uptime pendant la haute saison",
+      "tab2_outcome2": "50% d'économies sur le stockage",
+      "tab2_outcome3": "Latence <50ms LATAM",
+      "tab2_image_alt": "Diagramme d'infrastructure Retail",
+      "tab3_title": "Médias et Apps",
+      "tab3_heading": "Médias et Applications Numériques",
+      "tab3_description": "Infrastructure haute performance pour streaming et contenu numérique",
+      "tab3_outcome1": "Streaming vers 1M+ utilisateurs simultanés",
+      "tab3_outcome2": "CDN + object storage intégrés",
+      "tab3_outcome3": "Mise à l'échelle élastique 0-100 en minutes",
+      "tab3_image_alt": "Diagramme d'infrastructure Médias",
+      "cta": "Voir le cas de réussite"
     },
     "sla": {
       "title": "SLA et support sur lequel vous pouvez compter",
       "subtitle": "Nous sommes là quand vous avez besoin de nous",
-      "coverage": "Couverture 24/7",
-      "assigned_engineer": "Ingénieur assigné",
-      "severity_critical": {
-        "label": "Critique",
-        "response": "Réponse en 15 min"
-      },
-      "severity_high": {
-        "label": "Élevé",
-        "response": "Réponse en 1 heure"
-      },
-      "severity_medium": {
-        "label": "Moyen",
-        "response": "Réponse en 4 heures"
-      },
-      "severity_low": {
-        "label": "Bas",
-        "response": "Réponse en 24 heures"
-      },
-      "cta": "Voir nos SLAs"
+      "badge": "Support d'Entreprise",
+      "table_header1": "Gravité",
+      "table_header2": "Temps de Réponse",
+      "table_header3": "Objectif de Résolution",
+      "table_header4": "Disponibilité",
+      "row1_col1": "Critique",
+      "row1_col2": "15 minutes",
+      "row1_col3": "4 heures",
+      "row1_col4": "24/7/365",
+      "row2_col1": "Élevé",
+      "row2_col2": "1 heure",
+      "row2_col3": "8 heures",
+      "row2_col4": "24/7/365",
+      "row3_col1": "Moyen",
+      "row3_col2": "4 heures",
+      "row3_col3": "2 jours ouvrables",
+      "row3_col4": "Heures de bureau",
+      "row4_col1": "Bas",
+      "row4_col2": "24 heures",
+      "row4_col3": "5 jours ouvrables",
+      "row4_col4": "Heures de bureau",
+      "feature1_title": "Support Humain 24/7",
+      "feature1_description": "De vrais ingénieurs, pas de bots",
+      "feature2_title": "Surveillance Proactive",
+      "feature2_description": "Nous détectons les problèmes avant vous",
+      "feature3_title": "Gestionnaire de Compte Dédié",
+      "feature3_description": "Pour les clients d'entreprise"
     },
     "compliance": {
       "title": "Conformité et résidence des données",
       "subtitle": "Vos données, vos règles",
-      "residency": {
-        "title": "Résidence des données au Mexique",
-        "description": "Datacenters à Mexico et Monterrey"
-      },
-      "encryption": {
-        "title": "Chiffrement au repos et en transit",
-        "description": "AES-256 + TLS 1.3"
-      },
-      "logging": {
-        "title": "Journalisation immuable WORM",
-        "description": "Pistes d'audit impossibles à modifier"
-      },
-      "frameworks": {
-        "title": "Cadres de conformité",
-        "iso": "ISO 27001",
-        "nist": "NIST CSF",
-        "pci": "PCI-DSS Level 1"
-      }
+      "badge": "Sécurité et Conformité",
+      "cert1_alt": "Badge de certification ISO 27001",
+      "cert1_label": "ISO 27001",
+      "cert2_alt": "Badge de certification SOC 2 Type II",
+      "cert2_label": "SOC 2 Type II",
+      "cert3_alt": "Badge de certification PCI-DSS",
+      "cert3_label": "PCI-DSS Level 1",
+      "cert4_alt": "Badge de conformité RGPD",
+      "cert4_label": "Conforme RGPD",
+      "features_title": "Fonctionnalités de Protection des Données",
+      "feature1": "Résidence des données au Mexique",
+      "feature2": "Chiffrement au repos et en transit",
+      "feature3": "Journalisation immuable WORM",
+      "feature4": "Audits de sécurité réguliers",
+      "image_alt": "Illustration de conformité de sécurité"
     },
     "testimonials": {
       "title": "Ce que disent nos clients",
       "subtitle": "Résultats réels, entreprises réelles",
-      "testimonial1": {
-        "quote": "Ignia nous a aidés à réduire nos coûts d'infrastructure de 40% tout en améliorant la fiabilité. L'équipe de support est exceptionnelle.",
-        "author": "Carlos Mendoza",
-        "role": "CTO",
-        "company": "Fintech ACME"
-      },
-      "testimonial2": {
-        "quote": "La migration vers Ignia s'est déroulée sans accroc. Leurs ingénieurs ont travaillé côte à côte avec notre équipe, et l'intégration multicloud nous a fait économiser des mois de travail.",
-        "author": "Ana Rodríguez",
-        "role": "VP d'Ingénierie",
-        "company": "Global Retail"
-      },
-      "testimonial3": {
-        "quote": "Nous gérons des millions de requêtes quotidiennes. L'infrastructure d'Ignia s'adapte automatiquement, et la protection DDoS est incluse—sans frais supplémentaires.",
-        "author": "Luis Fernández",
-        "role": "Responsable DevOps",
-        "company": "Media Corp"
-      },
-      "cta": "Voir plus d'histoires"
+      "carousel_label": "Carrousel de témoignages de clients",
+      "testimonial1_name": "Carlos Mendoza",
+      "testimonial1_role": "CTO",
+      "testimonial1_company": "Fintech ACME",
+      "testimonial1_quote": "Ignia nous a aidés à réduire nos coûts d'infrastructure de 40% tout en améliorant la fiabilité. L'équipe de support est exceptionnelle.",
+      "testimonial2_name": "Ana Rodríguez",
+      "testimonial2_role": "VP d'Ingénierie",
+      "testimonial2_company": "Global Retail",
+      "testimonial2_quote": "La migration vers Ignia s'est déroulée sans accroc. Leurs ingénieurs ont travaillé côte à côte avec notre équipe, et l'intégration multicloud nous a fait économiser des mois de travail.",
+      "testimonial3_name": "Luis Fernández",
+      "testimonial3_role": "Responsable DevOps",
+      "testimonial3_company": "Media Corp",
+      "testimonial3_quote": "Nous gérons des millions de requêtes quotidiennes. L'infrastructure d'Ignia s'adapte automatiquement, et la protection DDoS est incluse—sans frais supplémentaires.",
+      "testimonial4_name": "María García",
+      "testimonial4_role": "Directrice IT",
+      "testimonial4_company": "Solutions d'Entreprise",
+      "testimonial4_quote": "Le support humain 24/7 fait toute la différence. De vrais ingénieurs qui comprennent notre métier et résolvent les problèmes rapidement."
     },
     "finalCTA": {
       "title": "Prêt à transformer votre infrastructure?",
       "subtitle": "Rejoignez des centaines d'entreprises utilisant déjà Ignia Cloud",
       "cta_primary": "Commencer aujourd'hui",
       "cta_secondary": "Parler à un ingénieur",
-      "trust": "Essai gratuit avec 500$ de crédit de bienvenue"
+      "trust1": "Essai gratuit avec 500$ de crédit de bienvenue",
+      "trust2": "Aucune carte de crédit requise",
+      "trust3": "Assistance à la migration incluse"
     }
   }
 }
