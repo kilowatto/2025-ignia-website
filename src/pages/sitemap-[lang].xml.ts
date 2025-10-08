@@ -28,7 +28,7 @@ export const prerender = false;
 // 
 // Páginas actuales:
 const pages = [
-    { path: '', changefreq: 'daily', priority: 1.0 },           // Home
+    { path: '/', changefreq: 'daily', priority: 1.0 },          // Home (añadido: 2025-10-08)
     { path: '/search', changefreq: 'monthly', priority: 0.5 },  // Búsqueda
     { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page (añadido: 2025-10-06)
     // Agregar aquí nuevas páginas según se creen

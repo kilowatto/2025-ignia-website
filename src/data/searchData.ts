@@ -15,6 +15,35 @@ export interface SearchItem {
 
 // Datos de ejemplo multiidioma
 export const searchDataEN: SearchItem[] = [
+    // Página principal (Home)
+    {
+        id: 'page-home',
+        title: 'Home | Ignia Cloud',
+        description: 'Enterprise cloud with transparent pricing and 24/7 human support',
+        content: 'Transform your business with Ignia Cloud. Enterprise performance, built-in anti-DDoS security, frictionless multicloud operation. Virtual Machines, Kubernetes, Object Storage, Load Balancers, Cloud Firewall, Backup as a Service. AI and LLMs ready for production with GPUs and private model hosting. BCP/DRaaS with RTO <15 minutes, Kubernetes DevOps with CI/CD pipelines, Compliance Fintech with WORM logging, Regulatory Backup with 7-10 year retention. Connect Azure, Google Cloud, and on-premise infrastructure. ISO 27001, SOC 2, PCI DSS, GDPR compliance. 99.99% uptime SLA with 24/7 human support in Spanish.',
+        url: '/',
+        type: 'page',
+        category: 'Main',
+        tags: [
+            'home', 'inicio', 'main page', 'landing',
+            'cloud', 'enterprise cloud', 'cloud computing',
+            'pricing', 'transparent pricing', 'cost calculator',
+            'kubernetes', 'k8s', 'containers', 'docker',
+            'VM', 'virtual machines', 'compute',
+            'storage', 'object storage', 'S3', 'block storage',
+            'AI', 'artificial intelligence', 'LLM', 'machine learning', 'ML', 'GPU',
+            'multicloud', 'multi-cloud', 'hybrid cloud', 'Azure', 'GCP', 'AWS',
+            'backup', 'disaster recovery', 'DR', 'BCP', 'DRaaS',
+            'compliance', 'ISO 27001', 'SOC 2', 'PCI DSS', 'GDPR', 'CNBV',
+            'support', '24/7', 'human support', 'soporte humano',
+            'SLA', 'uptime', '99.99%', 'availability',
+            'security', 'firewall', 'DDoS', 'anti-DDoS', 'WAF',
+            'DevOps', 'CI/CD', 'GitOps', 'observability',
+            'fintech', 'retail', 'media', 'use cases'
+        ],
+        locale: 'en',
+        priority: 10
+    },
     // Servicios principales
     {
         id: 'service-cloud-solutions',
@@ -94,6 +123,35 @@ export const searchDataEN: SearchItem[] = [
 ];
 
 export const searchDataES: SearchItem[] = [
+    // Página principal (Home)
+    {
+        id: 'page-home-es',
+        title: 'Inicio | Ignia Cloud',
+        description: 'Nube empresarial con precios transparentes y soporte humano 24/7',
+        content: 'Transforma tu negocio con Ignia Cloud. Rendimiento empresarial, seguridad anti-DDoS incluida, operación multinube sin fricciones. Máquinas Virtuales, Kubernetes, Almacenamiento de Objetos, Balanceadores de Carga, Firewall en la Nube, Backup como Servicio. IA y LLMs listos para producción con GPUs y hosting de modelos privados. BCP/DRaaS con RTO <15 minutos, Kubernetes DevOps con pipelines CI/CD, Compliance Fintech con logging WORM, Backup Regulatorio con retención 7-10 años. Conecta Azure, Google Cloud e infraestructura on-premise. Cumplimiento ISO 27001, SOC 2, PCI DSS, GDPR. SLA 99.99% de disponibilidad con soporte humano 24/7 en español.',
+        url: '/es/',
+        type: 'page',
+        category: 'Principal',
+        tags: [
+            'inicio', 'home', 'página principal', 'landing',
+            'nube', 'nube empresarial', 'computación en la nube',
+            'precios', 'precios transparentes', 'calculadora de costos',
+            'kubernetes', 'k8s', 'contenedores', 'docker',
+            'VM', 'máquinas virtuales', 'cómputo',
+            'almacenamiento', 'almacenamiento de objetos', 'S3', 'almacenamiento de bloques',
+            'IA', 'inteligencia artificial', 'LLM', 'machine learning', 'ML', 'GPU',
+            'multinube', 'multi-nube', 'nube híbrida', 'Azure', 'GCP', 'AWS',
+            'backup', 'recuperación de desastres', 'DR', 'BCP', 'DRaaS',
+            'cumplimiento', 'ISO 27001', 'SOC 2', 'PCI DSS', 'GDPR', 'CNBV',
+            'soporte', '24/7', 'soporte humano', 'atención al cliente',
+            'SLA', 'disponibilidad', '99.99%', 'uptime',
+            'seguridad', 'firewall', 'DDoS', 'anti-DDoS', 'WAF',
+            'DevOps', 'CI/CD', 'GitOps', 'observabilidad',
+            'fintech', 'retail', 'medios', 'casos de uso'
+        ],
+        locale: 'es',
+        priority: 10
+    },
     // Servicios principales
     {
         id: 'service-cloud-solutions-es',
@@ -161,6 +219,35 @@ export const searchDataES: SearchItem[] = [
 
 
 export const searchDataFR: SearchItem[] = [
+    // Página principal (Home)
+    {
+        id: 'page-home-fr',
+        title: 'Accueil | Ignia Cloud',
+        description: 'Cloud d\'entreprise avec tarification transparente et support humain 24/7',
+        content: 'Transformez votre entreprise avec Ignia Cloud. Performance d\'entreprise, sécurité anti-DDoS intégrée, opération multicloud sans friction. Machines Virtuelles, Kubernetes, Stockage d\'Objets, Équilibreurs de Charge, Pare-feu Cloud, Sauvegarde en tant que Service. IA et LLMs prêts pour la production avec GPUs et hébergement de modèles privés. BCP/DRaaS avec RTO <15 minutes, Kubernetes DevOps avec pipelines CI/CD, Conformité Fintech avec journalisation WORM, Sauvegarde Réglementaire avec rétention 7-10 ans. Connectez Azure, Google Cloud et infrastructure sur site. Conformité ISO 27001, SOC 2, PCI DSS, RGPD. SLA 99,99% de disponibilité avec support humain 24/7.',
+        url: '/fr/',
+        type: 'page',
+        category: 'Principal',
+        tags: [
+            'accueil', 'home', 'page principale', 'landing',
+            'cloud', 'cloud d\'entreprise', 'informatique en nuage',
+            'tarification', 'tarification transparente', 'calculateur de coûts',
+            'kubernetes', 'k8s', 'conteneurs', 'docker',
+            'VM', 'machines virtuelles', 'calcul',
+            'stockage', 'stockage d\'objets', 'S3', 'stockage de blocs',
+            'IA', 'intelligence artificielle', 'LLM', 'machine learning', 'ML', 'GPU',
+            'multicloud', 'multi-cloud', 'cloud hybride', 'Azure', 'GCP', 'AWS',
+            'sauvegarde', 'reprise après sinistre', 'DR', 'BCP', 'DRaaS',
+            'conformité', 'ISO 27001', 'SOC 2', 'PCI DSS', 'RGPD', 'CNBV',
+            'support', '24/7', 'support humain', 'service client',
+            'SLA', 'disponibilité', '99,99%', 'uptime',
+            'sécurité', 'pare-feu', 'DDoS', 'anti-DDoS', 'WAF',
+            'DevOps', 'CI/CD', 'GitOps', 'observabilité',
+            'fintech', 'retail', 'médias', 'cas d\'usage'
+        ],
+        locale: 'fr',
+        priority: 10
+    },
     // Servicios principales
     {
         id: 'service-cloud-solutions-fr',
