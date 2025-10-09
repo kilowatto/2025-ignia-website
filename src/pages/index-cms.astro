@@ -1,0 +1,285 @@
+---
+/**
+ * Index CMS-powered - English (Default)
+ * Renderiza contenido desde Markdown vía Content Collections
+ * 
+ * Siguiendo arquitecture.md:
+ * - §5: i18n (astro-i18n + Content Collections)
+ * - §2: JS mínimo, performance-first
+ * - §9: SEO (title, description desde frontmatter)
+ */
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const locale = 'en';
+
+// Obtener la página Home desde Content Collection
+const pages = await getCollection('pages');
+const homePage = pages.find((page) => page.data.slug === 'home' && page.id.startsWith('en/'));
+
+if (!homePage) {
+  throw new Error('Home page not found in Content Collection');
+}
+
+const { data: content } = homePage;
+
+// JSON-LD Structured Data (arquitecture.md §9)
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Ignia Cloud',
+  url: 'https://ignia.cloud',
+  logo: 'https://ignia.cloud/Ignia-blanco.svg',
+  description: content.description,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+1-XXX-XXX-XXXX',
+    contactType: 'Customer Support',
+    availableLanguage: ['English', 'Spanish', 'French'],
+    areaServed: 'Worldwide',
+  },
+};
+---
+
+<BaseLayout
+  title={content.title}
+  description={content.description}
+  locale={locale}
+  jsonLd={[jsonLdOrganization]}
+>
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero-section bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+    <div class="container mx-auto px-4 max-w-6xl text-center">
+      <h1 class="text-5xl md:text-6xl font-bold mb-6">
+        {content.hero.title}
+      </h1>
+      <p class="text-xl md:text-2xl mb-8 text-blue-100">
+        {content.hero.subtitle}
+      </p>
+      <a
+        href={content.hero.cta_url}
+        class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+      >
+        {content.hero.cta_text}
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== TRUST BAR ===== -->
+  <section class="trustbar-section py-12 bg-gray-50">
+    <div class="container mx-auto px-4 max-w-6xl text-center">
+      <h2 class="text-2xl font-semibold mb-8 text-gray-700">
+        {content.trustbar.title}
+      </h2>
+      <div class="flex flex-wrap justify-center items-center gap-8">
+        {
+          content.trustbar.logos.map((logo) => (
+            <div class="w-32 h-16 flex items-center justify-center">
+              {logo.url ? (
+                <a href={logo.url} target="_blank" rel="noopener noreferrer">
+                  <img src={logo.logo} alt={logo.name} class="max-h-full max-w-full opacity-60 hover:opacity-100 transition-opacity" />
+                </a>
+              ) : (
+                <img src={logo.logo} alt={logo.name} class="max-h-full max-w-full opacity-60" />
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES SECTION ===== -->
+  <section class="features-section py-20">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">{content.features.section_title}</h2>
+        {content.features.section_subtitle && (
+          <p class="text-xl text-gray-600">{content.features.section_subtitle}</p>
+        )}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {
+          content.features.items.map((feature) => (
+            <div class="feature-card p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+              <div class="text-4xl mb-4">
+                {/* Aquí iría el componente de ícono */}
+                <span class="inline-block w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  📦
+                </span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">{feature.title}</h3>
+              <p class="text-gray-600">{feature.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CLOUD SOLUTIONS ===== -->
+  <section class="cloud-solutions-section py-20 bg-gray-50">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">{content.cloud_solutions.section_title}</h2>
+        <p class="text-xl text-gray-600">{content.cloud_solutions.description}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+          content.cloud_solutions.solutions.map((solution) => (
+            <a
+              href={solution.url}
+              class="solution-card p-6 bg-white border border-gray-200 rounded-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            >
+              {solution.image && (
+                <div class="mb-4">
+                  <img src={solution.image} alt={solution.name} class="w-16 h-16" loading="lazy" />
+                </div>
+              )}
+              <h3 class="text-xl font-semibold mb-2">{solution.name}</h3>
+              <p class="text-gray-600">{solution.short_description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AI SECTION ===== -->
+  <section class="ai-section py-20 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+    <div class="container mx-auto px-4 max-w-4xl text-center">
+      <h2 class="text-4xl font-bold mb-6">{content.ai_section.title}</h2>
+      <p class="text-xl mb-8 text-purple-100">{content.ai_section.description}</p>
+      <a
+        href={content.ai_section.cta_url}
+        class="inline-block bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
+      >
+        {content.ai_section.cta_text}
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== SECURITY SECTION ===== -->
+  <section class="security-section py-20">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <h2 class="text-4xl font-bold text-center mb-12">{content.security.title}</h2>
+      <div class="flex flex-wrap justify-center items-center gap-12">
+        {
+          content.security.certifications.map((cert) => (
+            <div class="certification-badge text-center">
+              <img src={cert.logo} alt={cert.name} class="w-24 h-24 mx-auto mb-3" loading="lazy" />
+              <p class="font-semibold text-gray-700">{cert.name}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING SECTION ===== -->
+  <section class="pricing-section py-20 bg-gray-50">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">{content.pricing.title}</h2>
+        <p class="text-xl text-gray-600">{content.pricing.description}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {
+          content.pricing.plans.map((plan) => (
+            <div
+              class={`pricing-card p-8 bg-white rounded-lg border-2 ${
+                plan.featured ? 'border-blue-500 shadow-xl scale-105' : 'border-gray-200'
+              }`}
+            >
+              {plan.featured && (
+                <div class="text-xs font-semibold text-blue-600 uppercase mb-2">Popular</div>
+              )}
+              <h3 class="text-2xl font-bold mb-2">{plan.name}</h3>
+              <div class="mb-4">
+                <span class="text-4xl font-bold">{plan.price}</span>
+                {plan.period && <span class="text-gray-600">{plan.period}</span>}
+              </div>
+              <p class="text-gray-600 mb-6">{plan.description}</p>
+              <ul class="space-y-3 mb-8">
+                {plan.features.map((feature) => (
+                  <li class="flex items-start">
+                    <span class="text-green-500 mr-2">✓</span>
+                    <span class="text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="/en/contact/"
+                class={`block text-center px-6 py-3 rounded-lg font-semibold transition-colors ${
+                  plan.featured
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                }`}
+              >
+                Get Started
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS SECTION ===== -->
+  <section class="testimonials-section py-20">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <h2 class="text-4xl font-bold text-center mb-12">{content.testimonials.title}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {
+          content.testimonials.items.map((testimonial) => (
+            <div class="testimonial-card p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+              {testimonial.avatar && (
+                <img
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  class="w-16 h-16 rounded-full mb-4"
+                  loading="lazy"
+                />
+              )}
+              <p class="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
+              <div class="border-t pt-4">
+                <p class="font-semibold">{testimonial.name}</p>
+                <p class="text-sm text-gray-600">
+                  {testimonial.role} at {testimonial.company}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FINAL CTA ===== -->
+  <section class="final-cta-section py-20 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+    <div class="container mx-auto px-4 max-w-4xl text-center">
+      <h2 class="text-4xl font-bold mb-6">{content.final_cta.title}</h2>
+      <p class="text-xl mb-8 text-blue-100">{content.final_cta.description}</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href={content.final_cta.button_url}
+          class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+        >
+          {content.final_cta.button_text}
+        </a>
+        {content.final_cta.secondary_button_text && content.final_cta.secondary_button_url && (
+          <a
+            href={content.final_cta.secondary_button_url}
+            class="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+          >
+            {content.final_cta.secondary_button_text}
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Script para scroll animations (si está activo) -->
+  <script src="/scripts/scroll-animations.js" defer></script>
+</BaseLayout>

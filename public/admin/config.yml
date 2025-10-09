@@ -1,0 +1,219 @@
+# Configuración de Decap CMS para Ignia Cloud
+# Siguiendo estrictamente arquitecture.md (§5: i18n, §2: Principios, §9: SEO)
+
+backend:
+  name: github
+  repo: kilowatto/2025-ignia-website # IMPORTANTE: Cambiar por el repo correcto
+  branch: main
+  base_url: https://api.netlify.com # Usamos Netlify Identity (gratuito)
+  auth_endpoint: auth
+
+# Configuración de medios (imágenes, etc.)
+media_folder: "public/images/cms"
+public_folder: "/images/cms"
+
+# Idiomas soportados (arquitecture.md §5: EN/ES/FR)
+locale: "en"
+
+# IMPORTANTE: Estructura i18n con multiple_folders
+# Cada idioma tiene su propia carpeta (arquitecture.md §5)
+i18n:
+  structure: multiple_folders
+  locales: [en, es, fr]
+  default_locale: en
+
+# Colección: Páginas (Index/Home por ahora)
+collections:
+  - name: "pages"
+    label: "📄 Páginas"
+    label_singular: "Página"
+    folder: "src/content/pages"
+    create: false # Solo editamos Home (no crear nuevas páginas por ahora)
+    delete: false
+    format: "frontmatter"
+    extension: "md"
+    i18n: true # Habilitar multi-idioma
+    
+    # Identificador único por archivo
+    identifier_field: "slug"
+    
+    # Campos del frontmatter YAML
+    fields:
+      # ===== METADATOS SEO (arquitecture.md §9) =====
+      - label: "Slug"
+        name: "slug"
+        widget: "string"
+        hint: "Identificador único (ej: home, about)"
+        i18n: false # Mismo slug para todos los idiomas
+        
+      - label: "Título SEO"
+        name: "title"
+        widget: "string"
+        hint: "Aparece en <title> y resultados de búsqueda (50-60 caracteres)"
+        i18n: true
+        
+      - label: "Descripción SEO"
+        name: "description"
+        widget: "text"
+        hint: "Meta description para buscadores (150-160 caracteres)"
+        i18n: true
+        
+      - label: "Palabras clave"
+        name: "keywords"
+        widget: "list"
+        hint: "Keywords para búsqueda interna (minisearch)"
+        i18n: true
+        required: false
+      
+      # ===== SECCIÓN: HERO =====
+      - label: "🎯 Hero"
+        name: "hero"
+        widget: "object"
+        i18n: true
+        fields:
+          - { label: "Título Principal", name: "title", widget: "string", i18n: true }
+          - { label: "Subtítulo", name: "subtitle", widget: "text", i18n: true }
+          - { label: "Texto CTA", name: "cta_text", widget: "string", i18n: true }
+          - { label: "URL CTA", name: "cta_url", widget: "string", i18n: duplicate }
+          - label: "Imagen de fondo"
+            name: "background_image"
+            widget: "image"
+            required: false
+            i18n: duplicate
+            hint: "Optimizado: AVIF/WebP ≤90KB (arquitecture.md §10)"
+      
+      # ===== SECCIÓN: TRUST BAR =====
+      - label: "🏆 Trust Bar"
+        name: "trustbar"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - label: "Logos de clientes"
+            name: "logos"
+            widget: "list"
+            i18n: duplicate
+            fields:
+              - { label: "Nombre", name: "name", widget: "string" }
+              - { label: "Logo (SVG)", name: "logo", widget: "image" }
+              - { label: "URL", name: "url", widget: "string", required: false }
+      
+      # ===== SECCIÓN: FEATURES =====
+      - label: "✨ Features"
+        name: "features"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título de sección", name: "section_title", widget: "string", i18n: true }
+          - { label: "Subtítulo", name: "section_subtitle", widget: "text", i18n: true, required: false }
+          - label: "Lista de features"
+            name: "items"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Ícono", name: "icon", widget: "string", hint: "Nombre del ícono (ej: cloud, shield, rocket)" }
+              - { label: "Título", name: "title", widget: "string" }
+              - { label: "Descripción", name: "description", widget: "text" }
+      
+      # ===== SECCIÓN: CLOUD SOLUTIONS =====
+      - label: "☁️ Cloud Solutions"
+        name: "cloud_solutions"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título de sección", name: "section_title", widget: "string", i18n: true }
+          - { label: "Descripción", name: "description", widget: "text", i18n: true }
+          - label: "Soluciones"
+            name: "solutions"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Nombre", name: "name", widget: "string" }
+              - { label: "Descripción corta", name: "short_description", widget: "text" }
+              - { label: "URL", name: "url", widget: "string" }
+              - { label: "Imagen", name: "image", widget: "image", required: false }
+      
+      # ===== SECCIÓN: AI & LLMs =====
+      - label: "🤖 AI & LLMs"
+        name: "ai_section"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - { label: "Descripción", name: "description", widget: "text", i18n: true }
+          - { label: "Texto CTA", name: "cta_text", widget: "string", i18n: true }
+          - { label: "URL CTA", name: "cta_url", widget: "string", i18n: duplicate }
+      
+      # ===== SECCIÓN: SECURITY =====
+      - label: "🔒 Security"
+        name: "security"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - label: "Certificaciones"
+            name: "certifications"
+            widget: "list"
+            i18n: duplicate
+            fields:
+              - { label: "Nombre", name: "name", widget: "string" }
+              - { label: "Logo", name: "logo", widget: "image" }
+      
+      # ===== SECCIÓN: PRICING =====
+      - label: "💰 Pricing"
+        name: "pricing"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - { label: "Descripción", name: "description", widget: "text", i18n: true }
+          - label: "Planes"
+            name: "plans"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Nombre del plan", name: "name", widget: "string" }
+              - { label: "Precio", name: "price", widget: "string" }
+              - { label: "Período", name: "period", widget: "string", hint: "Ej: /mes, /año" }
+              - { label: "Descripción", name: "description", widget: "text" }
+              - { label: "Features", name: "features", widget: "list" }
+              - { label: "Destacado", name: "featured", widget: "boolean", default: false }
+      
+      # ===== SECCIÓN: TESTIMONIALS =====
+      - label: "💬 Testimonials"
+        name: "testimonials"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - label: "Testimonios"
+            name: "items"
+            widget: "list"
+            i18n: true
+            fields:
+              - { label: "Nombre del cliente", name: "name", widget: "string" }
+              - { label: "Cargo", name: "role", widget: "string" }
+              - { label: "Empresa", name: "company", widget: "string" }
+              - { label: "Testimonio", name: "quote", widget: "text" }
+              - { label: "Avatar", name: "avatar", widget: "image", required: false }
+      
+      # ===== SECCIÓN: FINAL CTA =====
+      - label: "📢 Final CTA"
+        name: "final_cta"
+        widget: "object"
+        i18n: true
+        collapsed: true
+        fields:
+          - { label: "Título", name: "title", widget: "string", i18n: true }
+          - { label: "Descripción", name: "description", widget: "text", i18n: true }
+          - { label: "Texto del botón", name: "button_text", widget: "string", i18n: true }
+          - { label: "URL del botón", name: "button_url", widget: "string", i18n: duplicate }
+          - { label: "Botón secundario (texto)", name: "secondary_button_text", widget: "string", required: false, i18n: true }
+          - { label: "Botón secundario (URL)", name: "secondary_button_url", widget: "string", required: false, i18n: duplicate }
