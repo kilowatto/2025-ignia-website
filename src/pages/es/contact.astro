@@ -1,0 +1,74 @@
+---
+/**
+ * /es/contact - Página de contacto (Español)
+ *
+ * CUMPLIMIENTO: PIPELINE_NEW_PAGE.md
+ * ✅ 1. Estructura de archivos EN/ES/FR
+ * ✅ 2. Traducciones i18n
+ * ✅ 3. Componente reutilizable
+ * ✅ 4. API routes
+ * ✅ 5. Sitemap
+ * ✅ 6. Search index
+ * ✅ 7. SEO & structured data
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContactPage from "../../components/ContactPage.astro";
+import { l, t } from "astro-i18n";
+
+const lang = "es";
+
+// JSON-LD Structured Data for ContactPage
+const jsonLdContactPage = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: t("contact.meta.title"),
+  description: t("contact.meta.description"),
+  url: "https://ignia.cloud/es/contact",
+  inLanguage: "es",
+  mainEntity: {
+    "@type": "Organization",
+    name: "Ignia Cloud",
+    url: "https://ignia.cloud",
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "Sales",
+        email: "hola@ignia.la",
+        telephone: "+52-55-5555-5555",
+        availableLanguage: ["English", "Spanish", "French"],
+        areaServed: "Worldwide",
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "09:00",
+          closes: "18:00",
+          timeZone: "America/Mexico_City",
+        },
+      },
+      {
+        "@type": "ContactPoint",
+        contactType: "Emergency Support",
+        telephone: "+52-55-5555-5555",
+        availableLanguage: ["English", "Spanish", "French"],
+        areaServed: "Worldwide",
+        hoursAvailable: "24/7",
+      },
+    ],
+  },
+};
+
+// OpenGraph metadata
+const ogImage = "https://ignia.cloud/Ignia-blanco.png";
+---
+
+<BaseLayout
+  title={t("contact.meta.title")}
+  description={t("contact.meta.description")}
+  canonicalUrl="https://ignia.cloud/es/contact"
+  ogImage={ogImage}
+  pageType="website"
+  structuredData={[jsonLdContactPage]}
+>
+  <ContactPage lang={lang} />
+</BaseLayout>

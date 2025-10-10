@@ -109,15 +109,15 @@ export const searchDataEN: SearchItem[] = [
     },
     {
         id: 'page-contact',
-        title: 'Contact Us',
-        description: 'Get in touch with our team',
-        content: 'Contact Ignia Cloud for inquiries, support, or partnership opportunities. Fill out our contact form and our team will respond within 24 hours.',
-        url: '/#contact',
+        title: 'Contact Us | Ignia Cloud',
+        description: 'Get in touch with our team or schedule a meeting',
+        content: 'Contact Ignia Cloud for inquiries, support, or partnership opportunities. Fill out our contact form or schedule a meeting with our sales team. We offer traditional contact form submissions and calendar-based appointment scheduling with Odoo integration. Our team responds within 24 hours. Available Monday to Friday, 9:00 AM to 6:00 PM Mexico City time. 24/7 emergency support available.',
+        url: '/contact',
         type: 'page',
         category: 'Support',
-        tags: ['contact', 'support', 'help', 'inquiry', 'sales'],
+        tags: ['contact', 'contacto', 'support', 'help', 'inquiry', 'sales', 'schedule', 'appointment', 'meeting', 'calendar', 'agenda', 'cita', 'reunión', 'form', 'formulario'],
         locale: 'en',
-        priority: 6
+        priority: 7
     },
 
 ];
@@ -204,15 +204,15 @@ export const searchDataES: SearchItem[] = [
     },
     {
         id: 'page-contact-es',
-        title: 'Contáctanos',
-        description: 'Ponte en contacto con nuestro equipo',
-        content: 'Contacta a Ignia Cloud para consultas, soporte u oportunidades de asociación. Completa nuestro formulario de contacto y nuestro equipo te responderá en 24 horas.',
-        url: '/es/#contact',
+        title: 'Contáctanos | Ignia Cloud',
+        description: 'Ponte en contacto con nuestro equipo o agenda una cita',
+        content: 'Contacta a Ignia Cloud para consultas, soporte u oportunidades de asociación. Completa nuestro formulario de contacto o agenda una cita con nuestro equipo comercial. Ofrecemos envío de formulario tradicional y agendamiento de citas basado en calendario con integración a Odoo. Nuestro equipo responde en 24 horas. Disponible lunes a viernes, 9:00 AM a 6:00 PM hora Ciudad de México. Soporte de emergencia 24/7 disponible.',
+        url: '/es/contact',
         type: 'page',
         category: 'Soporte',
-        tags: ['contacto', 'soporte', 'ayuda', 'consulta', 'ventas'],
+        tags: ['contacto', 'contact', 'soporte', 'ayuda', 'consulta', 'ventas', 'agendar', 'cita', 'reunión', 'calendario', 'agenda', 'meeting', 'appointment', 'formulario', 'form'],
         locale: 'es',
-        priority: 6
+        priority: 7
     },
 
 ];
@@ -288,15 +288,15 @@ export const searchDataFR: SearchItem[] = [
     },
     {
         id: 'page-contact-fr',
-        title: 'Contactez-nous',
-        description: 'Contactez notre équipe',
-        content: 'Contactez Ignia Cloud pour des demandes de renseignements, du support ou des opportunités de partenariat. Remplissez notre formulaire de contact et notre équipe répondra dans les 24 heures.',
-        url: '/fr/#contact',
+        title: 'Contactez-nous | Ignia Cloud',
+        description: 'Contactez notre équipe ou planifiez un rendez-vous',
+        content: 'Contactez Ignia Cloud pour des demandes de renseignements, du support ou des opportunités de partenariat. Remplissez notre formulaire de contact ou planifiez un rendez-vous avec notre équipe commerciale. Nous proposons un formulaire de contact traditionnel et la planification de rendez-vous via calendrier avec intégration Odoo. Notre équipe répond dans les 24 heures. Disponible du lundi au vendredi, 9h00 à 18h00 heure Mexico. Support d\'urgence 24/7 disponible.',
+        url: '/fr/contact',
         type: 'page',
         category: 'Support',
-        tags: ['contact', 'support', 'aide', 'demande', 'ventes'],
+        tags: ['contact', 'contacto', 'support', 'aide', 'demande', 'ventes', 'planifier', 'rendez-vous', 'réunion', 'calendrier', 'agenda', 'meeting', 'appointment', 'formulaire', 'form'],
         locale: 'fr',
-        priority: 6
+        priority: 7
     }
 ];
 

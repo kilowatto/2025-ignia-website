@@ -31,6 +31,7 @@ const pages = [
     { path: '/', changefreq: 'daily', priority: 1.0 },          // Home (añadido: 2025-10-08)
     { path: '/search', changefreq: 'monthly', priority: 0.5 },  // Búsqueda
     { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page (añadido: 2025-10-06)
+    { path: '/contact', changefreq: 'weekly', priority: 0.7 },  // Contact Page (añadido: 2025-10-10)
     // Agregar aquí nuevas páginas según se creen
 ];
 

@@ -1,0 +1,773 @@
+---
+/**
+ * ContactPage.astro - Página de contacto con doble funcionalidad
+ *
+ * PROPÓSITO:
+ * Componente reutilizable para /contact en 3 idiomas (EN/ES/FR) con:
+ * 1. Formulario tradicional de contacto (nombre, empresa, email, teléfono, mensaje)
+ * 2. Sistema de agendamiento de citas con equipo comercial (Odoo Calendar)
+ *
+ * ARQUITECTURA:
+ * - Layout de 2 columnas en desktop, stacked en mobile
+ * - Validación client-side mínima (HTML5 + JS progresivo)
+ * - Submit a API routes: /api/contact/submit y /api/contact/schedule
+ * - Mensajes de éxito/error inline
+ *
+ * CUMPLIMIENTO:
+ * §2 JavaScript Mínimo: Solo validación progresiva y submit handlers
+ * §5 i18n: Todos los textos desde i18n/*.json
+ * §7 Accesibilidad: WCAG 2.2 AA (labels, ARIA, keyboard nav)
+ * §11 Formularios: HTML5 validation + server-side en API
+ * §14 Performance: <300KB, lazy JS, critical CSS inline
+ */
+
+import { l, t } from "astro-i18n";
+
+interface Props {
+  lang: "en" | "es" | "fr";
+}
+
+const { lang } = Astro.props;
+---
+
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
+>
+  <!-- Hero Section -->
+  <section
+    class="bg-gradient-to-r from-ignia-primary to-ignia-secondary py-16 text-white"
+  >
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        {t("contact.hero.title")}
+      </h1>
+      <p class="text-xl text-slate-100 max-w-2xl">
+        {t("contact.hero.subtitle")}
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Content: Forms Grid -->
+  <section class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+      <!-- Contact Form -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            {t("contact.form.title")}
+          </h2>
+          <p class="text-slate-600 dark:text-slate-300">
+            {t("contact.form.subtitle")}
+          </p>
+        </div>
+
+        <form id="contact-form" class="space-y-6" novalidate>
+          <!-- Name -->
+          <div>
+            <label
+              for="contact-name"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.form.name")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="contact-name"
+              name="name"
+              required
+              minlength="2"
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.form.namePlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="contact-name"
+            >
+              {t("contact.form.nameError")}
+            </p>
+          </div>
+
+          <!-- Company (Optional) -->
+          <div>
+            <label
+              for="contact-company"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.form.company")}
+            </label>
+            <input
+              type="text"
+              id="contact-company"
+              name="company"
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.form.companyPlaceholder")}
+            />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label
+              for="contact-email"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.form.email")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              required
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.form.emailPlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="contact-email"
+            >
+              {t("contact.form.emailError")}
+            </p>
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label
+              for="contact-phone"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.form.phone")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              id="contact-phone"
+              name="phone"
+              required
+              maxlength="20"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.form.phonePlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="contact-phone"
+            >
+              {t("contact.form.phoneError")}
+            </p>
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label
+              for="contact-message"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.form.message")}
+              <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="contact-message"
+              name="message"
+              required
+              minlength="10"
+              maxlength="1000"
+              rows="5"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors resize-y"
+              placeholder={t("contact.form.messagePlaceholder")}
+              aria-required="true"></textarea>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("contact.form.messageHint")}
+            </p>
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="contact-message"
+            >
+              {t("contact.form.messageError")}
+            </p>
+          </div>
+
+          <!-- Consent Checkbox -->
+          <div class="flex items-start">
+            <input
+              type="checkbox"
+              id="contact-consent"
+              name="consent"
+              required
+              class="mt-1 h-4 w-4 text-ignia-primary border-slate-300 rounded focus:ring-2 focus:ring-ignia-primary"
+              aria-required="true"
+            />
+            <label
+              for="contact-consent"
+              class="ml-3 text-sm text-slate-600 dark:text-slate-300"
+            >
+              {t("contact.form.consent")}
+              <span class="text-red-500">*</span>
+            </label>
+          </div>
+          <p class="text-sm text-red-600 hidden" data-error="contact-consent">
+            {t("contact.form.consentError")}
+          </p>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-ignia-primary to-ignia-secondary text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ignia-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            data-submit-btn="contact"
+          >
+            {t("contact.form.submit")}
+          </button>
+
+          <!-- Success/Error Messages -->
+          <div
+            class="hidden"
+            data-message="contact-success"
+            role="alert"
+            aria-live="polite"
+          >
+            <div
+              class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
+            >
+              <p class="text-green-800 dark:text-green-200 font-medium">
+                {t("contact.form.successTitle")}
+              </p>
+              <p class="text-green-700 dark:text-green-300 text-sm mt-1">
+                {t("contact.form.successMessage")}
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="hidden"
+            data-message="contact-error"
+            role="alert"
+            aria-live="assertive"
+          >
+            <div
+              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            >
+              <p class="text-red-800 dark:text-red-200 font-medium">
+                {t("contact.form.errorTitle")}
+              </p>
+              <p
+                class="text-red-700 dark:text-red-300 text-sm mt-1"
+                data-error-text
+              >
+                {t("contact.form.errorMessage")}
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Schedule Meeting Form -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            {t("contact.schedule.title")}
+          </h2>
+          <p class="text-slate-600 dark:text-slate-300">
+            {t("contact.schedule.subtitle")}
+          </p>
+        </div>
+
+        <form id="schedule-form" class="space-y-6" novalidate>
+          <!-- Name -->
+          <div>
+            <label
+              for="schedule-name"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.name")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="schedule-name"
+              name="name"
+              required
+              minlength="2"
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.schedule.namePlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-name"
+            >
+              {t("contact.schedule.nameError")}
+            </p>
+          </div>
+
+          <!-- Company (Required) -->
+          <div>
+            <label
+              for="schedule-company"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.company")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="schedule-company"
+              name="company"
+              required
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.schedule.companyPlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-company"
+            >
+              {t("contact.schedule.companyError")}
+            </p>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label
+              for="schedule-email"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.email")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="schedule-email"
+              name="email"
+              required
+              maxlength="100"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.schedule.emailPlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-email"
+            >
+              {t("contact.schedule.emailError")}
+            </p>
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label
+              for="schedule-phone"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.phone")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              id="schedule-phone"
+              name="phone"
+              required
+              maxlength="20"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              placeholder={t("contact.schedule.phonePlaceholder")}
+              aria-required="true"
+            />
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-phone"
+            >
+              {t("contact.schedule.phoneError")}
+            </p>
+          </div>
+
+          <!-- Preferred Date -->
+          <div>
+            <label
+              for="schedule-date"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.date")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              id="schedule-date"
+              name="date"
+              required
+              min={new Date().toISOString().split("T")[0]}
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              aria-required="true"
+            />
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("contact.schedule.dateHint")}
+            </p>
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-date"
+            >
+              {t("contact.schedule.dateError")}
+            </p>
+          </div>
+
+          <!-- Preferred Time -->
+          <div>
+            <label
+              for="schedule-time"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.time")}
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="time"
+              id="schedule-time"
+              name="time"
+              required
+              min="09:00"
+              max="18:00"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
+              aria-required="true"
+            />
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("contact.schedule.timeHint")}
+            </p>
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-time"
+            >
+              {t("contact.schedule.timeError")}
+            </p>
+          </div>
+
+          <!-- Topic -->
+          <div>
+            <label
+              for="schedule-topic"
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >
+              {t("contact.schedule.topic")}
+              <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="schedule-topic"
+              name="topic"
+              required
+              minlength="10"
+              maxlength="500"
+              rows="4"
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors resize-y"
+              placeholder={t("contact.schedule.topicPlaceholder")}
+              aria-required="true"></textarea>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              {t("contact.schedule.topicHint")}
+            </p>
+            <p
+              class="text-sm text-red-600 mt-1 hidden"
+              data-error="schedule-topic"
+            >
+              {t("contact.schedule.topicError")}
+            </p>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-ignia-secondary to-ignia-primary text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ignia-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+            data-submit-btn="schedule"
+          >
+            {t("contact.schedule.submit")}
+          </button>
+
+          <!-- Success/Error Messages -->
+          <div
+            class="hidden"
+            data-message="schedule-success"
+            role="alert"
+            aria-live="polite"
+          >
+            <div
+              class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
+            >
+              <p class="text-green-800 dark:text-green-200 font-medium">
+                {t("contact.schedule.successTitle")}
+              </p>
+              <p class="text-green-700 dark:text-green-300 text-sm mt-1">
+                {t("contact.schedule.successMessage")}
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="hidden"
+            data-message="schedule-error"
+            role="alert"
+            aria-live="assertive"
+          >
+            <div
+              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+            >
+              <p class="text-red-800 dark:text-red-200 font-medium">
+                {t("contact.schedule.errorTitle")}
+              </p>
+              <p
+                class="text-red-700 dark:text-red-300 text-sm mt-1"
+                data-error-text
+              >
+                {t("contact.schedule.errorMessage")}
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contact Information Sidebar -->
+    <div class="max-w-7xl mx-auto mt-12">
+      <div
+        class="bg-gradient-to-r from-slate-800 to-slate-900 dark:from-slate-900 dark:to-black rounded-xl shadow-lg p-8 text-white"
+      >
+        <h3 class="text-2xl font-bold mb-6">{t("contact.info.title")}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div>
+            <h4 class="font-semibold mb-2">{t("contact.info.email")}</h4>
+            <a
+              href="mailto:hola@ignia.la"
+              class="text-ignia-secondary hover:underline"
+            >
+              hola@ignia.la
+            </a>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">{t("contact.info.phone")}</h4>
+            <a
+              href="tel:+525555555555"
+              class="text-ignia-secondary hover:underline"
+            >
+              +52 55 5555 5555
+            </a>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">{t("contact.info.hours")}</h4>
+            <p class="text-slate-300">{t("contact.info.hoursValue")}</p>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">{t("contact.info.emergency")}</h4>
+            <p class="text-slate-300">{t("contact.info.emergencyValue")}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  /**
+   * Progressive enhancement para formularios de contacto
+   *
+   * CUMPLIMIENTO:
+   * §2 JavaScript Mínimo: Solo validación y AJAX, funciona sin JS (HTML5 validation)
+   * §7 Accesibilidad: Focus management, ARIA live regions, keyboard nav
+   */
+
+  // Contact Form Handler
+  const contactForm = document.getElementById(
+    "contact-form"
+  ) as HTMLFormElement;
+  const contactBtn = contactForm?.querySelector(
+    '[data-submit-btn="contact"]'
+  ) as HTMLButtonElement;
+
+  contactForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Clear previous errors
+    contactForm
+      .querySelectorAll("[data-error]")
+      .forEach((el) => el.classList.add("hidden"));
+    contactForm
+      .querySelectorAll("[data-message]")
+      .forEach((el) => el.classList.add("hidden"));
+
+    // Get form data
+    const formData = new FormData(contactForm);
+    const data = Object.fromEntries(formData.entries());
+
+    // Basic validation
+    if (
+      !data.name ||
+      !data.email ||
+      !data.phone ||
+      !data.message ||
+      !data.consent
+    ) {
+      Object.keys(data).forEach((key) => {
+        if (
+          !data[key] &&
+          contactForm.querySelector(`[data-error="contact-${key}"]`)
+        ) {
+          contactForm
+            .querySelector(`[data-error="contact-${key}"]`)
+            ?.classList.remove("hidden");
+        }
+      });
+      return;
+    }
+
+    // Disable button
+    contactBtn.disabled = true;
+    contactBtn.textContent = contactBtn.textContent?.includes("Sending")
+      ? "Sending..."
+      : contactBtn.textContent?.includes("Enviando")
+        ? "Enviando..."
+        : "Envoi...";
+
+    try {
+      const response = await fetch("/api/contact/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          locale: document.documentElement.lang || "en",
+          source: "contact_page",
+          page: window.location.pathname,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        contactForm
+          .querySelector('[data-message="contact-success"]')
+          ?.classList.remove("hidden");
+        contactForm.reset();
+        // Scroll to success message
+        contactForm
+          .querySelector('[data-message="contact-success"]')
+          ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        const errorMsg = contactForm.querySelector(
+          '[data-message="contact-error"]'
+        );
+        const errorText = errorMsg?.querySelector("[data-error-text]");
+        if (errorText) errorText.textContent = result.error || "Unknown error";
+        errorMsg?.classList.remove("hidden");
+      }
+    } catch (error) {
+      contactForm
+        .querySelector('[data-message="contact-error"]')
+        ?.classList.remove("hidden");
+    } finally {
+      contactBtn.disabled = false;
+      contactBtn.textContent = contactBtn.textContent?.includes("Sending")
+        ? "Send Message"
+        : contactBtn.textContent?.includes("Enviando")
+          ? "Enviar Mensaje"
+          : "Envoyer le message";
+    }
+  });
+
+  // Schedule Form Handler
+  const scheduleForm = document.getElementById(
+    "schedule-form"
+  ) as HTMLFormElement;
+  const scheduleBtn = scheduleForm?.querySelector(
+    '[data-submit-btn="schedule"]'
+  ) as HTMLButtonElement;
+
+  scheduleForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Clear previous errors
+    scheduleForm
+      .querySelectorAll("[data-error]")
+      .forEach((el) => el.classList.add("hidden"));
+    scheduleForm
+      .querySelectorAll("[data-message]")
+      .forEach((el) => el.classList.add("hidden"));
+
+    // Get form data
+    const formData = new FormData(scheduleForm);
+    const data = Object.fromEntries(formData.entries());
+
+    // Basic validation
+    if (
+      !data.name ||
+      !data.company ||
+      !data.email ||
+      !data.phone ||
+      !data.date ||
+      !data.time ||
+      !data.topic
+    ) {
+      Object.keys(data).forEach((key) => {
+        if (
+          !data[key] &&
+          scheduleForm.querySelector(`[data-error="schedule-${key}"]`)
+        ) {
+          scheduleForm
+            .querySelector(`[data-error="schedule-${key}"]`)
+            ?.classList.remove("hidden");
+        }
+      });
+      return;
+    }
+
+    // Disable button
+    scheduleBtn.disabled = true;
+    scheduleBtn.textContent = scheduleBtn.textContent?.includes("Schedule")
+      ? "Scheduling..."
+      : scheduleBtn.textContent?.includes("Agendar")
+        ? "Agendando..."
+        : "Planification...";
+
+    try {
+      const response = await fetch("/api/contact/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          locale: document.documentElement.lang || "en",
+          source: "contact_page",
+          page: window.location.pathname,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        scheduleForm
+          .querySelector('[data-message="schedule-success"]')
+          ?.classList.remove("hidden");
+        scheduleForm.reset();
+        // Scroll to success message
+        scheduleForm
+          .querySelector('[data-message="schedule-success"]')
+          ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        const errorMsg = scheduleForm.querySelector(
+          '[data-message="schedule-error"]'
+        );
+        const errorText = errorMsg?.querySelector("[data-error-text]");
+        if (errorText) errorText.textContent = result.error || "Unknown error";
+        errorMsg?.classList.remove("hidden");
+      }
+    } catch (error) {
+      scheduleForm
+        .querySelector('[data-message="schedule-error"]')
+        ?.classList.remove("hidden");
+    } finally {
+      scheduleBtn.disabled = false;
+      scheduleBtn.textContent = scheduleBtn.textContent?.includes("Scheduling")
+        ? "Schedule Meeting"
+        : scheduleBtn.textContent?.includes("Agendando")
+          ? "Agendar Cita"
+          : "Planifier un rendez-vous";
+    }
+  });
+</script>

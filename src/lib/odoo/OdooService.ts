@@ -510,4 +510,70 @@ export class OdooService {
     const normalizedLocale = locale.toLowerCase().substring(0, 2);
     return ODOO_DEFAULTS.LOCALE_MAP[normalizedLocale as keyof typeof ODOO_DEFAULTS.LOCALE_MAP] || 'en_US';
   }
+
+  /**
+   * Crea un evento de calendario en Odoo Calendar
+   * 
+   * PROPÓSITO:
+   * Agenda una cita/meeting en el calendario de Odoo asignado al equipo de ventas.
+   * Usado para solicitudes de reuniones desde el formulario de contacto web.
+   * 
+   * MODELO ODOO:
+   * - Model: calendar.event
+   * - Campos:
+   *   - name: Título del evento
+   *   - start: Fecha/hora inicio (formato: 'YYYY-MM-DD HH:MM:SS')
+   *   - stop: Fecha/hora fin
+   *   - partner_ids: IDs de contactos invitados (formato: [[6, 0, [id1, id2]]])
+   *   - user_id: ID del usuario responsable (sales team)
+   *   - description: Detalles del evento
+   *   - allday: false para eventos con hora específica
+   *   - duration: Duración en horas (float)
+   * 
+   * @param data - Datos del evento de calendario
+   * @returns {Promise<OdooResponse<number>>} ID del evento creado
+   */
+  async createCalendarEvent(data: {
+    name: string;
+    start: string;
+    stop: string;
+    partnerId: number;
+    userId?: number;
+    description?: string;
+    duration?: number;
+    location?: string;
+  }): Promise<OdooResponse<number>> {
+    try {
+      const eventData = {
+        name: data.name,
+        start: data.start,
+        stop: data.stop,
+        allday: false,
+        duration: data.duration || 1.0,
+        partner_ids: [[6, 0, [data.partnerId]]], // many2many format
+        user_id: data.userId || 2, // Default: admin user
+        description: data.description || '',
+        location: data.location || 'Virtual Meeting',
+      };
+
+      const eventId = await this.client.execute<number>(
+        'calendar.event',
+        'create',
+        [eventData]
+      );
+
+      return {
+        success: true,
+        data: eventId,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: 'CREATE_CALENDAR_EVENT_FAILED',
+          message: error instanceof Error ? error.message : 'Error desconocido al crear evento',
+        },
+      };
+    }
+  }
 }
