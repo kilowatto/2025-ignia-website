@@ -41,7 +41,6 @@ if (!globalThis.__astroI18nMiddleware) {
  * - /sitemap*.xml (sitemaps multiidioma)
  * - /status (página de monitoreo, sin i18n)
  * - /api/* (API endpoints)
- * - /admin* (Decap CMS admin interface)
  * - /_* (rutas internas de Astro)
  * 
  * Estas rutas deben procesarse sin i18n para funcionar correctamente
@@ -55,10 +54,8 @@ const excludeFromI18n = defineMiddleware(async (context, next) => {
         pathname === '/robots.txt' ||
         pathname === '/status' ||
         pathname.startsWith('/api/') ||
-        pathname.startsWith('/admin') ||
         pathname.startsWith('/sitemap') ||
         pathname.endsWith('.xml') ||
-        pathname.endsWith('.yml') ||
         pathname.startsWith('/_')
     ) {
         return next();
