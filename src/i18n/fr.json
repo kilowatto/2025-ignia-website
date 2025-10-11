@@ -612,15 +612,31 @@
         "error_message": "Nous n'avons pas pu planifier votre réunion. Veuillez réessayer ou nous contacter directement à sales@ignia.cloud"
       },
       "info": {
-        "title": "Autres moyens de nous joindre",
-        "email_label": "Email",
-        "email_value": "contact@ignia.cloud",
-        "phone_label": "Téléphone",
-        "phone_value": "+52 55 1234 5678",
-        "hours_label": "Heures d'Ouverture",
-        "hours_value": "Lundi au vendredi, 9h00 - 18h00 (heure Mexico)",
-        "emergency_label": "Support d'Urgence 24/7",
-        "emergency_value": "Disponible pour les clients enterprise"
+        "title": "Nos Bureaux",
+        "subtitle": "Visitez-nous ou contactez-nous",
+        "corporate": {
+          "label": "Siège Social",
+          "address_line1": "28789 Hardin Store RD.",
+          "address_line2": "Suite 230, Magnolia TX",
+          "address_line3": "77354",
+          "country": "États-Unis"
+        },
+        "mexico_corp": {
+          "label": "Bureau Corporatif Mexique",
+          "address_line1": "Nueva York 32 Int 901",
+          "address_line2": "Napoles, Benito Juárez",
+          "address_line3": "03810",
+          "country": "Mexico City"
+        },
+        "mexico_sales": {
+          "label": "Bureau des Ventes Mexique",
+          "address_line1": "Av. Insurgentes Centro 1458",
+          "address_line2": "Actipan, Benito Juárez",
+          "address_line3": "03230 Ciudad de México, CDMX",
+          "phone": "+52 55 6952 7498",
+          "whatsapp": "+52 55 6952 7498",
+          "country": "Mexique"
+        }
       }
     },
     "pricingCTA": {

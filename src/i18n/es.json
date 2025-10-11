@@ -602,15 +602,31 @@
         "error_message": "No pudimos agendar tu reunión. Por favor intenta de nuevo o contáctanos directamente a ventas@ignia.cloud"
       },
       "info": {
-        "title": "Otras formas de contactarnos",
-        "email_label": "Correo Electrónico",
-        "email_value": "contacto@ignia.cloud",
-        "phone_label": "Teléfono",
-        "phone_value": "+52 55 1234 5678",
-        "hours_label": "Horario de Atención",
-        "hours_value": "Lunes a viernes, 9:00 AM - 6:00 PM (hora Ciudad de México)",
-        "emergency_label": "Soporte 24/7 para Emergencias",
-        "emergency_value": "Disponible para clientes enterprise"
+        "title": "Nuestras Oficinas",
+        "subtitle": "Visítanos o ponte en contacto",
+        "corporate": {
+          "label": "Oficina Corporativa",
+          "address_line1": "28789 Hardin Store RD.",
+          "address_line2": "Suite 230, Magnolia TX",
+          "address_line3": "77354",
+          "country": "Estados Unidos"
+        },
+        "mexico_corp": {
+          "label": "Corporativo México",
+          "address_line1": "Nueva York 32 Int 901",
+          "address_line2": "Napoles, Benito Juárez",
+          "address_line3": "03810",
+          "country": "Ciudad de México"
+        },
+        "mexico_sales": {
+          "label": "Oficina de Ventas México",
+          "address_line1": "Av. Insurgentes Centro 1458",
+          "address_line2": "Actipan, Benito Juárez",
+          "address_line3": "03230 Ciudad de México, CDMX",
+          "phone": "+52 55 6952 7498",
+          "whatsapp": "+52 55 6952 7498",
+          "country": "México"
+        }
       }
     },
     "pricingCTA": {

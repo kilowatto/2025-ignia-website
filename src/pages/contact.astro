@@ -24,12 +24,12 @@ const translations: Record<string, string> = {};
 const contactData = enTranslations.home.contact;
 
 // Helper to flatten nested object
-function flattenObject(obj: any, prefix = '') {
+function flattenObject(obj: any, prefix = "") {
   for (const key in obj) {
     const value = obj[key];
     const newKey = prefix ? `${prefix}.${key}` : key;
-    
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       flattenObject(value, newKey);
     } else {
       translations[newKey] = String(value);
@@ -37,7 +37,7 @@ function flattenObject(obj: any, prefix = '') {
   }
 }
 
-flattenObject(contactData, 'contact');
+flattenObject(contactData, "contact");
 
 // JSON-LD Structured Data for ContactPage
 const jsonLdContactPage = {
