@@ -68,7 +68,7 @@ const { lang } = Astro.props;
               for="contact-name"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.form.name")}
+              {t("contact.form.name_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -79,14 +79,14 @@ const { lang } = Astro.props;
               minlength="2"
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.form.namePlaceholder")}
+              placeholder={t("contact.form.name_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="contact-name"
             >
-              {t("contact.form.nameError")}
+              {t("contact.form.name_error")}
             </p>
           </div>
 
@@ -96,7 +96,7 @@ const { lang } = Astro.props;
               for="contact-company"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.form.company")}
+              {t("contact.form.company_label")}
             </label>
             <input
               type="text"
@@ -104,7 +104,7 @@ const { lang } = Astro.props;
               name="company"
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.form.companyPlaceholder")}
+              placeholder={t("contact.form.company_placeholder")}
             />
           </div>
 
@@ -114,7 +114,7 @@ const { lang } = Astro.props;
               for="contact-email"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.form.email")}
+              {t("contact.form.email_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -124,14 +124,14 @@ const { lang } = Astro.props;
               required
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.form.emailPlaceholder")}
+              placeholder={t("contact.form.email_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="contact-email"
             >
-              {t("contact.form.emailError")}
+              {t("contact.form.email_error")}
             </p>
           </div>
 
@@ -141,7 +141,7 @@ const { lang } = Astro.props;
               for="contact-phone"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.form.phone")}
+              {t("contact.form.phone_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -151,14 +151,14 @@ const { lang } = Astro.props;
               required
               maxlength="20"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.form.phonePlaceholder")}
+              placeholder={t("contact.form.phone_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="contact-phone"
             >
-              {t("contact.form.phoneError")}
+              {t("contact.form.phone_error")}
             </p>
           </div>
 
@@ -168,7 +168,7 @@ const { lang } = Astro.props;
               for="contact-message"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.form.message")}
+              {t("contact.form.message_label")}
               <span class="text-red-500">*</span>
             </label>
             <textarea
@@ -179,16 +179,16 @@ const { lang } = Astro.props;
               maxlength="1000"
               rows="5"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors resize-y"
-              placeholder={t("contact.form.messagePlaceholder")}
+              placeholder={t("contact.form.message_placeholder")}
               aria-required="true"></textarea>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {t("contact.form.messageHint")}
+              Min. 10 characters, max. 1000
             </p>
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="contact-message"
             >
-              {t("contact.form.messageError")}
+              {t("contact.form.message_error")}
             </p>
           </div>
 
@@ -206,12 +206,12 @@ const { lang } = Astro.props;
               for="contact-consent"
               class="ml-3 text-sm text-slate-600 dark:text-slate-300"
             >
-              {t("contact.form.consent")}
+              {t("contact.form.consent_label")}
               <span class="text-red-500">*</span>
             </label>
           </div>
           <p class="text-sm text-red-600 hidden" data-error="contact-consent">
-            {t("contact.form.consentError")}
+            {t("contact.form.consent_error")}
           </p>
 
           <!-- Submit Button -->
@@ -220,7 +220,7 @@ const { lang } = Astro.props;
             class="w-full bg-gradient-to-r from-ignia-primary to-ignia-secondary text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ignia-primary disabled:opacity-50 disabled:cursor-not-allowed"
             data-submit-btn="contact"
           >
-            {t("contact.form.submit")}
+            {t("contact.form.button_submit")}
           </button>
 
           <!-- Success/Error Messages -->
@@ -234,10 +234,10 @@ const { lang } = Astro.props;
               class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
             >
               <p class="text-green-800 dark:text-green-200 font-medium">
-                {t("contact.form.successTitle")}
+                {t("contact.form.success_title")}
               </p>
               <p class="text-green-700 dark:text-green-300 text-sm mt-1">
-                {t("contact.form.successMessage")}
+                {t("contact.form.success_message")}
               </p>
             </div>
           </div>
@@ -252,13 +252,13 @@ const { lang } = Astro.props;
               class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
             >
               <p class="text-red-800 dark:text-red-200 font-medium">
-                {t("contact.form.errorTitle")}
+                {t("contact.form.error_title")}
               </p>
               <p
                 class="text-red-700 dark:text-red-300 text-sm mt-1"
                 data-error-text
               >
-                {t("contact.form.errorMessage")}
+                {t("contact.form.error_message")}
               </p>
             </div>
           </div>
@@ -283,7 +283,7 @@ const { lang } = Astro.props;
               for="schedule-name"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.name")}
+              {t("contact.schedule.name_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -294,14 +294,14 @@ const { lang } = Astro.props;
               minlength="2"
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.schedule.namePlaceholder")}
+              placeholder={t("contact.schedule.name_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-name"
             >
-              {t("contact.schedule.nameError")}
+              {t("contact.schedule.name_error")}
             </p>
           </div>
 
@@ -311,7 +311,7 @@ const { lang } = Astro.props;
               for="schedule-company"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.company")}
+              {t("contact.schedule.company_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -321,14 +321,14 @@ const { lang } = Astro.props;
               required
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.schedule.companyPlaceholder")}
+              placeholder={t("contact.schedule.company_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-company"
             >
-              {t("contact.schedule.companyError")}
+              {t("contact.schedule.company_error")}
             </p>
           </div>
 
@@ -338,7 +338,7 @@ const { lang } = Astro.props;
               for="schedule-email"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.email")}
+              {t("contact.schedule.email_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -348,14 +348,14 @@ const { lang } = Astro.props;
               required
               maxlength="100"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.schedule.emailPlaceholder")}
+              placeholder={t("contact.schedule.email_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-email"
             >
-              {t("contact.schedule.emailError")}
+              {t("contact.schedule.email_error")}
             </p>
           </div>
 
@@ -365,7 +365,7 @@ const { lang } = Astro.props;
               for="schedule-phone"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.phone")}
+              {t("contact.schedule.phone_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -375,14 +375,14 @@ const { lang } = Astro.props;
               required
               maxlength="20"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors"
-              placeholder={t("contact.schedule.phonePlaceholder")}
+              placeholder={t("contact.schedule.phone_placeholder")}
               aria-required="true"
             />
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-phone"
             >
-              {t("contact.schedule.phoneError")}
+              {t("contact.schedule.phone_error")}
             </p>
           </div>
 
@@ -392,7 +392,7 @@ const { lang } = Astro.props;
               for="schedule-date"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.date")}
+              {t("contact.schedule.date_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -405,13 +405,13 @@ const { lang } = Astro.props;
               aria-required="true"
             />
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {t("contact.schedule.dateHint")}
+              Monday to Friday, 9:00 AM - 6:00 PM (Mexico City time)
             </p>
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-date"
             >
-              {t("contact.schedule.dateError")}
+              {t("contact.schedule.date_error")}
             </p>
           </div>
 
@@ -421,7 +421,7 @@ const { lang } = Astro.props;
               for="schedule-time"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.time")}
+              {t("contact.schedule.time_label")}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -435,13 +435,13 @@ const { lang } = Astro.props;
               aria-required="true"
             />
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {t("contact.schedule.timeHint")}
+              {t("contact.schedule.time_placeholder")}
             </p>
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-time"
             >
-              {t("contact.schedule.timeError")}
+              {t("contact.schedule.time_error")}
             </p>
           </div>
 
@@ -451,7 +451,7 @@ const { lang } = Astro.props;
               for="schedule-topic"
               class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              {t("contact.schedule.topic")}
+              {t("contact.schedule.topic_label")}
               <span class="text-red-500">*</span>
             </label>
             <textarea
@@ -462,16 +462,16 @@ const { lang } = Astro.props;
               maxlength="500"
               rows="4"
               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-ignia-primary focus:border-transparent dark:bg-slate-700 dark:text-white transition-colors resize-y"
-              placeholder={t("contact.schedule.topicPlaceholder")}
+              placeholder={t("contact.schedule.topic_placeholder")}
               aria-required="true"></textarea>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {t("contact.schedule.topicHint")}
+              Min. 10 characters, max. 500
             </p>
             <p
               class="text-sm text-red-600 mt-1 hidden"
               data-error="schedule-topic"
             >
-              {t("contact.schedule.topicError")}
+              {t("contact.schedule.topic_error")}
             </p>
           </div>
 
@@ -481,7 +481,7 @@ const { lang } = Astro.props;
             class="w-full bg-gradient-to-r from-ignia-secondary to-ignia-primary text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ignia-secondary disabled:opacity-50 disabled:cursor-not-allowed"
             data-submit-btn="schedule"
           >
-            {t("contact.schedule.submit")}
+            {t("contact.schedule.button_submit")}
           </button>
 
           <!-- Success/Error Messages -->
@@ -495,10 +495,10 @@ const { lang } = Astro.props;
               class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4"
             >
               <p class="text-green-800 dark:text-green-200 font-medium">
-                {t("contact.schedule.successTitle")}
+                {t("contact.schedule.success_title")}
               </p>
               <p class="text-green-700 dark:text-green-300 text-sm mt-1">
-                {t("contact.schedule.successMessage")}
+                {t("contact.schedule.success_message")}
               </p>
             </div>
           </div>
@@ -513,13 +513,13 @@ const { lang } = Astro.props;
               class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
             >
               <p class="text-red-800 dark:text-red-200 font-medium">
-                {t("contact.schedule.errorTitle")}
+                {t("contact.schedule.error_title")}
               </p>
               <p
                 class="text-red-700 dark:text-red-300 text-sm mt-1"
                 data-error-text
               >
-                {t("contact.schedule.errorMessage")}
+                {t("contact.schedule.error_message")}
               </p>
             </div>
           </div>
@@ -535,30 +535,30 @@ const { lang } = Astro.props;
         <h3 class="text-2xl font-bold mb-6">{t("contact.info.title")}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
-            <h4 class="font-semibold mb-2">{t("contact.info.email")}</h4>
+            <h4 class="font-semibold mb-2">{t("contact.info.email_label")}</h4>
             <a
               href="mailto:hola@ignia.la"
               class="text-ignia-secondary hover:underline"
             >
-              hola@ignia.la
+              {t("contact.info.email_value")}
             </a>
           </div>
           <div>
-            <h4 class="font-semibold mb-2">{t("contact.info.phone")}</h4>
+            <h4 class="font-semibold mb-2">{t("contact.info.phone_label")}</h4>
             <a
               href="tel:+525555555555"
               class="text-ignia-secondary hover:underline"
             >
-              +52 55 5555 5555
+              {t("contact.info.phone_value")}
             </a>
           </div>
           <div>
-            <h4 class="font-semibold mb-2">{t("contact.info.hours")}</h4>
-            <p class="text-slate-300">{t("contact.info.hoursValue")}</p>
+            <h4 class="font-semibold mb-2">{t("contact.info.hours_label")}</h4>
+            <p class="text-slate-300">{t("contact.info.hours_value")}</p>
           </div>
           <div>
-            <h4 class="font-semibold mb-2">{t("contact.info.emergency")}</h4>
-            <p class="text-slate-300">{t("contact.info.emergencyValue")}</p>
+            <h4 class="font-semibold mb-2">{t("contact.info.emergency_label")}</h4>
+            <p class="text-slate-300">{t("contact.info.emergency_value")}</p>
           </div>
         </div>
       </div>
