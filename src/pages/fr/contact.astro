@@ -15,8 +15,29 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContactPage from "../../components/ContactPage.astro";
 import { l, t } from "astro-i18n";
+import frTranslations from "../../i18n/fr.json";
 
 const lang = "fr";
+
+// Extract contact translations and flatten to match component usage
+const translations: Record<string, string> = {};
+const contactData = frTranslations.home.contact;
+
+// Helper to flatten nested object
+function flattenObject(obj: any, prefix = '') {
+  for (const key in obj) {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+    
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      flattenObject(value, newKey);
+    } else {
+      translations[newKey] = String(value);
+    }
+  }
+}
+
+flattenObject(contactData, 'contact');
 
 // JSON-LD Structured Data for ContactPage
 const jsonLdContactPage = {
@@ -70,5 +91,5 @@ const ogImage = "https://ignia.cloud/Ignia-blanco.png";
   pageType="website"
   structuredData={[jsonLdContactPage]}
 >
-  <ContactPage lang={lang} />
+  <ContactPage lang={lang} translations={translations} />
 </BaseLayout>
