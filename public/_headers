@@ -1,0 +1,126 @@
+# ============================================================================
+# CLOUDFLARE PAGES - SECURITY HEADERS
+# ============================================================================
+# Configuración de headers HTTP para seguridad y privacidad
+# Aplicados automáticamente por Cloudflare Pages a todas las rutas
+#
+# Cumplimiento arquitecture.md §15: "Headers: CSP estricta, HSTS, etc."
+#
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# HEADERS GLOBALES - Aplicados a todas las rutas
+# ----------------------------------------------------------------------------
+/*
+  # Content Security Policy (CSP)
+  # Cumplimiento arquitecture.md §2: "JS mínimo o nulo"
+  # Permite scripts inline necesarios para Astro + Google Analytics/GTM
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://cloudflareinsights.com https://challenges.cloudflare.com https://*.odoo.com; frame-src 'self' https://www.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.odoo.com; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;
+
+  # HTTP Strict Transport Security (HSTS)
+  # Fuerza HTTPS por 2 años, incluye subdominios
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+  # X-Frame-Options
+  # Previene clickjacking (redundante con frame-ancestors en CSP)
+  X-Frame-Options: DENY
+
+  # X-Content-Type-Options
+  # Previene MIME type sniffing
+  X-Content-Type-Options: nosniff
+
+  # Referrer-Policy
+  # Control de información enviada en header Referer
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Permissions-Policy (anteriormente Feature-Policy)
+  # Deshabilita APIs del navegador no utilizadas
+  # FIXED: Removidas features no reconocidas (browsing-topics, interest-cohort)
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+  # X-XSS-Protection
+  # Protección contra XSS en navegadores antiguos (legacy)
+  X-XSS-Protection: 1; mode=block
+
+  # Cross-Origin-Embedder-Policy
+  # Aísla el contexto de origen cruzado
+  Cross-Origin-Embedder-Policy: require-corp
+
+  # Cross-Origin-Opener-Policy
+  # Previene ataques Spectre via window.opener
+  Cross-Origin-Opener-Policy: same-origin
+
+  # Cross-Origin-Resource-Policy
+  # Controla qué orígenes pueden cargar este recurso
+  Cross-Origin-Resource-Policy: same-origin
+
+# ----------------------------------------------------------------------------
+# CACHE HEADERS - Assets Estáticos
+# ----------------------------------------------------------------------------
+# Cumplimiento arquitecture.md §16: "CDN: cache agresivo para assets"
+
+# Imágenes - Cache largo (1 año)
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/Ignia-blanco.*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fuentes - Cache largo (1 año)
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: cross-origin
+
+# JavaScript/CSS - Cache mediano (1 mes)
+/scripts/*
+  Cache-Control: public, max-age=2592000, immutable
+
+# Favicon - Cache mediano (1 semana)
+/favicon.*
+  Cache-Control: public, max-age=604800
+
+# Manifest - Cache corto (1 día)
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+
+# ----------------------------------------------------------------------------
+# SEO & BOT HEADERS
+# ----------------------------------------------------------------------------
+# robots.txt - Sin cache (puede cambiar frecuentemente)
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+# Sitemaps - Cache corto (1 hora)
+/sitemap*.xml
+  Cache-Control: public, max-age=3600
+  Content-Type: application/xml; charset=utf-8
+
+# ----------------------------------------------------------------------------
+# API ENDPOINTS - Sin cache
+# ----------------------------------------------------------------------------
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate
+  X-Robots-Tag: noindex, nofollow
+
+# ----------------------------------------------------------------------------
+# NOTAS DE IMPLEMENTACIÓN
+# ----------------------------------------------------------------------------
+# 1. CSP Strictness: Permite 'unsafe-inline' solo para scripts necesarios
+#    (Astro components, Google Analytics). Considera usar nonces en futuro.
+#
+# 2. HSTS Preload: Sitio listo para HSTS preload list (hstspreload.org)
+#    Activa preload cuando estés 100% seguro de usar HTTPS permanentemente.
+#
+# 3. Permissions-Policy: Lista mínima de permisos. Expandir solo si necesario.
+#    Features removidas: browsing-topics, interest-cohort (no estándar)
+#
+# 4. CORS: Cross-Origin-Resource-Policy=cross-origin solo en fuentes
+#    (necesario para cargar desde fonts.googleapis.com)
+#
+# 5. Cache Strategy: Immutable + hash-based URLs para assets estáticos
+#    (Astro genera URLs con hashes automáticamente en build)
+#
+# 6. Cloudflare Challenges: Preload warnings son normales (bot detection)
+#    No requieren action - Cloudflare los maneja automáticamente.
+# ============================================================================
