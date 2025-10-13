@@ -44,11 +44,15 @@ const isProduction = import.meta.env.PROD;
 const GTM_ID = import.meta.env.PUBLIC_GTM_ID; // Ejemplo: GTM-XXXXXXX
 const GA4_ID = import.meta.env.PUBLIC_GA4_ID; // Ejemplo: G-XXXXXXXXXX
 
+// Variable de entorno para Zift Solutions
+const ZIFT_ENABLED = import.meta.env.PUBLIC_ZIFT_ENABLED === 'true'; // true/false
+
 // Logging en desarrollo para debugging
 if (import.meta.env.DEV) {
   console.log('[Analytics] Development mode - scripts disabled');
   console.log('[Analytics] GTM_ID:', GTM_ID ? '✅ configured' : '❌ not set');
   console.log('[Analytics] GA4_ID:', GA4_ID ? '✅ configured' : '❌ not set');
+  console.log('[Analytics] ZIFT_ENABLED:', ZIFT_ENABLED ? '✅ enabled' : '❌ disabled');
 }
 ---
 
@@ -142,6 +146,54 @@ if (import.meta.env.DEV) {
       });
     </script>
   </Fragment>
+)}
+
+<!-- ============================================================================
+     ZIFT SOLUTIONS ANALYTICS - Partytown
+     ============================================================================
+     Zift Solutions es una plataforma de analytics y tracking para partners.
+     Se ejecuta en Web Worker gracias a Partytown para no impactar performance.
+     
+     IMPORTANTE:
+     - type="text/partytown": Script se mueve al Worker (no bloquea main thread)
+     - async=true: Mejora performance dentro del Worker
+     - Solo se carga si PUBLIC_ZIFT_ENABLED=true
+     - Solo en producción (isProduction = true)
+     
+     CONFIGURACIÓN ZIFT:
+     1. Obtener el ID único del script de Zift Solutions
+        (8a998a38993855680199393c736b2daf en tu caso)
+     2. Configurar en Cloudflare Pages:
+        Environment Variables → PUBLIC_ZIFT_ENABLED = true
+     3. El script se cargará automáticamente desde:
+        https://static.ziftsolutions.com/analytics/[ID].js
+     
+     PERFORMANCE:
+     - Partytown mueve la ejecución al Web Worker
+     - No impacta LCP (Largest Contentful Paint)
+     - No impacta TBT (Total Blocking Time)
+     - Cumple §3 arquitecture.md: "Partytown para scripts de terceros"
+     
+     DOCS:
+     - Zift Solutions: https://www.ziftsolutions.com/
+     - Partytown: https://partytown.builder.io/
+     
+     ARQUITECTURA:
+     - §3: Partytown implementado ✅
+     - §14: Performance (LCP < 2.5s, TBT mínimo) ✅
+     ============================================================================ -->
+{isProduction && ZIFT_ENABLED && (
+  <script type="text/partytown">
+    (function() { 
+      var zanalytics_ = document.createElement('script'); 
+      zanalytics_.type = 'text/javascript';
+      zanalytics_.async = true; // CAMBIADO: true para no bloquear Worker
+      zanalytics_.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 
+        'static.ziftsolutions.com/analytics/8a998a38993855680199393c736b2daf.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(zanalytics_, s);
+    })();
+  </script>
 )}
 
 <!-- ============================================================================

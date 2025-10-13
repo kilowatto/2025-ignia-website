@@ -607,6 +607,30 @@ partytown({
    - ✅ `SameSite=None;Secure` (cookies seguras)
    - ✅ Solo producción (no tracking en dev)
 
+**Uso: Zift Solutions Analytics**
+
+1. **Obtener configuración de Zift:**
+   - El script de Zift Solutions ya está integrado con el ID único
+   - URL: `https://static.ziftsolutions.com/analytics/8a998a38993855680199393c736b2daf.js`
+
+2. **Activar en Cloudflare Pages:**
+   ```
+   Dashboard → Settings → Environment Variables
+   
+   Production:
+   PUBLIC_ZIFT_ENABLED = true
+   
+   Para desactivar (útil en testing):
+   PUBLIC_ZIFT_ENABLED = false
+   ```
+
+3. **Características:**
+   - ✅ Se ejecuta en Web Worker vía Partytown (sin impacto en performance)
+   - ✅ `async = true` optimizado para Worker
+   - ✅ Solo se carga si `PUBLIC_ZIFT_ENABLED=true`
+   - ✅ Solo en producción (`import.meta.env.PROD`)
+   - ✅ CSP configurada automáticamente (`public/_headers`)
+
 **Ejemplo: Agregar Facebook Pixel**
 
 ```astro

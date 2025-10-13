@@ -15,8 +15,8 @@
 /*
   # Content Security Policy (CSP)
   # Cumplimiento arquitecture.md §2: "JS mínimo o nulo"
-  # Permite scripts inline necesarios para Astro + Google Analytics/GTM
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://cloudflareinsights.com https://challenges.cloudflare.com https://*.odoo.com; frame-src 'self' https://www.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.odoo.com; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;
+  # Permite scripts inline necesarios para Astro + Google Analytics/GTM + Zift Solutions
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://static.ziftsolutions.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://cloudflareinsights.com https://challenges.cloudflare.com https://*.odoo.com https://static.ziftsolutions.com; frame-src 'self' https://www.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.odoo.com; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;
 
   # HTTP Strict Transport Security (HSTS)
   # Fuerza HTTPS por 2 años, incluye subdominios
@@ -107,7 +107,11 @@
 # NOTAS DE IMPLEMENTACIÓN
 # ----------------------------------------------------------------------------
 # 1. CSP Strictness: Permite 'unsafe-inline' solo para scripts necesarios
-#    (Astro components, Google Analytics). Considera usar nonces en futuro.
+#    (Astro components, Google Analytics, Zift Solutions). Considera usar nonces en futuro.
+#    Dominios permitidos:
+#    - www.googletagmanager.com, www.google-analytics.com (GTM/GA4)
+#    - static.ziftsolutions.com (Zift Solutions Analytics)
+#    - challenges.cloudflare.com, static.cloudflareinsights.com (Cloudflare)
 #
 # 2. HSTS Preload: Sitio listo para HSTS preload list (hstspreload.org)
 #    Activa preload cuando estés 100% seguro de usar HTTPS permanentemente.
@@ -123,4 +127,8 @@
 #
 # 6. Cloudflare Challenges: Preload warnings son normales (bot detection)
 #    No requieren action - Cloudflare los maneja automáticamente.
+#
+# 7. Zift Solutions: Script se ejecuta en Web Worker vía Partytown
+#    Ver src/components/Analytics.astro para configuración
+#    Variable de entorno: PUBLIC_ZIFT_ENABLED=true
 # ============================================================================
