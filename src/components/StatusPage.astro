@@ -277,7 +277,7 @@ const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
                 Odoo API
               </h3>
               <p id="odoo-message" class="text-sm text-gray-600">
-                {t('status.services.odoo.description', undefined, { locale })}
+                {t('status.services.odoo_api.description', undefined, { locale })}
               </p>
             </div>
           </div>
@@ -389,80 +389,125 @@ const logs = showLogs && hasErrors ? services.filter(s => s.error) : [];
     };
 
     try {
-      // Fetch Odoo API status
       const tokenParam = providedToken ? `?token=${providedToken}` : '';
       const response = await fetch(`/api/status/odoo${tokenParam}`);
       const data = await response.json();
 
-      // Actualizar ícono
+      const service = Array.isArray(data.services) ? data.services[0] : undefined;
+      if (!service) throw new Error('Odoo service payload missing');
+
       if (odooIcon) {
-        odooIcon.textContent = statusEmoji[data.status];
+        odooIcon.textContent = statusEmoji[service.status] || 'ℹ️';
         odooIcon.className = 'text-3xl mr-3';
-        odooIcon.setAttribute('aria-label', statusTranslations[locale]?.[data.status] || data.status);
+        odooIcon.setAttribute('aria-label', statusTranslations[locale]?.[service.status] || service.status);
       }
 
-      // Actualizar mensaje
       if (odooMessage) {
-        odooMessage.textContent = data.message;
+        odooMessage.textContent = service.message;
       }
 
-      // Actualizar badge
       if (odooStatusBadge) {
         const badgeClasses = {
           operational: 'bg-green-100 text-green-800',
           degraded: 'bg-yellow-100 text-yellow-800',
           down: 'bg-red-100 text-red-800',
         };
-        odooStatusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${badgeClasses[data.status]}`;
-        odooStatusBadge.textContent = statusTranslations[locale]?.[data.status] || data.status;
+        odooStatusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+          badgeClasses[service.status] || 'bg-gray-100 text-gray-800'
+        }`;
+        odooStatusBadge.textContent = statusTranslations[locale]?.[service.status] || service.status;
       }
 
-      // Actualizar detalles
-      if (odooDetails && data.responseTime !== undefined) {
-        const detailsHTML = `
-          <div class="flex justify-between text-sm">
-            <dt class="text-gray-600">${locale === 'es' ? 'Tiempo de Respuesta' : locale === 'fr' ? 'Temps de Réponse' : 'Response Time'}:</dt>
-            <dd class="text-gray-900 font-medium">${data.responseTime}ms</dd>
-          </div>
-          ${data.details ? Object.entries(data.details).map(([key, value]) => `
+      if (odooDetails) {
+        const rows = [];
+
+        if (typeof service.responseTime === 'number') {
+          const label =
+            locale === 'es'
+              ? 'Tiempo de Respuesta'
+              : locale === 'fr'
+              ? 'Temps de Réponse'
+              : 'Response Time';
+          rows.push(`
             <div class="flex justify-between text-sm">
-              <dt class="text-gray-600 capitalize">${key}:</dt>
-              <dd class="text-gray-900 font-mono text-xs">${value}</dd>
+              <dt class="text-gray-600">${label}:</dt>
+              <dd class="text-gray-900 font-medium">${service.responseTime}ms</dd>
             </div>
-          `).join('') : ''}
-          ${data.error ? `
+          `);
+        }
+
+        if (service.details && typeof service.details === 'object') {
+          for (const [key, value] of Object.entries(service.details)) {
+            rows.push(`
+              <div class="flex justify-between text-sm">
+                <dt class="text-gray-600 capitalize">${key}:</dt>
+                <dd class="text-gray-900 font-mono text-xs">${String(value)}</dd>
+              </div>
+            `);
+          }
+        }
+
+        if (service.error) {
+          rows.push(`
             <div class="flex justify-between text-sm pt-2 border-t border-red-100">
               <dt class="text-gray-600">Error:</dt>
-              <dd class="text-red-600 font-medium text-right flex-1 ml-4">${data.error.message}</dd>
+              <dd class="text-red-600 font-medium text-right flex-1 ml-4">${service.error.message}</dd>
             </div>
-            ${data.error.code ? `
+          `);
+
+          if (service.error.code) {
+            rows.push(`
               <div class="flex justify-between text-sm">
                 <dt class="text-gray-600">Code:</dt>
-                <dd class="text-gray-900 font-mono text-xs">${data.error.code}</dd>
+                <dd class="text-gray-900 font-mono text-xs">${service.error.code}</dd>
               </div>
-            ` : ''}
-          ` : ''}
+            `);
+          }
+        }
+
+        odooDetails.innerHTML = rows.join('') || `
+          <div class="flex justify-between text-sm">
+            <dt class="text-gray-600">${
+              locale === 'es'
+                ? 'Sin datos disponibles'
+                : locale === 'fr'
+                ? 'Aucune donnée disponible'
+                : 'No data available'
+            }</dt>
+            <dd class="text-gray-900 font-medium">—</dd>
+          </div>
         `;
-        odooDetails.innerHTML = detailsHTML;
       }
 
-      // Marcar como loaded
       odooCard.removeAttribute('data-loading');
     } catch (error) {
       console.error('Failed to fetch Odoo status:', error);
-      
-      // Fallback UI
-      if (odooIcon) odooIcon.textContent = '🔴';
-      if (odooMessage) odooMessage.textContent = 'Failed to load status';
+
+      if (odooIcon) {
+        odooIcon.textContent = '🔴';
+        odooIcon.className = 'text-3xl mr-3';
+        odooIcon.setAttribute('aria-label', locale === 'es' ? 'Error' : locale === 'fr' ? 'Erreur' : 'Error');
+      }
+
+      if (odooMessage) {
+        odooMessage.textContent =
+          locale === 'es'
+            ? 'No se pudo cargar el estado'
+            : locale === 'fr'
+            ? 'Impossible de charger le statut'
+            : 'Failed to load status';
+      }
+
       if (odooStatusBadge) {
         odooStatusBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
         odooStatusBadge.textContent = locale === 'es' ? 'Error' : locale === 'fr' ? 'Erreur' : 'Error';
       }
+
       if (odooDetails) {
         odooDetails.innerHTML = `
           <div class="flex justify-between text-sm text-red-600">
             <dt>Error:</dt>
-            <dd>${error.message}</dd>
+            <dd>${error instanceof Error ? error.message : 'Unknown error'}</dd>
           </div>
         `;
       }

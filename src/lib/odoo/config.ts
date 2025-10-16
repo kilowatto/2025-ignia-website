@@ -1,3 +1,4 @@
+// ...existing code up to the end of the first ODOO_DEFAULTS export...
 /**
  * config.ts - Configuración y validación de variables de entorno para Odoo
  * 

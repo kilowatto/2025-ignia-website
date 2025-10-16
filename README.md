@@ -631,59 +631,269 @@ partytown({
    - ✅ Solo en producción (`import.meta.env.PROD`)
    - ✅ CSP configurada automáticamente (`public/_headers`)
 
-**Ejemplo: Agregar Facebook Pixel**
+---
 
-```astro
-<!-- src/components/Analytics.astro -->
-{isProduction && import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID && (
-  <script type="text/partytown" define:vars={{ 
-    PIXEL_ID: import.meta.env.PUBLIC_FACEBOOK_PIXEL_ID 
-  }}>
-    !function(f,b,e,v,n,t,s) {
-      // Facebook Pixel code aquí
-    }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', PIXEL_ID);
-    fbq('track', 'PageView');
-  </script>
-)}
-```
+## 🗓️ Sistema de Booking (Agendamiento de Reuniones)
 
-**Testing Local (con scripts):**
+**ESTADO ACTUAL: Phase 1 - EXTRAER (Read Slots) - EN PROGRESO**
+
+El sistema de booking permite agendar reuniones con Ignia directamente desde el sitio web, integrándose con Odoo SaaS 18 (`calendar.event` model).
+
+### Arquitectura
+
+**Two-Phase Approach:**
+1. **Phase 1: EXTRAER** (lectura) - Obtener slots disponibles de Odoo
+2. **Phase 2: ENVIAR** (escritura) - Crear bookings en Odoo
+
+**Stack Técnico:**
+- **Backend:** Odoo SaaS 18 - `calendar.event` model
+- **Communication:** XML-RPC (via `OdooClient.ts`)
+- **Service Layer:** `OdooBookingService.ts` (business logic)
+- **API Routes:** Astro API endpoints (`/api/booking/*`)
+- **Frontend:** React Islands (próximamente)
+- **Types:** TypeScript strict mode
+
+### Configuración
+
+**1. Variables de Entorno (.env.local):**
 
 ```bash
-# Simular producción localmente
-PUBLIC_GTM_ID=GTM-XXXXXXX pnpm run build
-pnpm run preview
+# Credenciales Odoo (REQUERIDAS)
+ODOO_URL=https://ignia-cloud.odoo.com
+ODOO_DB=ignia-cloud
+ODOO_API_USER=api@ignia.cloud
+ODOO_API_PASSWORD=your_password_here
 
-# Verificar en DevTools:
-# 1. Application → Service Workers (Partytown worker activo)
-# 2. Network → Filter "partytown" (archivos cargados)
-# 3. Console → Verificar sin errores de Partytown
-# 4. Performance → Main thread libre (scripts en Worker)
+# Configuración Booking (OPCIONAL - usa defaults si no se define)
+BOOKING_DURATION=30                    # minutos por reunión
+BOOKING_BUFFER=15                      # buffer entre reuniones
+BOOKING_DAYS_ADVANCE=60                # días en futuro para agendar
+BOOKING_MIN_NOTICE_HOURS=4             # horas mínimas de anticipación
+BOOKING_TIMEZONE=America/Mexico_City   # zona horaria
+
+# Horarios laborales (OPCIONAL - default: Lun-Vie 09:00-18:00)
+BOOKING_HOURS_MONDAY=09:00-18:00
+BOOKING_HOURS_TUESDAY=09:00-18:00
+BOOKING_HOURS_WEDNESDAY=09:00-18:00
+BOOKING_HOURS_THURSDAY=09:00-18:00
+BOOKING_HOURS_FRIDAY=09:00-18:00
+BOOKING_HOURS_SATURDAY=closed
+BOOKING_HOURS_SUNDAY=closed
 ```
 
-**Lighthouse Audit (Esperado):**
+**2. Permisos Odoo:**
+
+El usuario API necesita permisos para:
+- `calendar.event` - read, create (Phase 2: write, unlink)
+- `res.partner` - read, create (para asociar contactos)
+
+### Archivos del Sistema
 
 ```
-Performance Score: ≥ 90
-├─ LCP: < 2.5s ✅ (scripts no bloquean)
-├─ TBT: < 200ms ✅ (Worker aislado)
-├─ CLS: < 0.1 ✅ (sin layout shifts)
-└─ Speed Index: < 3.4s ✅
+src/lib/odoo/
+├── types.ts                      # Tipos TypeScript (extended con booking)
+├── booking-config.ts             # Configuración: horarios, reglas negocio
+├── OdooClient.ts                 # Cliente XML-RPC (existente)
+├── OdooBookingService.ts         # Lógica de booking (NEW)
+└── OdooService.ts                # Servicios contacto (existente)
+
+src/pages/api/booking/
+├── slots.ts                      # GET /api/booking/slots (Phase 1) ✅
+└── create.ts                     # POST /api/booking/create (Phase 2) ⏳
+
+src/components/
+└── BookingCalendar.tsx           # React Island UI (Phase 1.3) ⏳
 ```
 
-**Archivos Relacionados:**
-- **`astro.config.mjs`** - Configuración de Partytown
-- **`src/components/Analytics.astro`** - Scripts GTM/GA4 con Partytown
-- **`src/layouts/BaseLayout.astro`** - Integración de `<Analytics />`
-- **`package.json`** - Dependencia `@astrojs/partytown`
-- **`arquitecture.md §3`** - Stack Técnico (Partytown documentado)
+### API Endpoints
 
-**Recursos:**
-- [Partytown Docs](https://partytown.builder.io/)
-- [Astro Partytown Integration](https://docs.astro.build/en/guides/integrations-guide/partytown/)
-- [Google Tag Manager](https://tagmanager.google.com/)
-- [Google Analytics 4](https://analytics.google.com/)
+#### `GET /api/booking/slots` (✅ Implementado)
+
+Obtener slots disponibles para una fecha.
+
+**Request:**
+```http
+GET /api/booking/slots?date=2025-10-15&duration=30
+```
+
+**Query Parameters:**
+- `date` (requerido): Fecha en formato `YYYY-MM-DD`
+- `duration` (opcional): Duración en minutos (default: 30, min: 15, max: 120)
+- `locale` (opcional): Idioma para mensajes (`en`/`es`/`fr`, default: `en`)
+
+**Response 200 OK:**
+```json
+{
+  "success": true,
+  "date": "2025-10-15",
+  "slots": [
+    {
+      "start": "09:00",
+      "end": "09:30",
+      "available": true,
+      "date": "2025-10-15"
+    },
+    {
+      "start": "09:30",
+      "end": "10:00",
+      "available": false,
+      "date": "2025-10-15",
+      "reason": "occupied"
+    }
+  ],
+  "metadata": {
+    "timezone": "America/Mexico_City",
+    "businessHours": { "start": "09:00", "end": "18:00" },
+    "totalSlots": 16,
+    "availableSlots": 12,
+    "occupiedSlots": 4,
+    "duration": 30,
+    "date": "2025-10-15"
+  },
+  "responseTime": "245ms"
+}
+```
+
+**Response 400 Bad Request:**
+```json
+{
+  "success": false,
+  "error": "INVALID_DATE",
+  "message": "Date must be in format YYYY-MM-DD",
+  "responseTime": "12ms"
+}
+```
+
+**Error Codes:**
+- `MISSING_PARAMETER` - Falta parámetro `date`
+- `INVALID_DATE_FORMAT` - Formato de fecha incorrecto
+- `INVALID_DURATION` - Duración fuera de rango (15-120 min)
+- `INVALID_DATE` - Fecha inválida (ej: 32 de enero)
+- `PAST_DATE` - No se puede agendar en el pasado
+- `TOO_FAR_ADVANCE` - Fecha muy lejana (>60 días)
+- `INSUFFICIENT_NOTICE` - Muy poca anticipación (<4 horas)
+- `ODOO_UNAVAILABLE` - Error de conexión con Odoo
+- `SERVER_ERROR` - Error interno del servidor
+
+#### `POST /api/booking/create` (⏳ Phase 2)
+
+Crear booking en Odoo (próximamente).
+
+**Request:**
+```http
+POST /api/booking/create
+Content-Type: application/json
+
+{
+  "date": "2025-10-15",
+  "time": "09:00",
+  "duration": 30,
+  "name": "Juan Pérez",
+  "email": "juan@example.com",
+  "phone": "+525512345678",
+  "notes": "Interesado en servicios cloud",
+  "locale": "es"
+}
+```
+
+### Logging y Debugging
+
+**Console Logging Extensivo:**
+
+Todas las operaciones tienen logging estructurado en consola:
+
+```
+[OdooBooking] [INFO] [GET_SLOTS] Fetching available slots for date: 2025-10-15
+[OdooBooking] [DEBUG] [VALIDATE_DATE] Validating date: 2025-10-15
+[OdooBooking] [DEBUG] [GENERATE_SLOTS] Generating theoretical slots
+[OdooBooking] [INFO] [GET_OCCUPIED] Found 3 occupied events in Odoo
+[OdooBooking] [INFO] [FILTER_SLOTS] Filtering complete { available: 12, unavailable: 4 }
+```
+
+**Formato del Log:**
+```typescript
+[OdooBooking] [NIVEL] [OPERACIÓN] Mensaje { datos JSON }
+```
+
+**Niveles:**
+- `DEBUG` - Información detallada (Cyan)
+- `INFO` - Eventos importantes (Green)
+- `WARN` - Situaciones anómalas (Yellow)
+- `ERROR` - Errores críticos (Red)
+
+**Ver Logs:**
+```bash
+# Development
+pnpm run dev
+# Los logs aparecen en consola del servidor
+
+# Production (Cloudflare Pages)
+# Ver en Dashboard → Functions → Logs
+```
+
+### Testing
+
+**Testing Local (API):**
+
+```bash
+# 1. Iniciar servidor dev
+pnpm run dev
+
+# 2. Test GET slots (curl)
+curl "http://localhost:4321/api/booking/slots?date=2025-10-15"
+
+# 3. Test con duración custom
+curl "http://localhost:4321/api/booking/slots?date=2025-10-15&duration=60"
+
+# 4. Test fecha inválida (debe retornar 400)
+curl "http://localhost:4321/api/booking/slots?date=2025-13-40"
+
+# 5. Test fecha pasada (debe retornar 400)
+curl "http://localhost:4321/api/booking/slots?date=2020-01-01"
+
+# 6. Verificar logs en consola del servidor
+# Debe mostrar todos los pasos del proceso
+```
+
+**Testing con Browser:**
+
+```
+http://localhost:4321/api/booking/slots?date=2025-10-15
+```
+
+**Validar Respuestas:**
+- ✅ JSON válido
+- ✅ `success: true` para fechas válidas
+- ✅ `slots` array con TimeSlots
+- ✅ `metadata` con información del sistema
+- ✅ `responseTime` presente
+- ✅ Error codes apropiados para fallos
+
+### Roadmap
+
+**Phase 1: EXTRAER (Read-only) - EN PROGRESO**
+- ✅ 1.1: Setup - Tipos, configuración, servicio (completado)
+- ✅ 1.2: API endpoint GET /api/booking/slots (completado)
+- ⏳ 1.3: React Island - BookingCalendar.tsx UI
+- ⏳ 1.4: Testing completo de lectura
+
+**Phase 2: ENVIAR (Write operations) - PRÓXIMAMENTE**
+- ⏳ 2.1: API endpoint POST /api/booking/create
+- ⏳ 2.2: Formulario de booking (nombre, email, phone, notas)
+- ⏳ 2.3: Confirmaciones + Email
+
+**Phase 3: Integration - PRÓXIMAMENTE**
+- ⏳ 3.1: Integrar en ContactPage.astro (modal o sección)
+- ⏳ 3.2: i18n completo (EN/ES/FR)
+- ⏳ 3.3: Testing end-to-end
+- ⏳ 3.4: Deploy staging para UAT
+
+### Referencias
+
+- **Odoo Docs:** https://www.odoo.com/documentation/18.0/developer/reference/external_api.html
+- **calendar.event Model:** https://www.odoo.com/documentation/18.0/developer/reference/backend/orm.html#calendar-event
+- **Arquitectura:** `arquitecture.md` §3 (Odoo Integration)
+- **Código Fuente:** `src/lib/odoo/OdooBookingService.ts`
 
 ---
 

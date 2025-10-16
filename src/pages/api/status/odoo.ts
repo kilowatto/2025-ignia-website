@@ -1,155 +1,166 @@
 /**
  * API Endpoint: /api/status/odoo
- * 
+ *
  * PROPÓSITO:
- * Endpoint para verificar el estado de Odoo API de forma asíncrona.
- * Permite progressive rendering client-side sin bloquear SSR inicial.
- * 
- * ESTRATEGIA:
- * - SSR: Website check (instantáneo, <5ms)
- * - Client-side: fetch('/api/status/odoo') → update DOM cuando complete
- * 
- * JUSTIFICACIÓN JS (~50 líneas):
- * Mejora perceived performance de 5s → <500ms (mejora 10×)
- * arquitectura.md §2: JS mínimo justificado por UX significativa
- * 
- * @see src/components/StatusPage.astro - Consume este endpoint con fetch()
+ *   Comprueba el estado de la conexión contra Odoo (autenticación XML-RPC).
+ *   Se usa desde la página de status para mostrar disponibilidad del CRM.
  */
 
 import type { APIRoute } from 'astro';
 import { getOdooConfig, validateOdooConfig } from '../../../lib/odoo/config';
 import { OdooClient } from '../../../lib/odoo/OdooClient';
 
+type ServiceStatus = 'operational' | 'degraded' | 'down';
+
+interface ServicePayload {
+  name: string;
+  slug: 'odoo-crm';
+  status: ServiceStatus;
+  responseTime: number;
+  message: string;
+  lastChecked: string;
+  details?: Record<string, unknown>;
+  error?: {
+    message: string;
+    code?: string;
+  };
+}
+
+interface StatusResponse {
+  name: string;
+  status: ServiceStatus;
+  responseTime: number;
+  lastChecked: string;
+  services: ServicePayload[];
+}
+
 export const GET: APIRoute = async ({ url, locals }) => {
-    const start = Date.now();
+  const start = Date.now();
 
-    // Verificar si tiene token válido para logs detallados
-    const providedToken = url.searchParams.get('token');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const runtimeEnv = (locals as any).runtime?.env || {};
-    const expectedToken = runtimeEnv.STATUS_PAGE_TOKEN || import.meta.env.STATUS_PAGE_TOKEN;
-    // Seguro por defecto: solo mostrar logs si hay token configurado Y provisto correctamente
-    const showLogs = expectedToken && providedToken === expectedToken;
+  const providedToken = url.searchParams.get('token');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const runtimeEnv = (locals as any).runtime?.env || {};
+  const expectedToken = runtimeEnv.STATUS_PAGE_TOKEN || import.meta.env.STATUS_PAGE_TOKEN;
+  const showLogs = Boolean(expectedToken && providedToken === expectedToken);
 
-    try {
-        // 2. Validar configuración de Odoo
-        //    Si faltan variables de entorno, retornamos error informativo
-        //    IMPORTANTE: Pasar runtimeEnv (ya tiene fallback a {})
-        const validation = validateOdooConfig({ env: runtimeEnv });
-        if (!validation.valid) {
-            return new Response(
-                JSON.stringify({
-                    name: 'Odoo API',
-                    status: 'down',
-                    responseTime: Date.now() - start,
-                    message: 'Configuration missing',
-                    lastChecked: new Date().toISOString(),
-                    error: {
-                        message: `Missing environment variables: ${validation.missingVars.join(', ')}`,
-                        code: 'CONFIG_MISSING',
-                    },
-                    details: showLogs ? {
-                        missingVars: validation.missingVars,
-                        hint: 'Add variables to .env.local or Cloudflare Pages settings',
-                    } : undefined,
-                }),
-                {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    },
-                }
-            );
-        }
+  const validation = validateOdooConfig({ env: runtimeEnv });
+  if (!validation.valid) {
+    const missing = validation.missingVars;
+    const payload: StatusResponse = {
+      name: 'Odoo Integrations',
+      status: 'down',
+      responseTime: Date.now() - start,
+      lastChecked: new Date().toISOString(),
+      services: [
+        {
+          name: 'Odoo CRM',
+          slug: 'odoo-crm',
+          status: 'down',
+          responseTime: 0,
+          message: 'Configuration missing',
+          lastChecked: new Date().toISOString(),
+          error: {
+            message: showLogs
+              ? `Missing environment variables: ${missing.join(', ')}`
+              : 'Missing environment variables',
+            code: 'CONFIG_MISSING',
+          },
+          details: showLogs
+            ? {
+                missingVars: missing,
+                hint: 'Añade las variables en .env.local o en la configuración de Cloudflare Pages',
+              }
+            : undefined,
+        },
+      ],
+    };
 
-        // Paso 2: Obtener config y crear cliente
-        const config = getOdooConfig({ env: runtimeEnv });
-        const client = new OdooClient(config, 5000); // 5s timeout
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
+  }
 
-        // Paso 3: Intentar autenticación
-        const authStart = Date.now();
-        const auth = await client.authenticate();
-        const authTime = Date.now() - authStart;
+  try {
+    const config = getOdooConfig({ env: runtimeEnv });
+    const client = new OdooClient(config, 5000);
 
-        // Paso 4: Success
-        const totalTime = Date.now() - start;
+    const authStart = Date.now();
+    const auth = await client.authenticate();
+    const authTime = Date.now() - authStart;
 
-        return new Response(
-            JSON.stringify({
-                name: 'Odoo API',
-                status: totalTime < 2000 ? 'operational' : 'degraded',
-                responseTime: totalTime,
-                message:
-                    totalTime < 2000
-                        ? 'Connected and authenticated'
-                        : 'Connected but slow response',
-                lastChecked: new Date().toISOString(),
-                details: showLogs
-                    ? {
-                        url: config.url,
-                        database: config.db,
-                        username: config.username,
-                        uid: auth.uid,
-                        authTime: `${authTime}ms`,
-                    }
-                    : {
-                        url: config.url.replace(/https?:\/\//, '').split('/')[0],
-                        database: config.db,
-                    },
-            }),
-            {
-                status: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                },
-            }
-        );
-    } catch (error) {
-        const totalTime = Date.now() - start;
-        const errorObj = error as any;
+    const service: ServicePayload = {
+      name: 'Odoo CRM',
+      slug: 'odoo-crm',
+      status: authTime < 2000 ? 'operational' : 'degraded',
+      responseTime: authTime,
+      message:
+        authTime < 2000
+          ? 'Authenticated successfully via XML-RPC'
+          : 'Authenticated but response was slow',
+      lastChecked: new Date().toISOString(),
+      details: showLogs
+        ? {
+            url: config.url,
+            database: config.db,
+            username: config.username,
+            uid: auth.uid,
+            authTime: `${authTime}ms`,
+          }
+        : {
+            url: config.url.replace(/https?:\/+/, '').split('/')[0],
+            database: config.db,
+          },
+    };
 
-        // Obtener config para details (puede fallar si no está configurado)
-        let attemptedUrl: string | undefined;
-        try {
-            attemptedUrl = getOdooConfig({ env: runtimeEnv })?.url;
-        } catch {
-            attemptedUrl = undefined;
-        }
+    const payload: StatusResponse = {
+      name: 'Odoo Integrations',
+      status: service.status,
+      responseTime: Date.now() - start,
+      lastChecked: new Date().toISOString(),
+      services: [service],
+    };
 
-        return new Response(
-            JSON.stringify({
-                name: 'Odoo API',
-                status: 'down',
-                responseTime: totalTime,
-                message: error instanceof Error ? error.message : 'Connection failed',
-                lastChecked: new Date().toISOString(),
-                error: showLogs
-                    ? {
-                        message: error instanceof Error ? error.message : 'Unknown error',
-                        code: errorObj.code || 'CONNECTION_ERROR',
-                        stack: error instanceof Error ? error.stack : undefined,
-                        raw: errorObj,
-                    }
-                    : {
-                        message: 'Authentication or connection error',
-                        code: 'ODOO_ERROR',
-                    },
-                details: showLogs
-                    ? {
-                        attemptedUrl,
-                        timeout: '5000ms',
-                    }
-                    : undefined,
-            }),
-            {
-                status: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                },
-            }
-        );
-    }
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
+  } catch (error) {
+    const err = error as Error;
+
+    const payload: StatusResponse = {
+      name: 'Odoo Integrations',
+      status: 'down',
+      responseTime: Date.now() - start,
+      lastChecked: new Date().toISOString(),
+      services: [
+        {
+          name: 'Odoo CRM',
+          slug: 'odoo-crm',
+          status: 'down',
+          responseTime: Date.now() - start,
+          message: err instanceof Error ? err.message : 'Connection failed',
+          lastChecked: new Date().toISOString(),
+          error: {
+            message: err instanceof Error ? err.message : 'Unknown error',
+            code: 'ODOO_ERROR',
+          },
+        },
+      ],
+    };
+
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
+  }
 };

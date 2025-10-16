@@ -10,7 +10,6 @@
  * - Type-safe para prevenir errores en tiempo de compilación
  * - Documentación en español según §2 arquitecture.md
  */
-
 /**
  * Configuración de conexión a Odoo SaaS
  * 
@@ -328,4 +327,276 @@ export interface OdooReadOptions {
 
   /** Ordenamiento (ej: 'create_date desc', 'name asc') */
   order?: string;
+}
+
+// ============================================================================
+// BOOKING SYSTEM - TYPES EXTENSION
+// ============================================================================
+// Tipos adicionales para sistema de agendamiento de reuniones con Odoo
+// Agregados: octubre 2025
+// ============================================================================
+
+/**
+ * Slot de tiempo para agendar reunión
+ * 
+ * PROPÓSITO:
+ * Representa un bloque de tiempo disponible/ocupado en el calendario.
+ * Se genera combinando eventos existentes de Odoo + horario laboral.
+ * 
+ * EJEMPLO:
+ * { start: "09:00", end: "09:30", available: true, date: "2025-10-15" }
+ */
+export interface TimeSlot {
+  /** Hora de inicio (formato: "HH:MM" ej: "09:00") */
+  start: string;
+
+  /** Hora de fin (formato: "HH:MM" ej: "09:30") */
+  end: string;
+
+  /** Si el slot está disponible para agendar */
+  available: boolean;
+
+  /** Fecha del slot (ISO 8601: "YYYY-MM-DD") */
+  date: string;
+
+  /** Razón por la que no está disponible (opcional) */
+  reason?: 'occupied' | 'outside_hours' | 'buffer' | 'past';
+}
+
+/**
+ * Solicitud para crear una cita en Odoo
+ * 
+ * FLUJO:
+ * 1. Usuario selecciona fecha/hora en frontend
+ * 2. Frontend envía BookingRequest a /api/booking/create
+ * 3. Backend valida y crea calendar.event en Odoo
+ * 4. Backend envía email de confirmación
+ * 
+ * VALIDACIONES:
+ * - date: Debe ser fecha futura y día laboral
+ * - time: Debe estar dentro del horario laboral
+ * - email: Formato válido y no estar en blacklist
+ * - duration: Entre 15 y 120 minutos
+ */
+export interface BookingRequest {
+  /** Fecha de la reunión (ISO 8601: "YYYY-MM-DD") */
+  date: string;
+
+  /** Hora de inicio (formato: "HH:MM") */
+  time: string;
+
+  /** Duración en minutos (default: 30) */
+  duration?: number;
+
+  /** Nombre completo del cliente */
+  name: string;
+
+  /** Email del cliente */
+  email: string;
+
+  /** Teléfono del cliente (opcional) */
+  phone?: string;
+
+  /** Notas adicionales (opcional) */
+  notes?: string;
+
+  /** Idioma para email de confirmación (en/es/fr) */
+  locale?: 'en' | 'es' | 'fr';
+}
+
+/**
+ * Respuesta de creación de cita
+ * 
+ * SUCCESS RESPONSE:
+ * {
+ *   success: true,
+ *   appointmentId: 12345,
+ *   message: "Appointment created successfully",
+ *   confirmationUrl: "https://ignia.cloud/booking/confirm/abc123"
+ * }
+ * 
+ * ERROR RESPONSE:
+ * {
+ *   success: false,
+ *   error: "Slot no longer available"
+ * }
+ */
+export interface BookingResponse {
+  /** Si la cita se creó exitosamente */
+  success: boolean;
+
+  /** ID de la cita en Odoo (calendar.event.id) */
+  appointmentId?: number;
+
+  /** Mensaje descriptivo */
+  message?: string;
+
+  /** URL de confirmación/cancelación */
+  confirmationUrl?: string;
+
+  /** Mensaje de error (si success=false) */
+  error?: string;
+}
+
+/**
+ * Evento de calendario en Odoo (calendar.event)
+ * 
+ * MODELO ODOO:
+ * https://github.com/odoo/odoo/blob/18.0/addons/calendar/models/calendar_event.py
+ * 
+ * CAMPOS USADOS:
+ * - name: Título del evento
+ * - start/stop: Inicio y fin (datetime UTC)
+ * - partner_ids: Participantes (Many2Many con res.partner)
+ * - description: Notas/detalles
+ * - user_id: Usuario responsable (Many2One con res.users)
+ */
+export interface OdooCalendarEvent {
+  /** ID del evento (solo presente en registros existentes) */
+  id?: number;
+
+  /** Título del evento (ej: "Meeting with John Doe") */
+  name: string;
+
+  /** Inicio (ISO 8601 UTC: "YYYY-MM-DD HH:MM:SS") */
+  start: string;
+
+  /** Fin (ISO 8601 UTC: "YYYY-MM-DD HH:MM:SS") */
+  stop: string;
+
+  /** Nombre del participante externo (si no está en res.partner) */
+  partner_name?: string;
+
+  /** Email del participante externo */
+  partner_email?: string;
+
+  /** Teléfono del participante externo */
+  partner_phone?: string;
+
+  /** IDs de participantes (res.partner) - Many2Many */
+  partner_ids?: number[];
+
+  /** Descripción/notas del evento */
+  description?: string;
+
+  /** ID del usuario responsable (res.users) */
+  user_id?: number;
+
+  /** Duración en horas (ej: 0.5 para 30 min) */
+  duration?: number;
+
+  /** Estado del evento ('draft', 'confirmed', 'cancelled') */
+  state?: 'draft' | 'confirmed' | 'cancelled';
+
+  /** Tipo de cita (calendar.appointment.type) */
+  appointment_type_id?: number;
+
+  /** Si se envió invitación por email */
+  is_invitation_sent?: boolean;
+}
+
+/**
+ * Configuración de horario laboral
+ * 
+ * PROPÓSITO:
+ * Define los horarios en los que se pueden agendar reuniones.
+ * Si un día es null, significa que no hay disponibilidad ese día.
+ * 
+ * EJEMPLO:
+ * {
+ *   monday: { start: "09:00", end: "18:00" },
+ *   friday: { start: "09:00", end: "14:00" },
+ *   saturday: null, // No disponible
+ *   sunday: null    // No disponible
+ * }
+ */
+export interface BusinessHours {
+  monday: { start: string; end: string } | null;
+  tuesday: { start: string; end: string } | null;
+  wednesday: { start: string; end: string } | null;
+  thursday: { start: string; end: string } | null;
+  friday: { start: string; end: string } | null;
+  saturday: { start: string; end: string } | null;
+  sunday: { start: string; end: string } | null;
+}
+
+/**
+ * Configuración del sistema de booking
+ * 
+ * REGLAS DE NEGOCIO:
+ * - defaultDuration: Tiempo por reunión (30 min standard)
+ * - bufferTime: Tiempo entre reuniones para preparación
+ * - daysInAdvance: Cuántos días en el futuro se puede agendar
+ * - minimumNoticeHours: Anticipación mínima para agendar
+ * 
+ * EJEMPLO:
+ * {
+ *   defaultDuration: 30,
+ *   bufferTime: 15,
+ *   daysInAdvance: 60,
+ *   minimumNoticeHours: 4,
+ *   businessHours: { ... },
+ *   timezone: "America/Mexico_City"
+ * }
+ */
+export interface BookingConfig {
+  /** Duración de reunión por defecto (minutos) */
+  defaultDuration: number;
+
+  /** Buffer entre reuniones (minutos) */
+  bufferTime: number;
+
+  /** Días en el futuro que se pueden agendar */
+  daysInAdvance: number;
+
+  /** Mínimo de horas de anticipación para agendar */
+  minimumNoticeHours: number;
+
+  /** Horario laboral */
+  businessHours: BusinessHours;
+
+  /** Zona horaria (ej: "America/Mexico_City") */
+  timezone: string;
+
+  /** ID del usuario de Odoo para asignar reuniones */
+  defaultUserId?: number;
+
+  /** ID del tipo de cita en Odoo (calendar.appointment.type) */
+  appointmentTypeId?: number;
+}
+
+/**
+ * Log entry para debugging
+ * 
+ * PROPÓSITO:
+ * Logging estructurado para debugging fácil del sistema de booking.
+ * Todos los logs se imprimen en consola con formato consistente.
+ * 
+ * NIVELES:
+ * - debug: Información detallada para debugging
+ * - info: Eventos importantes (cita creada, slots obtenidos)
+ * - warn: Situaciones anómalas pero manejables
+ * - error: Errores que requieren atención
+ * 
+ * EJEMPLO:
+ * console.log(`[${level}] [${operation}] ${message}`, data);
+ */
+export interface OdooLogEntry {
+  /** Timestamp ISO 8601 */
+  timestamp: string;
+
+  /** Nivel de log */
+  level: 'debug' | 'info' | 'warn' | 'error';
+
+  /** Operación que generó el log (ej: "GET_SLOTS", "CREATE_APPOINTMENT") */
+  operation: string;
+
+  /** Mensaje descriptivo */
+  message: string;
+
+  /** Datos adicionales para debugging */
+  data?: any;
+
+  /** Error object (si level=error) */
+  error?: Error;
 }

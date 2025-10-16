@@ -23,7 +23,6 @@
  * §2 Documentación: Comentarios en español
  * §14 Performance: Timeout configurable, manejo de errores
  */
-
 import type { OdooConfig, OdooAuth, OdooResponse } from './types';
 import { ODOO_DEFAULTS } from './config';
 

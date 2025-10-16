@@ -1,3 +1,4 @@
+// Archivo eliminado por limpieza de arquitectura
 /**
  * OdooService.ts - Capa de servicio para operaciones CRUD en Odoo
  * 
@@ -19,7 +20,6 @@
  * §2 Documentación: Comentarios en español
  * §11 Formularios: Validación server-side
  */
-
 import { OdooClient } from './OdooClient';
 import { ODOO_DEFAULTS } from './config';
 import type {

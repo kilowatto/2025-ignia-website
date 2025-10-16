@@ -5,6 +5,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
 import partytown from '@astrojs/partytown';
+import react from '@astrojs/react';
 
 // ============================================================================
 // SITE URL - Configuración Dinámica
@@ -87,6 +88,19 @@ export default defineConfig({
       },
     }),
     compress(),
+    
+    // ============================================================================
+    // REACT: Islands Architecture
+    // ============================================================================
+    // Permite usar componentes React interactivos (Islands)
+    // - Solo hidrata componentes con client:* directive
+    // - Resto del sitio queda como HTML estático (mejor performance)
+    // - Perfecto para componentes interactivos como BookingCalendar
+    // 
+    // Uso: <BookingCalendar client:load />
+    // Docs: https://docs.astro.build/en/guides/integrations-guide/react/
+    // ============================================================================
+    react(),
     
     // ============================================================================
     // PARTYTOWN: Scripts de Terceros en Web Worker
