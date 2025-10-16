@@ -417,6 +417,19 @@ const getSectionItems = (sectionId: string): SitemapItem[] => {
                     </a>
                   </li>
                 ))}
+                {/* Enlace a Programación en línea debajo de System Status */}
+                {section.id === 'corporate' && (
+                  <li>
+                    <a
+                      href="https://outlook.office.com/book/ReunionconIgniaCloud@ignia.cloud/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block text-sm text-white/80 transition-colors hover:text-primary hover:underline"
+                    >
+                      {locale === 'es' ? 'Programación en línea' : locale === 'fr' ? 'Prise de rendez-vous en ligne' : 'Online Booking'}
+                    </a>
+                  </li>
+                )}
               </ul>
 
               {/* 
