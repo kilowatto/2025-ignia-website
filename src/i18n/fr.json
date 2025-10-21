@@ -138,6 +138,18 @@
           "virtualMachines": {
             "description": "Serveurs virtuels haute performance pour charges exigeantes.",
             "title": "Machines virtuelles"
+          },
+          "mdm": {
+            "description": "Gestion et sécurité centralisées des appareils mobiles dans toute l'organisation.",
+            "title": "MDM (Mobile Device Manager)"
+          },
+          "monitoring": {
+            "description": "Surveillance en temps réel de l'infrastructure et des applications avec alertes et tableaux de bord.",
+            "title": "Monitoring"
+          },
+          "patchManager": {
+            "description": "Gestion automatisée des correctifs pour serveurs, VMs et endpoints afin de garder les systèmes sécurisés et à jour.",
+            "title": "Patch Manager"
           }
         },
         "label": "Produits",
