@@ -2,6 +2,17 @@
 
 **Versión:** v1.3 · **Enfoque:** Utility-first, semántico, mobile‑first, fondo blanco, SEO/GEO-first, JS mínimo o nulo. **Stack:** Astro \+ Tailwind CSS \+ astro-i18n.
 
+---
+**[Actualización 2025-10-21]**
+Se actualizó este documento para detallar y reforzar los temas relacionados con el layout:
+- Se enfatizó el uso obligatorio de `src/layouts/BaseLayout.astro` en todas las páginas internas, eliminando layouts redundantes y asegurando coherencia visual y funcional.
+- Se documentó la política de evitar encadenamiento de layouts y la importancia de la estructura única para el layout base.
+- Se añadió referencia explícita a la sección de layouts en la estructura de directorios y en los principios arquitectónicos.
+- Se reforzó la relación entre layout, accesibilidad y consistencia cross-idioma.
+
+Esta actualización cumple con la política de documentación en línea y mantiene la trazabilidad de cambios arquitectónicos.
+---
+
 ## **1\) Visión General**
 
 Ignia Cloud tendrá un sitio estático/SSR con **Astro** que prioriza performance, accesibilidad y SEO. La arquitectura favorece **HTML5 \+ Tailwind CSS** y reduce al mínimo el uso de JavaScript; cuando sea indispensable, se carga de forma **aislada, diferida y sólo en la página que lo requiera** (p. ej., /search).
@@ -32,6 +43,7 @@ Idiomas: EN (default), ES, FR.
 *  **Documentacion en readme.md** se debe documentar todo el sitie en README.md con detalle de las referencias, librerias usadas, como pueden copiar el sitio, etc.
 * **Actualizacion de Sitemap** Cada vez que agregues una nueva página, debes actualizar el array pages en sitemap-[lang].xml.ts con la nueva ruta, changefreq y priority.
 * **Checkliast** se revisa el documento Pipeline_new_page cada vez que se genera una nueva pagina y se debe cumplir con todo lo que ahi se dice.
+* **Layout**: Todas las páginas internas deben incorporar o importar el layout único `src/layouts/BaseLayout.astro`. Esto elimina layouts redundantes, evita encadenamiento y asegura coherencia visual, accesibilidad y consistencia cross-idioma. Cualquier excepción debe ser documentada y validada por el equipo de arquitectura.
 
 
 
