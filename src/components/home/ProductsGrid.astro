@@ -278,11 +278,11 @@ const getUrl = (path: string) => {
 
       <!-- Product 8: MDM -->
       <article
-        class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-lg border border-indigo-100 hover:shadow-lg transition-shadow duration-300"
+        class="bg-gradient-to-br from-cyan-50 to-white p-6 rounded-lg border border-cyan-100 hover:shadow-lg transition-shadow duration-300"
       >
         <div class="flex items-center mb-4">
           <svg
-            class="h-8 w-8 text-indigo-500"
+            class="h-8 w-8 text-cyan-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -292,44 +292,23 @@ const getUrl = (path: string) => {
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            ></path>
+              d="M16 7a4 4 0 01-8 0M12 11v2m-6 4h12a2 2 0 002-2v-5a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2z"
+            />
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product8_title", undefined, { locale })}
+            {t("header.sections.products.items.mdm.title", undefined, { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product8_description", undefined, { locale })}
+          {t("header.sections.products.items.mdm.description", undefined, { locale })}
         </p>
         <a
           href={getUrl("/productos/mdm")}
-          class="text-sm text-indigo-500 hover:text-indigo-600 font-medium"
+          class="text-sm text-cyan-500 hover:text-cyan-600 font-medium"
         >
           {t("home.products.cta", undefined, { locale })} →
         </a>
       </article>
-
-      class="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24"
-      stroke="currentColor" aria-hidden="true" >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-      ></path>
     </div>
-    <h3 class="ml-3 text-lg font-semibold text-gray-900">
-      {t("home.products.product7_title", undefined, { locale })}
-    </h3>
   </div>
-  <p class="text-sm text-gray-600 mb-4">
-    {t("home.products.product7_description", undefined, { locale })}
-  </p>
-  <a
-    href={getUrl("/productos/monitoring")}
-    class="text-sm text-indigo-500 hover:text-indigo-600 font-medium"
-  >
-    {t("home.products.cta", undefined, { locale })} →
-  </a>
 </section>
