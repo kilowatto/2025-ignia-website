@@ -655,26 +655,48 @@
     "solutions": {
       "title": "Solutions tailored to your business",
       "subtitle": "More than infrastructure: outcomes you can measure",
-      "solution1_title": "BCP/DRaaS",
-      "solution1_description": "Business continuity and disaster recovery with active replicas and automatic failover",
-      "solution1_feature1": "RTO <15 minutes with active replicas",
-      "solution1_feature2": "Automated failover and recovery",
-      "solution1_feature3": "Multi-site replication",
-      "solution2_title": "Kubernetes DevOps",
-      "solution2_description": "Managed Kubernetes with built-in CI/CD pipelines and complete observability",
-      "solution2_feature1": "Production-ready clusters in minutes",
-      "solution2_feature2": "Integrated CI/CD with GitOps",
-      "solution2_feature3": "Full-stack observability",
-      "solution3_title": "Compliance Fintech",
-      "solution3_description": "Meet regulatory requirements with WORM logging and automated compliance reports",
-      "solution3_feature1": "WORM immutable logging",
-      "solution3_feature2": "CNBV + PCI-DSS compliance",
-      "solution3_feature3": "Automated audit reports",
-      "solution4_title": "Regulatory Backup",
-      "solution4_description": "Long-term backup retention for regulatory compliance with 99.99% durability",
-      "solution4_feature1": "7-10 year retention policies",
-      "solution4_feature2": "99.99% data durability",
-      "solution4_feature3": "Encrypted and immutable",
+      "regulatoryBackup": {
+        "title": "Regulatory Backup",
+        "description": "Long-term backup retention for regulatory compliance with 99.99% durability",
+        "feature1": "7-10 year retention policies",
+        "feature2": "99.99% data durability",
+        "feature3": "Encrypted and immutable"
+      },
+      "kubernetes": {
+        "title": "Kubernetes DevOps",
+        "description": "Managed Kubernetes with built-in CI/CD pipelines and complete observability",
+        "feature1": "Production-ready clusters in minutes",
+        "feature2": "Integrated CI/CD with GitOps",
+        "feature3": "Full-stack observability"
+      },
+      "nocaas": {
+        "title": "NOC as a Service",
+        "description": "24/7 monitoring and operations with managed patching and incident response",
+        "feature1": "Proactive infrastructure monitoring",
+        "feature2": "Managed patching and updates",
+        "feature3": "Runbooks aligned with ITIL best practices"
+      },
+      "multicloud": {
+        "title": "Multicloud Architecture",
+        "description": "Design and operate hybrid and multicloud topologies with dedicated connectivity",
+        "feature1": "Direct links to Azure, GCP, and on-prem",
+        "feature2": "Unified observability and governance",
+        "feature3": "Expert-led migrations and operations"
+      },
+      "privateCloud": {
+        "title": "Private Cloud Service",
+        "description": "Dedicated private cloud clusters with elastic compute, storage, and networking",
+        "feature1": "Isolated resources with enterprise security",
+        "feature2": "Compliance-ready segmentation and auditing",
+        "feature3": "Predictable scaling with managed support"
+      },
+      "aiMl": {
+        "title": "AI & ML Platform",
+        "description": "GPU infrastructure and MLOps tooling to ship AI workloads securely",
+        "feature1": "Managed GPU clusters for training and inference",
+        "feature2": "Integrated pipelines and automation for ML models",
+        "feature3": "Governance guardrails for data and compliance"
+      },
       "cta": "See details"
     },
     "products": {

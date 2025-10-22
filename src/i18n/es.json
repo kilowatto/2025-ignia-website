@@ -655,26 +655,48 @@
     "solutions": {
       "title": "Soluciones adaptadas a tu negocio",
       "subtitle": "Más que infraestructura: resultados que puedes medir",
-      "solution1_title": "BCP/DRaaS",
-      "solution1_description": "Continuidad del negocio y recuperación ante desastres con réplicas activas y failover automático",
-      "solution1_feature1": "RTO <15 minutos con réplicas activas",
-      "solution1_feature2": "Failover y recuperación automatizada",
-      "solution1_feature3": "Replicación multi-sitio",
-      "solution2_title": "Kubernetes DevOps",
-      "solution2_description": "Kubernetes gestionado con pipelines CI/CD integrados y observabilidad completa",
-      "solution2_feature1": "Clusters listos para producción en minutos",
-      "solution2_feature2": "CI/CD integrado con GitOps",
-      "solution2_feature3": "Observabilidad full-stack",
-      "solution3_title": "Compliance Fintech",
-      "solution3_description": "Cumple requisitos regulatorios con logging WORM y reportes de cumplimiento automatizados",
-      "solution3_feature1": "Logging inmutable WORM",
-      "solution3_feature2": "Cumplimiento CNBV + PCI-DSS",
-      "solution3_feature3": "Reportes de auditoría automatizados",
-      "solution4_title": "Backup Regulatorio",
-      "solution4_description": "Retención de backups a largo plazo para cumplimiento regulatorio con 99.99% de durabilidad",
-      "solution4_feature1": "Políticas de retención 7-10 años",
-      "solution4_feature2": "99.99% de durabilidad de datos",
-      "solution4_feature3": "Cifrado e inmutabilidad",
+      "regulatoryBackup": {
+        "title": "Backup Regulatorio",
+        "description": "Retención de backups a largo plazo para cumplimiento regulatorio con 99.99% de durabilidad",
+        "feature1": "Políticas de retención de 7-10 años",
+        "feature2": "99.99% de durabilidad de datos",
+        "feature3": "Cifrado e inmutabilidad garantizada"
+      },
+      "kubernetes": {
+        "title": "Kubernetes DevOps",
+        "description": "Kubernetes gestionado con pipelines CI/CD integrados y observabilidad completa",
+        "feature1": "Clusters listos para producción en minutos",
+        "feature2": "CI/CD integrado con GitOps",
+        "feature3": "Observabilidad full-stack"
+      },
+      "nocaas": {
+        "title": "NOC como Servicio",
+        "description": "Monitoreo 24/7 y operación de infraestructura con parches y soporte gestionado",
+        "feature1": "Monitoreo proactivo con alertas en tiempo real",
+        "feature2": "Parches y actualizaciones gestionadas",
+        "feature3": "Runbooks y respuesta alineados a ITIL"
+      },
+      "multicloud": {
+        "title": "Arquitectura Multicloud",
+        "description": "Diseña y opera topologías híbridas y multicloud con conectividad dedicada",
+        "feature1": "Enlaces directos a Azure, GCP y on-premise",
+        "feature2": "Observabilidad y gobierno unificados",
+        "feature3": "Migraciones y operación lideradas por expertos"
+      },
+      "privateCloud": {
+        "title": "Nube Privada como Servicio",
+        "description": "Clusters de nube privada dedicados con cómputo, almacenamiento y red elásticos",
+        "feature1": "Recursos aislados con seguridad empresarial",
+        "feature2": "Segmentación y auditoría listas para cumplimiento",
+        "feature3": "Escalamiento predecible con soporte gestionado"
+      },
+      "aiMl": {
+        "title": "Plataforma de IA & ML",
+        "description": "Infraestructura GPU y herramientas MLOps para lanzar cargas de IA de forma segura",
+        "feature1": "Clusters GPU gestionados para entrenamiento e inferencia",
+        "feature2": "Pipelines e integración automatizada para modelos",
+        "feature3": "Guardas de gobernanza para datos y cumplimiento"
+      },
       "cta": "Ver detalles"
     },
     "products": {

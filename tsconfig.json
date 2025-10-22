@@ -1,5 +1,14 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "public"]
+  "exclude": ["dist", "public", "node_modules"]
 }
