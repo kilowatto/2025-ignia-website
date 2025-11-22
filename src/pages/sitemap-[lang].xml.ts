@@ -15,7 +15,7 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 
 // Prerender con parámetros estáticos en build time
-export const prerender = false;
+export const prerender = true;
 
 // Definir todas las páginas del sitio
 // TODO: Actualizar esta lista cada vez que se agreguen nuevas páginas (arquitecture.md)
@@ -26,27 +26,20 @@ export const prerender = false;
 // 3. Testear con: curl http://localhost:4321/sitemap-en.xml | grep "nueva-pagina"
 // 4. Commit con mensaje: "feat(sitemap): add /nueva-pagina to XML sitemaps"
 // 
-// Páginas actuales:
+// NOTA: No definir rutas localizadas manualmente (/es/X, /fr/X)
+// Astro i18n routing las genera automáticamente desde estas rutas base
 const pages = [
-    { path: '/', changefreq: 'daily', priority: 1.0 },          // Home (añadido: 2025-10-08)
+    // Páginas core
+    { path: '/', changefreq: 'daily', priority: 1.0 },          // Home
     { path: '/search', changefreq: 'monthly', priority: 0.5 },  // Búsqueda
-    { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page (añadido: 2025-10-06)
-    { path: '/contact', changefreq: 'weekly', priority: 0.7 },  // Contact Page (añadido: 2025-10-10)
-    // Páginas de segundo nivel EN
-    { path: '/products', changefreq: 'monthly', priority: 0.7 },
-    { path: '/solutions', changefreq: 'monthly', priority: 0.7 },
-    { path: '/services', changefreq: 'monthly', priority: 0.7 },
-    { path: '/ai', changefreq: 'monthly', priority: 0.7 },
-    // Páginas de segundo nivel ES
-    { path: '/productos', changefreq: 'monthly', priority: 0.7 },
-    { path: '/soluciones', changefreq: 'monthly', priority: 0.7 },
-    { path: '/servicios', changefreq: 'monthly', priority: 0.7 },
-    { path: '/IA', changefreq: 'monthly', priority: 0.7 },
-    // Páginas de segundo nivel FR
-    { path: '/produits', changefreq: 'monthly', priority: 0.7 },
-    { path: '/solutions', changefreq: 'monthly', priority: 0.7 },
-    { path: '/services', changefreq: 'monthly', priority: 0.7 },
-    { path: '/ia', changefreq: 'monthly', priority: 0.7 },
+    { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page
+    { path: '/contact', changefreq: 'weekly', priority: 0.7 },  // Contact Page
+
+    // Páginas de secciones principales
+    { path: '/products', changefreq: 'weekly', priority: 0.9 },   // Productos
+    { path: '/solutions', changefreq: 'weekly', priority: 0.9 },  // Soluciones
+    { path: '/services', changefreq: 'weekly', priority: 0.9 },   // Servicios
+    { path: '/ai', changefreq: 'weekly', priority: 0.9 },         // AI & Larry
 ];
 
 const locales = ['en', 'es', 'fr'];

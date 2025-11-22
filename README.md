@@ -2101,7 +2101,7 @@ git checkout -b rama-recuperada
 
 ### 📋 Descripción General
 
-**`SitemapFooter.astro`** es un componente de mini-sitemap visual integrado en el footer que genera automáticamente un mapa navegable de todas las rutas del sitio, organizado por secciones (Solutions, Products, AI & LLMs, Services).
+**`SitemapFooter.astro`** es un componente de mini-sitemap visual integrado en el footer que genera automáticamente un mapa navegable de todas las rutas del sitio, organizado por secciones (Solutions, Products, AI & Larry, Services).
 
 **Ubicación:** `src/components/SitemapFooter.astro`  
 **Integración:** Renderizado en `Footer.astro` antes de la sección de newsletter
@@ -2153,7 +2153,7 @@ git checkout -b rama-recuperada
         "label": "Solutions",
         "items": {
           "nocaas": {
-            "title": "NOCaaS",
+            "title": "SecureOps 365",
             "description": "24/7 monitoring..."
           },
           ...

@@ -18,7 +18,7 @@ Esta actualización cumple con la política de documentación en línea y mantie
 Ignia Cloud tendrá un sitio estático/SSR con **Astro** que prioriza performance, accesibilidad y SEO. La arquitectura favorece **HTML5 \+ Tailwind CSS** y reduce al mínimo el uso de JavaScript; cuando sea indispensable, se carga de forma **aislada, diferida y sólo en la página que lo requiera** (p. ej., /search).
 
 Audiencias primarias: CTOs y emprendedores.  
-Objetivos por página: Home (leads y credibilidad), Solutions/Products (agenda y respuestas a objeciones), AI & LARRY (contacto técnico y demos de agente).  
+Objetivos por página: Home (leads y credibilidad), Solutions/Products (agenda y respuestas a objeciones), AI & Larry (contacto técnico y demos de agente).  
 Idiomas: EN (default), ES, FR.
 
 ## **2\) Principios Arquitectónicos (No Negociables)**
@@ -451,29 +451,29 @@ El servicio anteriormente conocido como "NOCaaS" ha sido renombrado oficialmente
   * ES: "SecureOps 365 (Anteriormente NOCaaS)"
   * FR: "SecureOps 365 (Anciennement NOCaaS)"
 
-#### **AI & LARRY (Formerly AI & LLM)**
+#### **AI & Larry (Formerly AI & LLM)**
 
-La sección de inteligencia artificial ha sido renombrada a **AI & LARRY**.
+La sección de inteligenciaartificial ha sido renombrada a **AI & Larry**.
 
-**Contexto:** LARRY es el agente de IA de Ignia Cloud. Esta sección ahora abarca nuestra oferta completa de Inteligencia Artificial y Agentes de AI.
+**Contexto:** Larry es el agente de IA de Ignia Cloud. Esta sección ahora abarca nuestra oferta completa de Inteligencia Artificial y Agentes de AI.
 
 **Reglas de Uso:**
 
-* **En Menús de Navegación**: Usar "AI & LARRY"
+* **En Menús de Navegación**: Usar "AI & Larry"
   * ❌ Incorrecto: "AI & LLM", "AI/LLM", "Artificial Intelligence"
-  * ✅ Correcto: "AI & LARRY"
+  * ✅ Correcto: "AI & Larry"
 
-* **En Títulos de Página**: "AI & LARRY"
-  * Ejemplo H1: "AI & LARRY Solutions"
+* **En Títulos de Página**: "AI & Larry"
+  * Ejemplo H1: "AI & Larry Solutions"
 
 * **En URLs y Rutas**: Mantener `/ai` para SEO continuity
   * La ruta sigue siendo `/ai/`, `/es/ai/`, `/fr/ai/`
-  * El contenido visible usa "AI & LARRY"
+  * El contenido visible usa "AI & Larry"
 
 * **Archivos i18n**: Esta regla aplica en **todos los idiomas**
-  * EN: "AI & LARRY"
-  * ES: "AI & LARRY" (el nombre del agente no se traduce)
-  * FR: "AI & LARRY" (el nombre del agente no se traduce)
+  * EN: "AI & Larry"
+  * ES: "AI & Larry" (el nombre del agente no se traduce)
+  * FR: "AI & Larry" (el nombre del agente no se traduce)
 
 ### **Referencias Cruzadas entre Páginas**
 

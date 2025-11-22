@@ -136,7 +136,7 @@
             "title": "RAG Blueprints"
           }
         },
-        "label": "AI & LARRY",
+        "label": "AI & Larry",
         "summary": "Run your LLMs on Ignia Cloud with managed GPUs, data pipelines, and copilots."
       },
       "products": {
@@ -509,7 +509,7 @@
   },
   "home": {
     "hero": {
-      "title": "Enterprise cloud with transparent pricing and 24/7 human support",
+      "title": "Enterprise cloud with transparent pricing and 24/7 human support powered by Larry AI",
       "subtitle": "Enterprise performance, built-in anti-DDoS security, and frictionless multicloud operation.",
       "cta_primary": "View pricing now",
       "cta_secondary": "Talk to an engineer"
@@ -726,7 +726,7 @@
       "feature3_description": "Avoid vendor lock-in"
     },
     "ai": {
-      "title": "AI & LARRY ready for production",
+      "title": "AI & Larry ready for production",
       "subtitle": "Deploy intelligent solutions securely",
       "badge": "AI & Machine Learning",
       "card1_title": "LLM Hosting",
@@ -744,7 +744,7 @@
       "card3_feature1": "Branded copilot interface",
       "card3_feature2": "Guardrails and compliance",
       "card3_feature3": "Omnichannel deployment",
-      "cta": "Explore AI & LARRY"
+      "cta": "Explore AI & Larry"
     },
     "useCases": {
       "title": "Use cases by industry",
@@ -856,7 +856,7 @@
   },
   "section_pages": {
     "ai": {
-      "title": "AI & LARRY Infrastructure",
+      "title": "AI & Larry Infrastructure",
       "subtitle": "Enterprise AI infrastructure for the next generation of intelligent applications",
       "overview": "Deploy and scale AI workloads with confidence. From GPU-powered LLM hosting to RAG pipelines and copilot studios, we provide the infrastructure to power your AI initiatives.",
       "cta_text": "Get Started with AI",

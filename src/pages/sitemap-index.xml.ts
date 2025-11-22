@@ -16,16 +16,16 @@
 import type { APIRoute } from 'astro';
 
 // Prerender este archivo en build time (no requiere servidor en producción)
-export const prerender = false;
+export const prerender = true;
 
 export const GET: APIRoute = ({ site }) => {
-    // Obtener URL base del sitio desde astro.config.mjs
-    const siteUrl = site ? site.toString().replace(/\/$/, '') : 'https://ignia.cloud';
+  // Obtener URL base del sitio desde astro.config.mjs
+  const siteUrl = site ? site.toString().replace(/\/$/, '') : 'https://ignia.cloud';
 
-    // Fecha de última modificación (se actualiza en cada build)
-    const lastMod = new Date().toISOString();
+  // Fecha de última modificación (se actualiza en cada build)
+  const lastMod = new Date().toISOString();
 
-    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${siteUrl}/sitemap-en.xml</loc>
@@ -41,10 +41,10 @@ export const GET: APIRoute = ({ site }) => {
   </sitemap>
 </sitemapindex>`;
 
-    return new Response(sitemapIndex, {
-        headers: {
-            'Content-Type': 'application/xml; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600', // Cache por 1 hora
-        },
-    });
+  return new Response(sitemapIndex, {
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600', // Cache por 1 hora
+    },
+  });
 };

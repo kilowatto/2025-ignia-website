@@ -102,7 +102,7 @@
             "title": "Blueprints RAG"
           }
         },
-        "label": "AI & LARRY",
+        "label": "AI & Larry",
         "summary": "Ejecuta tus LLMs en Ignia Cloud con GPUs gestionadas, pipelines de datos y copilots."
       },
       "products": {
@@ -509,7 +509,7 @@
   },
   "home": {
     "hero": {
-      "title": "La nube empresarial con costos claros y soporte humano 24/7",
+      "title": "La nube empresarial con costos claros y soporte humano 24/7 con el poder de Larry AI",
       "subtitle": "Rendimiento enterprise, seguridad anti-DDoS incluida y operación multicloud sin fricciones.",
       "cta_primary": "Ver precios ahora",
       "cta_secondary": "Habla con un ingeniero"
@@ -726,7 +726,7 @@
       "feature3_description": "Evita vendor lock-in"
     },
     "ai": {
-      "title": "AI & LARRY listos para producción",
+      "title": "AI & Larry listos para producción",
       "subtitle": "Despliega soluciones inteligentes de forma segura",
       "badge": "IA y Machine Learning",
       "card1_title": "Hosting de LLMs",
@@ -744,7 +744,7 @@
       "card3_feature1": "Interfaz de copilot con marca",
       "card3_feature2": "Guardas y cumplimiento",
       "card3_feature3": "Despliegue omnicanal",
-      "cta": "Explorar AI & LARRY"
+      "cta": "Explorar AI & Larry"
     },
     "useCases": {
       "title": "Casos de uso por industria",
