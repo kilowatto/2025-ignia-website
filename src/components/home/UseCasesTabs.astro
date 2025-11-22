@@ -1,386 +1,409 @@
 ---
 /**
  * UseCasesTabs Component
- * CSS-only tabs for Fintech, Retail, Media use cases
- * Architecture: Zero JS, :checked pattern, WCAG 2.2 AA
+ * Interactive tabs for Fintech, Retail, Media use cases
+ * Architecture: Zero JS, peer-checked pattern, WCAG 2.2 AA
  * Section: #9 of Home
  */
-
 import { t } from "astro-i18n";
 
-interface Props {
-  locale?: "en" | "es" | "fr";
-}
-
-const { locale = "en" } = Astro.props;
-
 const getUrl = (path: string) => {
-  return locale === "en" ? path : `/${locale}${path}`;
+  const locale = Astro.currentLocale === "en" ? "" : `/${Astro.currentLocale}`;
+  return `${locale}${path}`;
 };
 ---
 
-<section class="py-20 bg-white" aria-labelledby="usecases-heading">
+<section class="py-24 bg-gray-50" aria-labelledby="usecases-heading">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Section Header -->
     <div class="text-center max-w-3xl mx-auto mb-16">
       <h2
         id="usecases-heading"
-        class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
+        class="text-4xl md:text-5xl font-light text-gray-900 mb-6 tracking-tight"
       >
-        {t("home.useCases.title", undefined, { locale })}
+        {t("home.useCases.title")}
       </h2>
-      <p class="text-lg text-gray-600">
-        {t("home.useCases.subtitle", undefined, { locale })}
+      <p class="text-xl text-gray-600 font-light">
+        {t("home.useCases.subtitle")}
       </p>
     </div>
 
     <!-- CSS-Only Tabs -->
-    <div class="max-w-5xl mx-auto">
-      <!-- Hidden Radio Inputs -->
-      <input
-        type="radio"
-        id="tab-fintech"
-        name="usecase-tabs"
-        class="hidden peer/fintech"
-        checked
-      />
-      <input
-        type="radio"
-        id="tab-retail"
-        name="usecase-tabs"
-        class="hidden peer/retail"
-      />
-      <input
-        type="radio"
-        id="tab-media"
-        name="usecase-tabs"
-        class="hidden peer/media"
-      />
-
-      <!-- Tab Buttons -->
+    <div
+      class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100"
+    >
+      <!-- Tab Headers -->
       <div
-        class="flex border-b border-gray-200 mb-8"
+        class="flex flex-col md:flex-row border-b border-gray-100"
         role="tablist"
-        aria-label={t("home.useCases.tabs_aria_label", undefined, { locale })}
+        aria-label={t("home.useCases.tabs_aria_label")}
       >
+        <!-- Fintech Tab -->
         <label
           for="tab-fintech"
-          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/fintech:text-orange-500 peer-checked/fintech:border-orange-500"
+          class="flex-1 text-center py-6 px-8 font-medium text-gray-500 cursor-pointer hover:bg-gray-50 hover:text-orange-500 transition-all duration-200 has-[:checked]:text-orange-600 has-[:checked]:bg-orange-50/50 has-[:checked]:border-b-2 md:has-[:checked]:border-b-orange-500 relative"
           role="tab"
-          aria-selected="true"
           tabindex="0"
         >
-          {t("home.useCases.tab1_title", undefined, { locale })}
+          <span class="text-lg">{t("home.useCases.tab1_title")}</span>
         </label>
+
+        <!-- Retail Tab -->
         <label
           for="tab-retail"
-          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/retail:text-orange-500 peer-checked/retail:border-orange-500"
+          class="flex-1 text-center py-6 px-8 font-medium text-gray-500 cursor-pointer hover:bg-gray-50 hover:text-blue-500 transition-all duration-200 has-[:checked]:text-blue-600 has-[:checked]:bg-blue-50/50 has-[:checked]:border-b-2 md:has-[:checked]:border-b-blue-500 relative"
           role="tab"
-          aria-selected="false"
           tabindex="0"
         >
-          {t("home.useCases.tab2_title", undefined, { locale })}
+          <span class="text-lg">{t("home.useCases.tab2_title")}</span>
         </label>
+
+        <!-- Media Tab -->
         <label
           for="tab-media"
-          class="flex-1 text-center py-4 px-6 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent hover:text-orange-500 hover:border-orange-300 transition-colors duration-200 peer-checked/media:text-orange-500 peer-checked/media:border-orange-500"
+          class="flex-1 text-center py-6 px-8 font-medium text-gray-500 cursor-pointer hover:bg-gray-50 hover:text-purple-500 transition-all duration-200 has-[:checked]:text-purple-600 has-[:checked]:bg-purple-50/50 has-[:checked]:border-b-2 md:has-[:checked]:border-b-purple-500 relative"
           role="tab"
-          aria-selected="false"
           tabindex="0"
         >
-          {t("home.useCases.tab3_title", undefined, { locale })}
+          <span class="text-lg">{t("home.useCases.tab3_title")}</span>
         </label>
       </div>
 
-      <!-- Tab Content Panels -->
-      <div class="relative">
+      <!-- Tab Panels -->
+      <div class="relative min-h-[500px]">
         <!-- Fintech Panel -->
+        <input
+          type="radio"
+          id="tab-fintech"
+          name="usecase-tabs"
+          class="peer/fintech hidden"
+          checked
+        />
         <div
-          class="hidden peer-checked/fintech:block"
+          class="hidden peer-checked/fintech:grid grid-cols-1 lg:grid-cols-2 gap-0 animate-fade-in"
+          id="panel-fintech"
           role="tabpanel"
           aria-labelledby="tab-fintech"
         >
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
-                {t("home.useCases.tab1_heading", undefined, { locale })}
-              </h3>
-              <p class="text-base text-gray-600 mb-6">
-                {t("home.useCases.tab1_description", undefined, { locale })}
-              </p>
-              <ul class="space-y-4 mb-6">
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab1_outcome1", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab1_outcome2", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab1_outcome3", undefined, { locale })}
-                  </span>
-                </li>
-              </ul>
-              <a
-                href={getUrl("/casos-de-uso/fintech")}
-                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
-              >
-                {t("home.useCases.cta", undefined, { locale })}
+          <div class="p-10 lg:p-16 flex flex-col justify-center">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-semibold w-fit mb-6"
+            >
+              <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+              Financial Services
+            </div>
+            <h3 class="text-3xl font-light text-gray-900 mb-6">
+              {t("home.useCases.tab1_heading")}
+            </h3>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              {t("home.useCases.tab1_description")}
+            </p>
+
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-start gap-3">
                 <svg
-                  class="ml-2 h-5 w-5"
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
+                  ><path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-            <div class="flex items-center justify-center">
-              <img
-                src="https://placehold.co/500x400/f59e0b/ffffff/webp?text=Fintech+Infrastructure&font=raleway"
-                alt={t("home.useCases.tab1_image_alt", undefined, { locale })}
-                class="rounded-lg shadow-lg"
-                loading="lazy"
-                width="500"
-                height="400"
-              />
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab1_outcome1")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab1_outcome2")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab1_outcome3")}</span
+                >
+              </li>
+            </ul>
+
+            <a
+              href={getUrl("/solutions/fintech")}
+              class="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium rounded-xl hover:bg-orange-600 transition-colors duration-300 w-fit group"
+            >
+              {t("home.useCases.cta")}
+              <svg
+                class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="relative h-64 lg:h-auto bg-gray-100 overflow-hidden">
+            <img
+              src="/images/usecases/fintech-secure.png"
+              alt={t("home.useCases.tab1_image_alt")}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              loading="lazy"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
+            >
             </div>
           </div>
         </div>
 
         <!-- Retail Panel -->
+        <input
+          type="radio"
+          id="tab-retail"
+          name="usecase-tabs"
+          class="peer/retail hidden"
+        />
         <div
-          class="hidden peer-checked/retail:block"
+          class="hidden peer-checked/retail:grid grid-cols-1 lg:grid-cols-2 gap-0 animate-fade-in"
+          id="panel-retail"
           role="tabpanel"
           aria-labelledby="tab-retail"
         >
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
-                {t("home.useCases.tab2_heading", undefined, { locale })}
-              </h3>
-              <p class="text-base text-gray-600 mb-6">
-                {t("home.useCases.tab2_description", undefined, { locale })}
-              </p>
-              <ul class="space-y-4 mb-6">
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab2_outcome1", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab2_outcome2", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab2_outcome3", undefined, { locale })}
-                  </span>
-                </li>
-              </ul>
-              <a
-                href={getUrl("/casos-de-uso/retail")}
-                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
-              >
-                {t("home.useCases.cta", undefined, { locale })}
+          <div class="p-10 lg:p-16 flex flex-col justify-center">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold w-fit mb-6"
+            >
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              Retail & E-commerce
+            </div>
+            <h3 class="text-3xl font-light text-gray-900 mb-6">
+              {t("home.useCases.tab2_heading")}
+            </h3>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              {t("home.useCases.tab2_description")}
+            </p>
+
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-start gap-3">
                 <svg
-                  class="ml-2 h-5 w-5"
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
+                  ><path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-            <div class="flex items-center justify-center">
-              <img
-                src="https://placehold.co/500x400/3b82f6/ffffff/webp?text=Retail+E-commerce&font=raleway"
-                alt={t("home.useCases.tab2_image_alt", undefined, { locale })}
-                class="rounded-lg shadow-lg"
-                loading="lazy"
-                width="500"
-                height="400"
-              />
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab2_outcome1")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab2_outcome2")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab2_outcome3")}</span
+                >
+              </li>
+            </ul>
+
+            <a
+              href={getUrl("/solutions/retail")}
+              class="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors duration-300 w-fit group"
+            >
+              {t("home.useCases.cta")}
+              <svg
+                class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="relative h-64 lg:h-auto bg-gray-100 overflow-hidden">
+            <img
+              src="/images/usecases/retail-scale.png"
+              alt={t("home.useCases.tab2_image_alt")}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              loading="lazy"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
+            >
             </div>
           </div>
         </div>
 
         <!-- Media Panel -->
+        <input
+          type="radio"
+          id="tab-media"
+          name="usecase-tabs"
+          class="peer/media hidden"
+        />
         <div
-          class="hidden peer-checked/media:block"
+          class="hidden peer-checked/media:grid grid-cols-1 lg:grid-cols-2 gap-0 animate-fade-in"
+          id="panel-media"
           role="tabpanel"
           aria-labelledby="tab-media"
         >
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-2xl font-semibold text-gray-900 mb-4">
-                {t("home.useCases.tab3_heading", undefined, { locale })}
-              </h3>
-              <p class="text-base text-gray-600 mb-6">
-                {t("home.useCases.tab3_description", undefined, { locale })}
-              </p>
-              <ul class="space-y-4 mb-6">
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab3_outcome1", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab3_outcome2", undefined, { locale })}
-                  </span>
-                </li>
-                <li class="flex items-start">
-                  <svg
-                    class="h-6 w-6 text-orange-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-3 text-sm text-gray-700">
-                    {t("home.useCases.tab3_outcome3", undefined, { locale })}
-                  </span>
-                </li>
-              </ul>
-              <a
-                href={getUrl("/casos-de-uso/media")}
-                class="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200"
-              >
-                {t("home.useCases.cta", undefined, { locale })}
+          <div class="p-10 lg:p-16 flex flex-col justify-center">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold w-fit mb-6"
+            >
+              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+              Media & Apps
+            </div>
+            <h3 class="text-3xl font-light text-gray-900 mb-6">
+              {t("home.useCases.tab3_heading")}
+            </h3>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              {t("home.useCases.tab3_description")}
+            </p>
+
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-start gap-3">
                 <svg
-                  class="ml-2 h-5 w-5"
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
+                  ><path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-            <div class="flex items-center justify-center">
-              <img
-                src="https://placehold.co/500x400/8b5cf6/ffffff/webp?text=Media+Streaming&font=raleway"
-                alt={t("home.useCases.tab3_image_alt", undefined, { locale })}
-                class="rounded-lg shadow-lg"
-                loading="lazy"
-                width="500"
-                height="400"
-              />
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab3_outcome1")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab3_outcome2")}</span
+                >
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"></path></svg
+                >
+                <span class="text-gray-700"
+                  >{t("home.useCases.tab3_outcome3")}</span
+                >
+              </li>
+            </ul>
+
+            <a
+              href={getUrl("/solutions/media")}
+              class="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium rounded-xl hover:bg-purple-600 transition-colors duration-300 w-fit group"
+            >
+              {t("home.useCases.cta")}
+              <svg
+                class="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="relative h-64 lg:h-auto bg-gray-100 overflow-hidden">
+            <img
+              src="/images/usecases/media-streaming.png"
+              alt={t("home.useCases.tab3_image_alt")}
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              loading="lazy"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
+            >
             </div>
           </div>
         </div>
@@ -390,9 +413,26 @@ const getUrl = (path: string) => {
 </section>
 
 <style>
-  /* Focus states for keyboard navigation */
-  label[role="tab"]:focus {
-    outline: 2px solid #f59e0b;
-    outline-offset: 2px;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
   }
 </style>

@@ -80,7 +80,6 @@ const itemIcons: Record<string, string> = {
   privateCloudOnPremise: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01',
   bcpDraas: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
   kubernetesDevops: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-  secureWorkloadHosting: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z',
   complianceCloud: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
   regulatoryBackupArchival: 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4',
   // PRODUCTS (8 iconos)
@@ -119,7 +118,6 @@ const navConfig: NavSectionConfig[] = [
       { key: 'privateCloudOnPremise', href: translate('routes.solutions.privateCloudOnPremise'), icon: itemIcons.privateCloudOnPremise },
       { key: 'bcpDraas', href: translate('routes.solutions.bcpDraas'), icon: itemIcons.bcpDraas },
       { key: 'kubernetesDevops', href: translate('routes.solutions.kubernetesDevops'), icon: itemIcons.kubernetesDevops },
-      { key: 'secureWorkloadHosting', href: translate('routes.solutions.secureWorkloadHosting'), icon: itemIcons.secureWorkloadHosting },
       { key: 'complianceCloud', href: translate('routes.solutions.complianceCloud'), icon: itemIcons.complianceCloud },
       { key: 'regulatoryBackupArchival', href: translate('routes.solutions.regulatoryBackupArchival'), icon: itemIcons.regulatoryBackupArchival },
     ],
@@ -211,10 +209,11 @@ const socialLabels = {
 <!-- Header: navegación principal del sitio con enlaces localizados; Tailwind gestiona espaciado, blur y sombras -->
  <!-- el header tiene sombra color #f36b1c -->
 <header
-  class="relative z-50 w-full border-b border-slate-100 bg-white/85 shadow-md shadow-[#f36b1c] backdrop-blur supports-[backdrop-filter]:bg-white/70"
+  id="main-header"
+  class="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/85 shadow-md shadow-[#f36b1c] backdrop-blur supports-[backdrop-filter]:bg-white/70 transition-all duration-300"
 >
   <!-- Wrapper: alinea logo, navegación desktop y acciones de utilidad -->
-  <div class="mx-auto flex max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+  <div class="mx-auto flex max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8 transition-all duration-300 data-[scrolled=true]:py-2" id="header-wrapper">
     <div class="flex items-center justify-between gap-4 lg:gap-6">
       <!-- Logo del sitio: enlace a home page con locale detectado -->
       <a
@@ -233,9 +232,10 @@ const socialLabels = {
         <img
           src="/logo.svg"
           alt={logoAlt}
-          class="h-12 w-auto"
+          class="h-12 w-auto transition-all duration-300 data-[scrolled=true]:h-9"
           fetchpriority="high"
           decoding="async"
+          id="header-logo"
         />
       </a>
       <!-- Desktop mega-menu: only visible from extra-large breakpoints (≥1280px) -->
@@ -466,5 +466,5 @@ const socialLabels = {
   
   Cumplimiento arquitecture.md §2: "JavaScript debe ser aislado, diferido y sólo en la página que lo requiera"
 -->
-<script src="/scripts/header-progressive.js" defer></script>
+<script src="../scripts/header-progressive.ts"></script>
 

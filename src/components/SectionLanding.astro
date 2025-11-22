@@ -1,0 +1,623 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { t } from "astro-i18n";
+import enJson from "../i18n/en.json";
+import esJson from "../i18n/es.json";
+import frJson from "../i18n/fr.json";
+
+interface Props {
+    section: "solutions" | "products" | "ai" | "services";
+    locale?: string;
+}
+
+const { section, locale = "en" } = Astro.props;
+
+// Select the appropriate JSON based on locale
+const i18nData = locale === "es" ? esJson : locale === "fr" ? frJson : enJson;
+
+// Fetch all section data from i18n JSON
+const sectionData = i18nData.section_pages[section];
+const headerData = i18nData.header.sections[section];
+const items = headerData?.items || {};
+---
+
+<BaseLayout
+    title={`${sectionData.title} | Ignia Cloud`}
+    description={sectionData.subtitle}
+>
+    <!-- Hero Section -->
+    <section
+        class="relative bg-gradient-to-br from-gray-50 to-white pt-20 pb-16 md:pt-28 md:pb-20"
+    >
+        <div
+            class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"
+        >
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1
+                    class="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight"
+                >
+                    {sectionData.title}
+                </h1>
+                <p
+                    class="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed"
+                >
+                    {sectionData.subtitle}
+                </p>
+                <a
+                    href="/contact"
+                    class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+                >
+                    {sectionData.cta_text}
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section with Image -->
+    <section class="py-16 md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+                >
+                    <div class="space-y-6">
+                        <p
+                            class="text-lg md:text-xl text-gray-700 leading-relaxed"
+                        >
+                            {sectionData.overview}
+                        </p>
+
+                        <div class="pt-4">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Why Choose Ignia?
+                            </h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-5 h-5 text-orange-500 mt-1 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700"
+                                        >Enterprise-grade infrastructure with
+                                        99.99% uptime SLA</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-5 h-5 text-orange-500 mt-1 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700"
+                                        >Transparent pricing with no hidden fees
+                                        or surprises</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-5 h-5 text-orange-500 mt-1 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700"
+                                        >24/7 human support from cloud experts,
+                                        always available</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-5 h-5 text-orange-500 mt-1 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-700"
+                                        >Fully compliant with industry standards
+                                        and regulations</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-2">
+                            <a
+                                href="/contact"
+                                class="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold"
+                            >
+                                Learn more about our approach
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        {
+                            section === "solutions" && (
+                                <img
+                                    src="/images/sections/solutions_hero.png"
+                                    alt="Cloud Solutions"
+                                    class="w-full h-auto rounded-xl shadow-md"
+                                    loading="lazy"
+                                    width="600"
+                                    height="400"
+                                />
+                            )
+                        }
+                        {
+                            section === "products" && (
+                                <svg
+                                    class="w-full h-auto"
+                                    viewBox="0 0 400 300"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <rect
+                                        width="400"
+                                        height="300"
+                                        fill="#F9FAFB"
+                                        rx="12"
+                                    />
+                                    <circle
+                                        cx="100"
+                                        cy="150"
+                                        r="40"
+                                        fill="#FED7AA"
+                                        opacity="0.5"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="110"
+                                        r="35"
+                                        fill="#F36B1C"
+                                        opacity="0.3"
+                                    />
+                                    <circle
+                                        cx="300"
+                                        cy="150"
+                                        r="38"
+                                        fill="#FB923C"
+                                        opacity="0.4"
+                                    />
+                                    <rect
+                                        x="75"
+                                        y="125"
+                                        width="50"
+                                        height="50"
+                                        rx="8"
+                                        fill="#F36B1C"
+                                        opacity="0.8"
+                                    />
+                                    <rect
+                                        x="175"
+                                        y="95"
+                                        width="50"
+                                        height="30"
+                                        rx="6"
+                                        fill="#FB923C"
+                                        opacity="0.7"
+                                    />
+                                    <rect
+                                        x="275"
+                                        y="125"
+                                        width="50"
+                                        height="50"
+                                        rx="8"
+                                        fill="#FDBA74"
+                                        opacity="0.6"
+                                    />
+                                    <path
+                                        d="M100 175 L200 140 L300 175"
+                                        stroke="#F36B1C"
+                                        stroke-width="2"
+                                        stroke-dasharray="6,4"
+                                    />
+                                </svg>
+                            )
+                        }
+                        {
+                            section === "ai" && (
+                                <svg
+                                    class="w-full h-auto"
+                                    viewBox="0 0 400 300"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <rect
+                                        width="400"
+                                        height="300"
+                                        fill="#F9FAFB"
+                                        rx="12"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="150"
+                                        r="60"
+                                        fill="#F36B1C"
+                                        opacity="0.1"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="150"
+                                        r="45"
+                                        fill="#F36B1C"
+                                        opacity="0.2"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="150"
+                                        r="30"
+                                        fill="#F36B1C"
+                                        opacity="0.3"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="150"
+                                        r="15"
+                                        fill="#F36B1C"
+                                        opacity="0.6"
+                                    />
+                                    <circle
+                                        cx="120"
+                                        cy="100"
+                                        r="12"
+                                        fill="#FB923C"
+                                    />
+                                    <circle
+                                        cx="280"
+                                        cy="100"
+                                        r="12"
+                                        fill="#FB923C"
+                                    />
+                                    <circle
+                                        cx="140"
+                                        cy="210"
+                                        r="12"
+                                        fill="#FDBA74"
+                                    />
+                                    <circle
+                                        cx="260"
+                                        cy="210"
+                                        r="12"
+                                        fill="#FDBA74"
+                                    />
+                                    <path
+                                        d="M120 100 L185 140"
+                                        stroke="#F36B1C"
+                                        stroke-width="1.5"
+                                    />
+                                    <path
+                                        d="M280 100 L215 140"
+                                        stroke="#F36B1C"
+                                        stroke-width="1.5"
+                                    />
+                                    <path
+                                        d="M140 210 L185 160"
+                                        stroke="#FB923C"
+                                        stroke-width="1.5"
+                                    />
+                                    <path
+                                        d="M260 210 L215 160"
+                                        stroke="#FB923C"
+                                        stroke-width="1.5"
+                                    />
+                                </svg>
+                            )
+                        }
+                        {
+                            section === "services" && (
+                                <svg
+                                    class="w-full h-auto"
+                                    viewBox="0 0 400 300"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <rect
+                                        width="400"
+                                        height="300"
+                                        fill="#F9FAFB"
+                                        rx="12"
+                                    />
+                                    <rect
+                                        x="100"
+                                        y="50"
+                                        width="200"
+                                        height="150"
+                                        rx="15"
+                                        fill="#FED7AA"
+                                        opacity="0.3"
+                                    />
+                                    <circle
+                                        cx="160"
+                                        cy="100"
+                                        r="20"
+                                        fill="#F36B1C"
+                                    />
+                                    <circle
+                                        cx="240"
+                                        cy="100"
+                                        r="20"
+                                        fill="#FB923C"
+                                    />
+                                    <rect
+                                        x="130"
+                                        y="140"
+                                        width="140"
+                                        height="40"
+                                        rx="8"
+                                        fill="#FDBA74"
+                                        opacity="0.5"
+                                    />
+                                    <circle
+                                        cx="200"
+                                        cy="230"
+                                        r="10"
+                                        fill="#F36B1C"
+                                    />
+                                    <circle
+                                        cx="180"
+                                        cy="230"
+                                        r="7"
+                                        fill="#FB923C"
+                                    />
+                                    <circle
+                                        cx="220"
+                                        cy="230"
+                                        r="7"
+                                        fill="#FB923C"
+                                    />
+                                </svg>
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Target Audience Section -->
+    <section class="py-16 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2
+                class="text-3xl md:text-4xl font-light text-gray-900 text-center mb-12"
+            >
+                {sectionData.target_audience.title}
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            >
+                {
+                    sectionData.target_audience.audiences.map(
+                        (audience: any) => (
+                            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                                    <svg
+                                        class="w-6 h-6 text-orange-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                                    {audience.title}
+                                </h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    {audience.description}
+                                </p>
+                            </div>
+                        ),
+                    )
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-16 md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2
+                class="text-3xl md:text-4xl font-light text-gray-900 text-center mb-12"
+            >
+                {sectionData.benefits.title}
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto"
+            >
+                {
+                    sectionData.benefits.items.map((benefit: any) => (
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg
+                                    class="w-8 h-8 text-orange-500"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M5 13l4 4L19 7"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                {benefit.title}
+                            </h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                {benefit.description}
+                            </p>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Items Grid Section -->
+    <section class="py-16 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2
+                class="text-3xl md:text-4xl font-light text-gray-900 text-center mb-12"
+            >
+                {headerData.label}
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                {
+                    items &&
+                        Object.entries(items).map(
+                            ([key, item]: [string, any]) => (
+                                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-orange-200">
+                                    <div class="flex items-start gap-4 mb-4">
+                                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg
+                                                class="w-5 h-5 text-orange-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-xl font-semibold text-gray-900">
+                                            {item.title}
+                                        </h3>
+                                    </div>
+                                    <p class="text-gray-600 leading-relaxed">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            ),
+                        )
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="py-16 md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2
+                class="text-3xl md:text-4xl font-light text-gray-900 text-center mb-12"
+            >
+                {sectionData.use_cases.title}
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                {
+                    sectionData.use_cases.cases.map((useCase: any) => (
+                        <div class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-xl border border-gray-200 hover:border-orange-300 transition-colors duration-300">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                                {useCase.title}
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-500 mb-1">
+                                        Challenge:
+                                    </p>
+                                    <p class="text-gray-700 text-sm leading-relaxed">
+                                        {useCase.challenge}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-500 mb-1">
+                                        Solution:
+                                    </p>
+                                    <p class="text-gray-700 text-sm leading-relaxed">
+                                        {useCase.solution}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-orange-600 mb-1">
+                                        Result:
+                                    </p>
+                                    <p class="text-gray-900 text-sm font-medium leading-relaxed">
+                                        {useCase.result}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section
+        class="py-20 bg-gradient-to-br from-orange-500 to-orange-600 text-white"
+    >
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-light mb-6">
+                    Ready to get started?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Join hundreds of companies already using Ignia Cloud
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                        href="/contact"
+                        class="inline-block bg-white text-orange-600 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg"
+                    >
+                        Talk to an Expert
+                    </a>
+                    <a
+                        href="/pricing"
+                        class="inline-block bg-orange-700 text-white font-semibold px-8 py-4 rounded-lg hover:bg-orange-800 transition-colors duration-200"
+                    >
+                        View Pricing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</BaseLayout>

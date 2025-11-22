@@ -1,0 +1,6 @@
+---
+import SectionLanding from "../components/SectionLanding.astro";
+const locale = Astro.currentLocale?.split("-")[0] || "en";
+---
+
+<SectionLanding section="services" locale={locale} />

@@ -18,7 +18,7 @@ Esta actualización cumple con la política de documentación en línea y mantie
 Ignia Cloud tendrá un sitio estático/SSR con **Astro** que prioriza performance, accesibilidad y SEO. La arquitectura favorece **HTML5 \+ Tailwind CSS** y reduce al mínimo el uso de JavaScript; cuando sea indispensable, se carga de forma **aislada, diferida y sólo en la página que lo requiera** (p. ej., /search).
 
 Audiencias primarias: CTOs y emprendedores.  
-Objetivos por página: Home (leads y credibilidad), Solutions/Products (agenda y respuestas a objeciones), AI & LLMs (contacto técnico).  
+Objetivos por página: Home (leads y credibilidad), Solutions/Products (agenda y respuestas a objeciones), AI & LARRY (contacto técnico y demos de agente).  
 Idiomas: EN (default), ES, FR.
 
 ## **2\) Principios Arquitectónicos (No Negociables)**
@@ -257,8 +257,9 @@ Para mantener la integridad de esta arquitectura, se debe cumplir:
 * **Rutas limpias** y predecibles: /en/solutions/private-cloud-as-a-service/.  
 * **hreflang**: astro-i18n gestionará automáticamente la generación de etiquetas link para hreflang.  
 * **Detección de Idioma**: La detección inicial se basará en la cabecera Accept-Language del navegador para una redirección en el servidor. Opcionalmente, se podrá usar un script de JS ligero y no bloqueante para guardar la preferencia explícita del usuario en localStorage y agilizar futuras visitas.  
-* **Selector EN/ES/FR**: bandera \+ texto, accesible por teclado.  
+* **Selector EN/ES/FR**: bandera + texto, accesible por teclado.  
 * **Canonical & Sitemap**: Canónico por idioma. Sitemap(s) por idioma generados en build.
+* **Internal Linking**: Todas las páginas interiores deben implementar referencias cruzadas (ver §17: Referencias Cruzadas). Objetivo: mejorar SEO interno y user journey.
 
 ## **7\) Layouts y Componentes (sin JS)**
 
@@ -355,14 +356,9 @@ export default {
 
 ## **16\) Build & Deploy (Astro)**
 
-* **CI/CD**: lint, tests de links rotos, validación JSON‑LD, Lighthouse, Pa11y.  
-* **CDN**: cache agresivo para assets.
-
-**Snippet base (astro.config.mjs)**
-
 ```javascript
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import compress from 'astro-compress';
@@ -370,7 +366,9 @@ import compress from 'astro-compress';
 export default defineConfig({
   site: 'https://ignia.cloud',
   output: 'server', // Modo servidor para SSR selectivo
-  adapter: node({ mode: 'standalone' }),
+  adapter: cloudflare({
+    mode: 'directory'
+  }),
   
   // Configuración i18n nativa de Astro (routing)
   i18n: {
@@ -424,4 +422,88 @@ export default defineAstroI18nConfig({
     },
   },
 });
-```  
+```
+
+## **17) Nomenclatura y Branding**
+
+Esta sección define la terminología oficial y reglas de nomenclatura para productos y servicios de Ignia Cloud.
+
+### **Productos Renombrados**
+
+#### **SecureOps 365 (Formerly NOCaaS)**
+
+El servicio anteriormente conocido como "NOCaaS" ha sido renombrado oficialmente a **SecureOps 365**.
+
+**Reglas de Uso:**
+
+* **En Títulos y Menús**: Usar **exclusivamente** "SecureOps 365"
+  * Ejemplos: Menú de navegación, encabezados H1/H2, meta titles, breadcrumbs
+  * ❌ Incorrecto: "NOCaaS"
+  * ✅ Correcto: "SecureOps 365"
+
+* **En Contenido del Cuerpo**: Primera mención debe incluir referencia al nombre anterior
+  * ✅ Primera mención: "SecureOps 365 (Formerly NOCaaS)"
+  * ✅ Menciones subsecuentes: "SecureOps 365"
+  * Esto aplica a: Descripciones de productos, casos de uso, documentación técnica
+
+* **Archivos i18n**: Esta regla aplica en **todos los idiomas** (EN, ES, FR)
+  * EN: "SecureOps 365 (Formerly NOCaaS)"
+  * ES: "SecureOps 365 (Anteriormente NOCaaS)"
+  * FR: "SecureOps 365 (Anciennement NOCaaS)"
+
+#### **AI & LARRY (Formerly AI & LLM)**
+
+La sección de inteligencia artificial ha sido renombrada a **AI & LARRY**.
+
+**Contexto:** LARRY es el agente de IA de Ignia Cloud. Esta sección ahora abarca nuestra oferta completa de Inteligencia Artificial y Agentes de AI.
+
+**Reglas de Uso:**
+
+* **En Menús de Navegación**: Usar "AI & LARRY"
+  * ❌ Incorrecto: "AI & LLM", "AI/LLM", "Artificial Intelligence"
+  * ✅ Correcto: "AI & LARRY"
+
+* **En Títulos de Página**: "AI & LARRY"
+  * Ejemplo H1: "AI & LARRY Solutions"
+
+* **En URLs y Rutas**: Mantener `/ai` para SEO continuity
+  * La ruta sigue siendo `/ai/`, `/es/ai/`, `/fr/ai/`
+  * El contenido visible usa "AI & LARRY"
+
+* **Archivos i18n**: Esta regla aplica en **todos los idiomas**
+  * EN: "AI & LARRY"
+  * ES: "AI & LARRY" (el nombre del agente no se traduce)
+  * FR: "AI & LARRY" (el nombre del agente no se traduce)
+
+### **Referencias Cruzadas entre Páginas**
+
+Todas las páginas interiores (productos, soluciones, servicios, AI) **deben** incluir referencias cruzadas a contenido relacionado.
+
+**Implementación Obligatoria:**
+
+* **Sección "Related Solutions"**: En páginas de productos, enlazar a soluciones relevantes
+* **Sección "Related Products"**: En páginas de soluciones, enlazar a productos relacionados  
+* **Sección "See Also"**: Enlaces contextuales a servicios, casos de uso, o contenido de AI
+
+**Estructura**:
+```astro
+<!-- Ejemplo: En página de Virtual Machines (producto) -->
+<section class="related-solutions">
+  <h2>{t('products.related_solutions')}</h2>
+  <ul>
+    <li><a href="/solutions/private-cloud-service/">{t('solutions.privateCloudService.title')}</a></li>
+    <li><a href="/solutions/kubernetes-devops/">{t('solutions.kubernetesDevops.title')}</a></li>
+  </ul>
+</section>
+```
+
+**Objetivos:**
+- Mejorar SEO interno (internal linking)
+- Aumentar tiempo en sitio y páginas por sesión
+- Guiar al usuario a través del journey de descubrimiento
+- Reducir bounce rate
+
+**Gestión de Contenido:**
+- Las referencias cruzadas se gestionan vía archivos i18n (`en.json`, `es.json`, `fr.json`)
+- Cada producto/solución define su array de `related_items` en JSON
+- Los componentes de página renderizan dinámicamente estos links

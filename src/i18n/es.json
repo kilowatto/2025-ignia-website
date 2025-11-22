@@ -1,7 +1,7 @@
 {
   "footer": {
     "legal": {
-      "copyright": "© 2024 Ignia. Todos los derechos reservados."
+      "copyright": "© 2025 Ignia. Todos los derechos reservados."
     },
     "newsletter": {
       "button": "Suscribirme",
@@ -102,7 +102,7 @@
             "title": "Blueprints RAG"
           }
         },
-        "label": "IA y LLMs",
+        "label": "AI & LARRY",
         "summary": "Ejecuta tus LLMs en Ignia Cloud con GPUs gestionadas, pipelines de datos y copilots."
       },
       "products": {
@@ -189,7 +189,7 @@
           },
           "nocaas": {
             "description": "Monitoreo y operación 24/7, parches y actualizaciones gestionadas.",
-            "title": "NOCaaS"
+            "title": "SecureOps 365"
           },
           "privateCloudOnPremise": {
             "description": "Nube privada desplegada y administrada en sitio.",
@@ -202,10 +202,6 @@
           "regulatoryBackupArchival": {
             "description": "Backups cifrados con retención de 5 a 10 años.",
             "title": "Regulatory Backup & Archival"
-          },
-          "secureWorkloadHosting": {
-            "description": "Hosting seguro para cargas críticas con balanceo y gestión.",
-            "title": "Secure Workload Hosting"
           }
         },
         "label": "Soluciones",
@@ -730,7 +726,7 @@
       "feature3_description": "Evita vendor lock-in"
     },
     "ai": {
-      "title": "IA y LLMs listos para producción",
+      "title": "AI & LARRY listos para producción",
       "subtitle": "Despliega soluciones inteligentes de forma segura",
       "badge": "IA y Machine Learning",
       "card1_title": "Hosting de LLMs",
@@ -748,7 +744,7 @@
       "card3_feature1": "Interfaz de copilot con marca",
       "card3_feature2": "Guardas y cumplimiento",
       "card3_feature3": "Despliegue omnicanal",
-      "cta": "Explorar IA y LLMs"
+      "cta": "Explorar AI & LARRY"
     },
     "useCases": {
       "title": "Casos de uso por industria",
@@ -756,10 +752,10 @@
       "tabs_aria_label": "Tabs de casos de uso por industria",
       "tab1_title": "Fintech / Finserv",
       "tab1_heading": "Servicios Financieros y Fintech",
-      "tab1_description": "Infraestructura crítica para instituciones financieras",
-      "tab1_outcome1": "Reducción 40% en costos de DR",
-      "tab1_outcome2": "RTO <15 min en disaster recovery",
-      "tab1_outcome3": "Cumplimiento CNBV + PCI-DSS",
+      "tab1_description": "Infraestructura robusta y segura para bancos, fintechs y entidades financieras que deben cumplir con regulaciones estrictas y cambiantes impuestas por agencias gubernamentales.",
+      "tab1_outcome1": "Reducción del 40% en costos de recuperación ante desastres.",
+      "tab1_outcome2": "RTO menor a 15 minutos en planes de contingencia.",
+      "tab1_outcome3": "Cumplimiento de normativas complejas y auditorías regulatorias.",
       "tab1_image_alt": "Diagrama de infraestructura Fintech",
       "tab2_title": "Retail / eCommerce",
       "tab2_heading": "Retail y Comercio Electrónico",
@@ -856,6 +852,32 @@
       "trust1": "Prueba gratuita con $500 de crédito de bienvenida",
       "trust2": "Sin tarjeta de crédito requerida",
       "trust3": "Asistencia de migración incluida"
+    }
+  },
+  "section_pages": {
+    "ai": {
+      "title": "Inteligencia Artificial",
+      "subtitle": "Aproveche el poder de la IA.",
+      "hero_image": "/images/sections/ai_hero.webp",
+      "features": []
+    },
+    "products": {
+      "title": "Productos",
+      "subtitle": "Productos innovadores para su negocio.",
+      "hero_image": "/images/sections/product_hero.webp",
+      "features": []
+    },
+    "services": {
+      "title": "Servicios",
+      "subtitle": "Servicios profesionales para ayudarle a tener éxito.",
+      "hero_image": "/images/sections/services_hero.webp",
+      "features": []
+    },
+    "solutions": {
+      "title": "Soluciones",
+      "subtitle": "Escalables, seguras y eficientes.",
+      "hero_image": "/images/sections/solutions_hero.webp",
+      "features": []
     }
   }
 }

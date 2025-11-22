@@ -84,7 +84,7 @@ const heroImageUrl =
       </div>
 
       <!-- Columna derecha: Imagen Hero -->
-      <div class="relative">
+      <div class="relative z-10">
         <img
           src="/hero.png"
           alt={t("home.hero.title", undefined, { locale })}
@@ -120,4 +120,13 @@ const heroImageUrl =
       </div>
     </div>
   </div>
+
+  <!-- Particles Canvas -->
+  <canvas
+    id="hero-particles"
+    class="absolute inset-0 pointer-events-none z-0 w-full h-full"></canvas>
+
+  <script>
+    import "../../scripts/hero-particles.ts";
+  </script>
 </section>

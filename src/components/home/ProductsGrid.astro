@@ -293,14 +293,22 @@ const getUrl = (path: string) => {
               stroke-linejoin="round"
               stroke-width="2"
               d="M16 7a4 4 0 01-8 0M12 11v2m-6 4h12a2 2 0 002-2v-5a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2z"
-            />
+            ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("header.sections.products.items.mdm.title", undefined, { locale })}
+            {
+              t("header.sections.products.items.mdm.title", undefined, {
+                locale,
+              })
+            }
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("header.sections.products.items.mdm.description", undefined, { locale })}
+          {
+            t("header.sections.products.items.mdm.description", undefined, {
+              locale,
+            })
+          }
         </p>
         <a
           href={getUrl("/productos/mdm")}

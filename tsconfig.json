@@ -7,8 +7,16 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "public", "node_modules"]
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist",
+    "public",
+    "node_modules"
+  ]
 }

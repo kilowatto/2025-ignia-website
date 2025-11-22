@@ -28,6 +28,8 @@ let mobileToggle: HTMLElement | null;
 let mobileMenu: HTMLElement | null;
 let iconOpen: Element | null;
 let iconClose: Element | null;
+let headerWrapper: HTMLElement | null;
+let headerLogo: HTMLElement | null;
 
 /**
  * Inicializar cache de elementos del DOM.
@@ -36,6 +38,8 @@ let iconClose: Element | null;
 function cacheElements(): boolean {
     mobileToggle = document.getElementById('mobile-menu-button');
     mobileMenu = document.getElementById('mobile-menu');
+    headerWrapper = document.getElementById('header-wrapper');
+    headerLogo = document.getElementById('header-logo');
 
     if (!mobileToggle || !mobileMenu) return false;
 
@@ -96,6 +100,23 @@ function toggleMenu(): void {
 }
 
 /**
+ * Manejar el evento de scroll para reducir el tamaño del header.
+ */
+function handleScroll(): void {
+    if (!headerWrapper || !headerLogo) return;
+
+    const isScrolled = window.scrollY > 20;
+
+    if (isScrolled) {
+        headerWrapper.setAttribute('data-scrolled', 'true');
+        headerLogo.setAttribute('data-scrolled', 'true');
+    } else {
+        headerWrapper.removeAttribute('data-scrolled');
+        headerLogo.removeAttribute('data-scrolled');
+    }
+}
+
+/**
  * Inicializar event listeners.
  * Configuración única de todos los listeners al cargar.
  */
@@ -117,6 +138,9 @@ function initEventListeners(): void {
             closeMenu(true); // Devolver focus al toggle
         }
     });
+
+    // Scroll listener para sticky header
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
 /**
@@ -126,6 +150,7 @@ function initEventListeners(): void {
 function init(): void {
     if (cacheElements()) {
         initEventListeners();
+        handleScroll(); // Check initial scroll position
     }
 }
 

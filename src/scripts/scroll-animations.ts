@@ -48,7 +48,7 @@ function initScrollAnimations(): void {
     // Configuración del Intersection Observer
     const observerOptions: IntersectionObserverInit = {
         root: null, // viewport
-        rootMargin: '0px 0px -100px 0px', // Trigger 100px antes del viewport bottom
+        rootMargin: '0px 0px -50px 0px', // Trigger 50px antes del viewport bottom (más reactivo)
         threshold: 0.1, // 10% del elemento visible
     };
 

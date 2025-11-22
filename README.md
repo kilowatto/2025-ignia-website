@@ -897,6 +897,108 @@ http://localhost:4321/api/booking/slots?date=2025-10-15
 
 ---
 
+## 🏛️ Arquitectura de Contenido - Segundo Nivel
+
+Para mejorar la mantenibilidad y escalar el contenido del sitio, se introduce una arquitectura de segundo nivel para las secciones principales: **Soluciones, Producto, AI y Servicios**.
+
+Esta arquitectura resuelve el problema de los archivos de traducción monolíticos (`en.json`, `es.json`) que se han vuelto demasiado grandes y difíciles de gestionar, a la vez que asegura una presentación consistente.
+
+### Principios Clave
+
+1.  **Plantilla Única:** Se utiliza una única plantilla de Astro para renderizar las 4 páginas de segundo nivel, asegurando consistencia visual y estructural mediante una ruta dinámica.
+2.  **Traducciones Modulares:** Cada sección tiene su propio archivo de traducción, facilitando la edición y gestión del contenido específico de esa sección.
+3.  **Contenido Desacoplado:** El contenido de estas páginas se gestiona a través de los nuevos archivos JSON de traducción, separando el contenido de la presentación.
+
+### Nueva Estructura de Archivos Propuesta
+
+#### 1. Plantilla de Página Dinámica
+
+Se creará una ruta dinámica en Astro que servirá como plantilla para todas las páginas de sección.
+
+```
+src/
+└── pages/
+    └── [lang]/
+        └── [section].astro   # PLANTILLA DINÁMICA para /solutions, /product, /ai, /services
+```
+
+-   **`[lang]`**: `en`, `es`, `fr` (gestionado por Astro i18n).
+-   **`[section]`**: El slug de la sección (`solutions`, `product`, `ai`, `services`).
+
+El archivo `[section].astro` será responsable de:
+-   Validar que el `section` slug sea uno de los permitidos.
+-   Cargar dinámicamente el archivo de traducción correspondiente.
+-   Renderizar el contenido usando un layout común, `SectionLayout.astro`.
+
+#### 2. Layout para Páginas de Sección
+
+Un nuevo layout para mantener la consistencia de estas páginas.
+
+```
+src/
+└── layouts/
+    ├── BaseLayout.astro
+    └── SectionLayout.astro      # NUEVO: Layout para páginas de segundo nivel
+```
+
+#### 3. Estructura de Traducciones Modulares
+
+Las traducciones se moverán a un nuevo subdirectorio, organizado por sección.
+
+```
+src/
+└── i18n/
+    ├── en.json                     # Traducciones globales/comunes (header, footer, etc.)
+    ├── es.json
+    ├── fr.json
+    └── sections/                   # NUEVO: Directorio para traducciones de sección
+        ├── solutions.json
+        ├── product.json
+        ├── ai.json
+        └── services.json
+```
+
+Cada archivo JSON de sección contendrá las traducciones para todos los idiomas soportados, estructurando el contenido de la página.
+
+**Ejemplo: `src/i18n/sections/solutions.json`**
+```json
+{
+  "en": {
+    "title": "Our Cloud Solutions",
+    "subtitle": "Scalable, secure, and efficient.",
+    "hero_image": "/images/sections/solutions_hero.webp",
+    "features": [
+      { "title": "Feature 1", "description": "Description for feature 1." },
+      { "title": "Feature 2", "description": "Description for feature 2." }
+    ]
+  },
+  "es": {
+    "title": "Nuestras Soluciones Cloud",
+    "subtitle": "Escalables, seguras y eficientes.",
+    "hero_image": "/images/sections/solutions_hero.webp",
+    "features": [
+      { "title": "Característica 1", "description": "Descripción para característica 1." },
+      { "title": "Característica 2", "description": "Descripción para característica 2." }
+    ]
+  }
+}
+```
+
+### Flujo de Implementación Sugerido
+
+1.  **Crear nuevos archivos de traducción** en `src/i18n/sections/` para `solutions`, `product`, `ai`, y `services`.
+2.  **Mover el contenido relevante** de los archivos `en.json`, `es.json`, `fr.json` a los nuevos archivos modulares, dejando solo las traducciones globales en los archivos raíz.
+3.  **Crear el nuevo layout** `src/layouts/SectionLayout.astro`.
+4.  **Crear la plantilla de página dinámica** `src/pages/[lang]/[section].astro`.
+5.  **Implementar la lógica** en `[section].astro` para:
+    a. Definir las secciones permitidas (`const allowedSections = ['solutions', 'product', 'ai', 'services']`).
+    b. Usar `getStaticPaths` para generar las páginas en tiempo de build.
+    c. En el render, importar el JSON correcto (`await import(../../i18n/sections/${section}.json)`) y pasar los datos al layout.
+6.  **Actualizar la navegación** en `src/components/Header.astro` para apuntar a las nuevas rutas (ej. `/es/solutions`).
+7.  **Verificar Sitemaps**: Asegurarse de que las nuevas páginas (`/es/solutions`, `/en/product`, etc.) se incluyan automáticamente en los sitemaps generados por `sitemap-[lang].xml.ts`. La integración `@astrojs/sitemap` debería detectar las rutas de `getStaticPaths` sin configuración adicional.
+
+---
+
 ## 📁 Estructura de Directorios
 
 ```
@@ -3220,9 +3322,40 @@ Este proyecto sigue lineamientos arquitectónicos estrictos definidos en `arquit
 
 ---
 
+## 📊 Analytics Setup (GA4)
+
+El sitio utiliza Google Analytics 4 vía Partytown para no impactar el rendimiento.
+
+**Configuración en Cloudflare Pages:**
+1.  Ir a **Settings** > **Environment Variables**.
+2.  Añadir `PUBLIC_GA4_ID` con el ID de medición (ej: `G-XXXXXXXXXX`).
+3.  Redeployar.
+
+**Verificación:**
+- Verificar que `gtag/js` carga desde `~partytown` en la pestaña Network.
+- Verificar eventos en Real-Time de GA4.
+
+## 🤝 Content Management
+
+### **TrustBar Client Logos**
+Los logos de clientes se encuentran en `public/images/trust/clients/`.
+
+**Especificaciones:**
+- **Formato**: WebP (.webp)
+- **Dimensiones**: 200x80px
+- **Peso**: <15KB
+- **Estilo**: Preferiblemente versión monocromática/negra para el estado inactivo (el CSS aplica opacidad).
+
+**Para añadir un logo:**
+1.  Procesar la imagen: `cwebp -q 85 input.png -o client-name.webp`
+2.  Subir a `public/images/trust/clients/`.
+3.  Actualizar el array `clientLogos` en `src/components/home/TrustBar.astro`.
+
+---
+
 ## 📄 Licencia
 
-Copyright © 2025 Ignia Cloud. Todos los derechos reservados.
+Propiedad de **Ignia Cloud**. Todos los derechos reservados.
 
 ---
 

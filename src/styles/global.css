@@ -1,25 +1,23 @@
 .clip-hexagon {
-  clip-path: polygon(
-    25% 6.7%,
-    75% 6.7%,
-    100% 50%,
-    75% 93.3%,
-    25% 93.3%,
-    0% 50%
-  );
-  box-shadow: 0 24px 48px -8px rgba(0,0,0,0.32), 0 8px 32px -2px rgba(0,0,0,0.24);
+  clip-path: polygon(25% 6.7%,
+      75% 6.7%,
+      100% 50%,
+      75% 93.3%,
+      25% 93.3%,
+      0% 50%);
+  box-shadow: 0 24px 48px -8px rgba(0, 0, 0, 0.32), 0 8px 32px -2px rgba(0, 0, 0, 0.24);
 }
+
 /* Hexagon clip-path utility for solution cards */
 .clip-hexagon {
-  clip-path: polygon(
-    25% 6.7%,
-    75% 6.7%,
-    100% 50%,
-    75% 93.3%,
-    25% 93.3%,
-    0% 50%
-  );
+  clip-path: polygon(25% 6.7%,
+      75% 6.7%,
+      100% 50%,
+      75% 93.3%,
+      25% 93.3%,
+      0% 50%);
 }
+
 /* 
  * global.css - Estilos globales de Ignia Cloud
  * 
@@ -266,13 +264,15 @@
     border: 1px solid var(--color-border-muted, #e2e8f0);
     box-shadow: 0 28px 64px rgba(15, 23, 42, 0.18);
     padding: var(--space-6, 1.5rem) var(--space-7, 1.75rem);
-    display: none;
+    display: grid;
     gap: var(--space-6, 1.5rem);
     grid-template-columns: 22rem 1fr;
     align-items: start;
     min-height: 22rem;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0s 0.4s;
     z-index: 60;
   }
 
@@ -289,8 +289,10 @@
   /* Mostrar panel en hover o focus-within del item padre */
   .nav-ignia__item:hover .nav-ignia__panel,
   .nav-ignia__item:focus-within .nav-ignia__panel {
-    display: grid;
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   /* Rotar icono chevron cuando el menú está abierto */
@@ -393,8 +395,7 @@
   }
 
   .nav-ignia__mobile-menu {
-    padding: var(--space-3, 0.75rem) var(--space-2, 0.5rem)
-      var(--space-5, 1.25rem);
+    padding: var(--space-3, 0.75rem) var(--space-2, 0.5rem) var(--space-5, 1.25rem);
     background: #fff;
     border-top: 1px solid var(--color-border-muted, #e2e8f0);
     box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
@@ -458,6 +459,7 @@
       opacity: 0;
       transform: translateY(-6px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -469,6 +471,7 @@
       opacity: 0;
       transform: translate(-50%, 8px);
     }
+
     to {
       opacity: 1;
       transform: translate(-50%, 0);
@@ -482,6 +485,7 @@
   }
 
   @media (min-width: 1280px) {
+
     #mobile-menu-button,
     #mobile-menu {
       display: none !important;
@@ -489,6 +493,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+
     .nav-ignia__trigger,
     .nav-ignia__panel,
     .nav-ignia__panel-link,
@@ -508,7 +513,8 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.6);
-    -webkit-backdrop-filter: blur(4px); /* Safari 9+, iOS Safari 9+ */
+    -webkit-backdrop-filter: blur(4px);
+    /* Safari 9+, iOS Safari 9+ */
     backdrop-filter: blur(4px);
     padding: 1rem;
     overflow-y: auto;
@@ -538,6 +544,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -548,6 +555,7 @@
       opacity: 0;
       transform: scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
@@ -555,6 +563,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+
     .search-modal,
     .search-modal__content {
       animation: none !important;
@@ -598,34 +607,73 @@
    * 
    * @see src/scripts/scroll-animations.ts - Script que agrega clase .in-view
    */
-  
+
   .animate-on-scroll {
     opacity: 0;
-    transform: translateY(30px);
-    transition: 
-      opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
-      transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+    filter: blur(8px);
+    transform: translateY(8px);
+    /* Movimiento sutil para acompañar el enfoque */
+    transition:
+      opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      filter 500ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, filter, transform;
   }
 
   .animate-on-scroll.in-view {
     opacity: 1;
+    filter: blur(0);
     transform: translateY(0);
   }
 
-  /* Stagger delays para secciones consecutivas */
-  /* Cada sección tiene +100ms de delay para efecto cascada */
-  .animate-on-scroll:nth-of-type(1) { transition-delay: 0ms; }
-  .animate-on-scroll:nth-of-type(2) { transition-delay: 100ms; }
-  .animate-on-scroll:nth-of-type(3) { transition-delay: 200ms; }
-  .animate-on-scroll:nth-of-type(4) { transition-delay: 300ms; }
-  .animate-on-scroll:nth-of-type(5) { transition-delay: 400ms; }
-  .animate-on-scroll:nth-of-type(6) { transition-delay: 500ms; }
-  .animate-on-scroll:nth-of-type(7) { transition-delay: 600ms; }
-  .animate-on-scroll:nth-of-type(8) { transition-delay: 700ms; }
-  .animate-on-scroll:nth-of-type(9) { transition-delay: 800ms; }
-  .animate-on-scroll:nth-of-type(10) { transition-delay: 900ms; }
-  .animate-on-scroll:nth-of-type(11) { transition-delay: 1000ms; }
-  .animate-on-scroll:nth-of-type(12) { transition-delay: 1100ms; }
+  /* Stagger delays optimizados para el efecto blur */
+  .animate-on-scroll:nth-of-type(1) {
+    transition-delay: 0ms;
+  }
+
+  .animate-on-scroll:nth-of-type(2) {
+    transition-delay: 50ms;
+  }
+
+  .animate-on-scroll:nth-of-type(3) {
+    transition-delay: 100ms;
+  }
+
+  .animate-on-scroll:nth-of-type(4) {
+    transition-delay: 150ms;
+  }
+
+  .animate-on-scroll:nth-of-type(5) {
+    transition-delay: 200ms;
+  }
+
+  .animate-on-scroll:nth-of-type(6) {
+    transition-delay: 250ms;
+  }
+
+  .animate-on-scroll:nth-of-type(7) {
+    transition-delay: 300ms;
+  }
+
+  .animate-on-scroll:nth-of-type(8) {
+    transition-delay: 350ms;
+  }
+
+  .animate-on-scroll:nth-of-type(9) {
+    transition-delay: 400ms;
+  }
+
+  .animate-on-scroll:nth-of-type(10) {
+    transition-delay: 450ms;
+  }
+
+  .animate-on-scroll:nth-of-type(11) {
+    transition-delay: 500ms;
+  }
+
+  .animate-on-scroll:nth-of-type(12) {
+    transition-delay: 550ms;
+  }
 
   /* 
    * ACCESIBILIDAD: prefers-reduced-motion
@@ -663,6 +711,7 @@
       opacity: 0;
       transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);

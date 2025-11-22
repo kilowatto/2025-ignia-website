@@ -1,7 +1,7 @@
 {
   "footer": {
     "legal": {
-      "copyright": "© 2024 Ignia. Tous droits réservés."
+      "copyright": "© 2025 Ignia. Tous droits réservés."
     },
     "newsletter": {
       "button": "S'abonner",
@@ -102,7 +102,7 @@
             "title": "Blueprints RAG"
           }
         },
-        "label": "IA et LLMs",
+        "label": "AI & LARRY",
         "summary": "Faites tourner vos LLM sur Ignia Cloud avec GPU gérés, pipelines de données et copilotes."
       },
       "products": {
@@ -188,8 +188,8 @@
             "title": "Plateforme DevOps Kubernetes"
           },
           "nocaas": {
-            "description": "Supervision 24/7 et opérations avec correctifs et mises à jour gérés.",
-            "title": "NOCaaS"
+            "description": "Surveillance et opérations 24/7 avec gestion des correctifs et mises à jour.",
+            "title": "SecureOps 365"
           },
           "privateCloudOnPremise": {
             "description": "Cloud privé déployé et géré sur site.",
@@ -202,10 +202,6 @@
           "regulatoryBackupArchival": {
             "description": "Sauvegardes chiffrées avec rétention de 5 à 10 ans.",
             "title": "Archivage & sauvegarde réglementaire"
-          },
-          "secureWorkloadHosting": {
-            "description": "Hébergement sécurisé pour charges critiques avec répartition et gestion.",
-            "title": "Secure Workload Hosting"
           }
         },
         "label": "Solutions",
@@ -269,7 +265,6 @@
       "privateCloudOnPremise": "/solutions/private-cloud-on-premise/",
       "bcpDraas": "/solutions/bcp-draas/",
       "kubernetesDevops": "/solutions/kubernetes-devops-platform/",
-      "secureWorkloadHosting": "/solutions/secure-workload-hosting/",
       "complianceCloud": "/solutions/compliance-cloud/",
       "regulatoryBackupArchival": "/solutions/regulatory-backup-archival/"
     },
@@ -740,7 +735,7 @@
       "feature3_description": "Évitez le vendor lock-in"
     },
     "ai": {
-      "title": "IA et LLMs prêts pour la production",
+      "title": "AI & LARRY prêts pour la production",
       "subtitle": "Déployez des solutions intelligentes en toute sécurité",
       "badge": "IA et Machine Learning",
       "card1_title": "Hébergement LLM",
@@ -758,7 +753,7 @@
       "card3_feature1": "Interface copilot avec votre marque",
       "card3_feature2": "Garde-fous et conformité",
       "card3_feature3": "Déploiement omnicanal",
-      "cta": "Explorer IA et LLMs"
+      "cta": "Explorer AI & LARRY"
     },
     "useCases": {
       "title": "Cas d'usage par industrie",
@@ -766,10 +761,10 @@
       "tabs_aria_label": "Onglets de cas d'usage par industrie",
       "tab1_title": "Fintech / Finserv",
       "tab1_heading": "Services Financiers et Fintech",
-      "tab1_description": "Infrastructure critique pour institutions financières",
-      "tab1_outcome1": "Réduction de 40% des coûts DR",
-      "tab1_outcome2": "RTO <15 min en disaster recovery",
-      "tab1_outcome3": "Conformité CNBV + PCI-DSS",
+      "tab1_description": "Infrastructure robuste et sécurisée pour les banques, fintechs et institutions financières devant se conformer à des réglementations strictes et évolutives imposées par les agences gouvernementales.",
+      "tab1_outcome1": "Réduction de 40 % des coûts de reprise après sinistre.",
+      "tab1_outcome2": "RTO inférieur à 15 minutes dans les plans de contingence.",
+      "tab1_outcome3": "Conformité aux réglementations complexes et aux audits réglementaires.",
       "tab1_image_alt": "Diagramme d'infrastructure Fintech",
       "tab2_title": "Retail / eCommerce",
       "tab2_heading": "Retail et E-commerce",
@@ -866,6 +861,32 @@
       "trust1": "Essai gratuit avec 500$ de crédit de bienvenue",
       "trust2": "Aucune carte de crédit requise",
       "trust3": "Assistance à la migration incluse"
+    }
+  },
+  "section_pages": {
+    "ai": {
+      "title": "Intelligence Artificielle",
+      "subtitle": "Exploitez la puissance de l'IA.",
+      "hero_image": "/images/sections/ai_hero.webp",
+      "features": []
+    },
+    "products": {
+      "title": "Produits",
+      "subtitle": "Des produits innovants pour votre entreprise.",
+      "hero_image": "/images/sections/product_hero.webp",
+      "features": []
+    },
+    "services": {
+      "title": "Services",
+      "subtitle": "Des services professionnels pour vous aider à réussir.",
+      "hero_image": "/images/sections/services_hero.webp",
+      "features": []
+    },
+    "solutions": {
+      "title": "Solutions",
+      "subtitle": "Évolutives, sécurisées et efficaces.",
+      "hero_image": "/images/sections/solutions_hero.webp",
+      "features": []
     }
   }
 }

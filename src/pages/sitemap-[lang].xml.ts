@@ -32,7 +32,21 @@ const pages = [
     { path: '/search', changefreq: 'monthly', priority: 0.5 },  // Búsqueda
     { path: '/status', changefreq: 'hourly', priority: 0.8 },   // Status Page (añadido: 2025-10-06)
     { path: '/contact', changefreq: 'weekly', priority: 0.7 },  // Contact Page (añadido: 2025-10-10)
-    // Agregar aquí nuevas páginas según se creen
+    // Páginas de segundo nivel EN
+    { path: '/products', changefreq: 'monthly', priority: 0.7 },
+    { path: '/solutions', changefreq: 'monthly', priority: 0.7 },
+    { path: '/services', changefreq: 'monthly', priority: 0.7 },
+    { path: '/ai', changefreq: 'monthly', priority: 0.7 },
+    // Páginas de segundo nivel ES
+    { path: '/productos', changefreq: 'monthly', priority: 0.7 },
+    { path: '/soluciones', changefreq: 'monthly', priority: 0.7 },
+    { path: '/servicios', changefreq: 'monthly', priority: 0.7 },
+    { path: '/IA', changefreq: 'monthly', priority: 0.7 },
+    // Páginas de segundo nivel FR
+    { path: '/produits', changefreq: 'monthly', priority: 0.7 },
+    { path: '/solutions', changefreq: 'monthly', priority: 0.7 },
+    { path: '/services', changefreq: 'monthly', priority: 0.7 },
+    { path: '/ia', changefreq: 'monthly', priority: 0.7 },
 ];
 
 const locales = ['en', 'es', 'fr'];

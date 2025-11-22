@@ -1,7 +1,7 @@
 {
   "footer": {
     "legal": {
-      "copyright": "© 2024 Ignia. All rights reserved."
+      "copyright": "© 2025 Ignia. All rights reserved."
     },
     "newsletter": {
       "button": "Subscribe",
@@ -99,7 +99,7 @@
           },
           "nocaas": {
             "description": "24/7 monitoring and operations with managed patching and updates.",
-            "title": "NOCaaS"
+            "title": "SecureOps 365"
           },
           "privateCloudOnPremise": {
             "description": "Private cloud deployed and operated directly on-site.",
@@ -112,10 +112,6 @@
           "regulatoryBackupArchival": {
             "description": "Encrypted backups with 5–10 year retention policies.",
             "title": "Regulatory Backup & Archival"
-          },
-          "secureWorkloadHosting": {
-            "description": "Secure hosting for critical workloads with load balancing and management.",
-            "title": "Secure Workload Hosting"
           }
         },
         "label": "Solutions",
@@ -140,7 +136,7 @@
             "title": "RAG Blueprints"
           }
         },
-        "label": "AI & LLMs",
+        "label": "AI & LARRY",
         "summary": "Run your LLMs on Ignia Cloud with managed GPUs, data pipelines, and copilots."
       },
       "products": {
@@ -730,7 +726,7 @@
       "feature3_description": "Avoid vendor lock-in"
     },
     "ai": {
-      "title": "AI & LLMs ready for production",
+      "title": "AI & LARRY ready for production",
       "subtitle": "Deploy intelligent solutions securely",
       "badge": "AI & Machine Learning",
       "card1_title": "LLM Hosting",
@@ -748,7 +744,7 @@
       "card3_feature1": "Branded copilot interface",
       "card3_feature2": "Guardrails and compliance",
       "card3_feature3": "Omnichannel deployment",
-      "cta": "Explore AI & LLMs"
+      "cta": "Explore AI & LARRY"
     },
     "useCases": {
       "title": "Use cases by industry",
@@ -756,10 +752,10 @@
       "tabs_aria_label": "Industry use cases tabs",
       "tab1_title": "Fintech / Finserv",
       "tab1_heading": "Financial Services & Fintech",
-      "tab1_description": "Mission-critical infrastructure for financial institutions",
-      "tab1_outcome1": "40% reduction in DR costs",
-      "tab1_outcome2": "RTO <15 min in disaster recovery",
-      "tab1_outcome3": "CNBV + PCI-DSS compliance",
+      "tab1_description": "Robust and secure infrastructure for banks, fintechs, and financial institutions facing strict and evolving regulations from government agencies.",
+      "tab1_outcome1": "40% reduction in disaster recovery costs.",
+      "tab1_outcome2": "RTO under 15 minutes in contingency plans.",
+      "tab1_outcome3": "Compliance with complex regulations and regulatory audits.",
       "tab1_image_alt": "Fintech infrastructure diagram",
       "tab2_title": "Retail / eCommerce",
       "tab2_heading": "Retail & E-commerce",
@@ -857,5 +853,258 @@
       "trust2": "No credit card required",
       "trust3": "Migration assistance included"
     }
+  },
+  "section_pages": {
+    "ai": {
+      "title": "AI & LARRY Infrastructure",
+      "subtitle": "Enterprise AI infrastructure for the next generation of intelligent applications",
+      "overview": "Deploy and scale AI workloads with confidence. From GPU-powered LLM hosting to RAG pipelines and copilot studios, we provide the infrastructure to power your AI initiatives.",
+      "cta_text": "Get Started with AI",
+      "target_audience": {
+        "title": "Built For AI Teams",
+        "audiences": [
+          {
+            "title": "ML/AI Engineers",
+            "description": "Teams training and deploying large language models and AI applications"
+          },
+          {
+            "title": "Product Teams",
+            "description": "Companies building AI-powered features into their products"
+          },
+          {
+            "title": "Research Organizations",
+            "description": "Universities and labs conducting AI research and experimentation"
+          }
+        ]
+      },
+      "benefits": {
+        "title": "Why Choose Us for AI?",
+        "items": [
+          {
+            "title": "Managed GPUs",
+            "description": "NVIDIA A100 and H100 GPUs ready to use without hardware procurement"
+          },
+          {
+            "title": "Pre-built Pipelines",
+            "description": "RAG templates and vector databases configured for production use"
+          },
+          {
+            "title": "Scale on Demand",
+            "description": "Auto-scale GPU resources based on inference load"
+          },
+          {
+            "title": "Data Privacy",
+            "description": "Your models and data stay completely private and secure"
+          }
+        ]
+      },
+      "use_cases": {
+        "title": "AI Success Stories",
+        "cases": [
+          {
+            "title": "Customer Support Copilot",
+            "challenge": "Support team overwhelmed with 10,000+ monthly tickets",
+            "solution": "Built a Copilot Studio instance with company knowledge base integration",
+            "result": "Resolved 60% of tickets automatically, 4hour average response time"
+          },
+          {
+            "title": "Document Intelligence",
+            "challenge": "Legal firm processing thousands of contracts manually",
+            "solution": "Deployed RAG pipeline with LLM for contract analysis and extraction",
+            "result": "Reduced review time by 80%, improved accuracy to 99.5%"
+          }
+        ]
+      }
+    },
+    "products": {
+      "title": "Cloud Products",
+      "subtitle": "Best-in-class infrastructure products for modern applications",
+      "overview": "Build and scale your applications with our enterprise-grade cloud products. From virtual machines to managed Kubernetes, storage, and networking - everything you need to run mission-critical workloads.",
+      "cta_text": "View All Products",
+      "target_audience": {
+        "title": "Perfect For",
+        "audiences": [
+          {
+            "title": "DevOps Engineers",
+            "description": "Teams automating deployment pipelines and managing infrastructure as code"
+          },
+          {
+            "title": "Application Developers",
+            "description": "Developers building cloud-native applications that need to scale globally"
+          },
+          {
+            "title": "System Administrators",
+            "description": "IT ops managing production workloads requiring reliability and performance"
+          }
+        ]
+      },
+      "benefits": {
+        "title": "Product Advantages",
+        "items": [
+          {
+            "title": "API-First Design",
+            "description": "Full automation with comprehensive REST API and Terraform provider"
+          },
+          {
+            "title": "Enterprise Performance",
+            "description": "NVMe SSD storage, dedicated vCPUs, and low-latency networking"
+          },
+          {
+            "title": "Transparent Pricing",
+            "description": "Simple per-hour billing with no hidden fees or surprise charges"
+          },
+          {
+            "title": "Instant Provisioning",
+            "description": "Deploy resources in seconds with our high-speed infrastructure"
+          }
+        ]
+      },
+      "use_cases": {
+        "title": "How Teams Use Our Products",
+        "cases": [
+          {
+            "title": "Microservices Architecture",
+            "challenge": "SaaS company needed to deploy hundreds of microservices efficiently",
+            "solution": "Used Kubernetes Service with integrated load balancer and auto-scaling",
+            "result": "Reduced deployment time from hours to minutes, improved reliability by 99.95%"
+          },
+          {
+            "title": "Big Data Analytics Pipeline",
+            "challenge": "Data team processing terabytes of customer data daily",
+            "solution": "Leveraged Block Storage for databases and Object Storage for data lake",
+            "result": "10x faster query performance, 60% cost savings vs previous provider"
+          }
+        ]
+      }
+    },
+    "services": {
+      "title": "Professional Services",
+      "subtitle": "Expert guidance to maximize your cloud investment",
+      "overview": "Accelerate your cloud journey with our team of certified experts. From migration planning to ongoing managed services, we ensure your infrastructure runs smoothly 24/7.",
+      "cta_text": "Talk to an Expert",
+      "target_audience": {
+        "title": "Who Works With Us?",
+        "audiences": [
+          {
+            "title": "Growing Companies",
+            "description": "Businesses scaling rapidly who need expert help managing infrastructure"
+          },
+          {
+            "title": "Enterprises Migrating",
+            "description": "Large organizations moving from on-premise to cloud infrastructure"
+          },
+          {
+            "title": "Teams Needing Support",
+            "description": "Companies wanting 24/7 expert support without hiring a full team"
+          }
+        ]
+      },
+      "benefits": {
+        "title": "Service Benefits",
+        "items": [
+          {
+            "title": "24/7 Human Support",
+            "description": "Real engineers, not chatbots - available whenever you need help"
+          },
+          {
+            "title": "Proactive Monitoring",
+            "description": "We catch issues before they impact your users"
+          },
+          {
+            "title": "Migration Assistance",
+            "description": "Zero-downtime migrations handled by our expert team"
+          },
+          {
+            "title": "Cost Optimization",
+            "description": "Regular reviews to ensure you're not overpaying for resources"
+          }
+        ]
+      },
+      "use_cases": {
+        "title": "Service Success Stories",
+        "cases": [
+          {
+            "title": "Enterprise Cloud Migration",
+            "challenge": "Financial services company migrating 200+ applications to cloud",
+            "solution": "Managed IT service handled entire migration with zero downtime",
+            "result": "Migrated in 90 days vs 1-year estimate, saved $2M in planned costs"
+          },
+          {
+            "title": "24/7 Managed Operations",
+            "challenge": "E-commerce platform needed round-the-clock infrastructure support",
+            "solution": "Implemented managed services with proactive monitoring and optimization",
+            "result": "99.99% uptime, 40% reduction in infrastructure costs through optimization"
+          }
+        ]
+      }
+    },
+    "solutions": {
+      "title": "Cloud Solutions",
+      "subtitle": "Enterprise-grade cloud solutions tailored to your business needs",
+      "overview": "Transform your infrastructure with our comprehensive cloud solutions. From disaster recovery to hybrid architectures, we provide scalable, secure, and fully managed solutions that adapt to your business requirements.",
+      "cta_text": "Explore Our Solutions",
+      "target_audience": {
+        "title": "Who Benefits from Our Solutions?",
+        "audiences": [
+          {
+            "title": "Enterprise IT Teams",
+            "description": "Large organizations seeking scalable infrastructure with enterprise-grade security and compliance"
+          },
+          {
+            "title": "Fast-Growing Startups",
+            "description": "Companies needing flexible, cost-effective infrastructure that scales with rapid growth"
+          },
+          {
+            "title": "Regulated Industries",
+            "description": "Organizations in finance, healthcare, and government requiring compliance-ready infrastructure"
+          }
+        ]
+      },
+      "benefits": {
+        "title": "Why Choose Our Solutions?",
+        "items": [
+          {
+            "title": "Turnkey Deployment",
+            "description": "Pre-configured solutions ready to deploy in minutes, not months"
+          },
+          {
+            "title": "Always Available",
+            "description": "99.99% uptime SLA with automated failover and disaster recovery"
+          },
+          {
+            "title": "Cost Optimized",
+            "description": "Pay only for what you use with transparent, predictable pricing"
+          },
+          {
+            "title": "Expert Support",
+            "description": "24/7 human support from certified cloud architects"
+          }
+        ]
+      },
+      "use_cases": {
+        "title": "Real-World Success Stories",
+        "cases": [
+          {
+            "title": "E-commerce Platform Migration",
+            "challenge": "A retail company struggled with downtime during peak sales periods",
+            "solution": "Deployed our BCP/DRaaS solution with multi-region failover",
+            "result": "Zero downtime during Black Friday, 40% reduction in infrastructure costs"
+          },
+          {
+            "title": "Healthcare Data Compliance",
+            "challenge": "Medical provider needed HIPAA-compliant cloud infrastructure",
+            "solution": "Implemented Compliance Cloud with encrypted storage and audit logging",
+            "result": "Achieved HIPAA certification in 30 days, reduced audit time by 60%"
+          },
+          {
+            "title": "Hybrid Cloud Integration",
+            "challenge": "Manufacturing company wanted to keep legacy systems while moving to cloud",
+            "solution": "Created hybrid architecture connecting on-premise and cloud resources",
+            "result": "Modernized 70% of workloads while maintaining critical on-premise systems"
+          }
+        ]
+      }
+    }
   }
+
 }

@@ -54,18 +54,18 @@ import compress from 'astro-compress';
 export default defineConfig({
   // URL base del sitio - dinámica según ambiente
   site: SITE_URL,
-  
+
   // SSR habilitado - páginas se renderizan en Cloudflare Workers al solicitar
   output: 'server',
-  
+
   // Adapter de Cloudflare Pages con modo directorio
   // - 'directory': Estructura de archivos para Cloudflare Pages
   // - 'advanced': Control total sobre Workers (avanzado)
-  adapter: cloudflare({ 
+  adapter: cloudflare({
     mode: 'directory',
     // imageService: 'cloudflare', // Opcional: Cloudflare Image Resizing
   }),
-  
+
   // Configuración nativa de i18n de Astro (para routing)
   i18n: {
     defaultLocale: 'en',
@@ -88,7 +88,7 @@ export default defineConfig({
       },
     }),
     compress(),
-    
+
     // ============================================================================
     // REACT: Islands Architecture
     // ============================================================================
@@ -101,7 +101,7 @@ export default defineConfig({
     // Docs: https://docs.astro.build/en/guides/integrations-guide/react/
     // ============================================================================
     react(),
-    
+
     // ============================================================================
     // PARTYTOWN: Scripts de Terceros en Web Worker
     // ============================================================================
@@ -120,7 +120,7 @@ export default defineConfig({
         // - dataLayer.push: Para Google Tag Manager
         // - gtag: Para Google Analytics 4
         forward: ['dataLayer.push', 'gtag'],
-        
+
         // Debug: Solo en desarrollo para troubleshooting
         debug: import.meta.env.DEV,
       },

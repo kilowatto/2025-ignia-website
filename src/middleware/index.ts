@@ -2,6 +2,7 @@
 // Middleware para astro-i18n según arquitecture.md
 import { sequence, defineMiddleware } from 'astro/middleware';
 import { useAstroI18n } from 'astro-i18n';
+// @ts-ignore
 import config from '../../astro-i18n.config.mjs';
 
 /**
@@ -53,9 +54,14 @@ const excludeFromI18n = defineMiddleware(async (context, next) => {
     if (
         pathname === '/robots.txt' ||
         pathname === '/status' ||
+        pathname === '/favicon.ico' ||
         pathname.startsWith('/api/') ||
         pathname.startsWith('/sitemap') ||
         pathname.endsWith('.xml') ||
+        pathname.endsWith('.png') ||
+        pathname.endsWith('.jpg') ||
+        pathname.endsWith('.svg') ||
+        pathname.endsWith('.css') ||
         pathname.startsWith('/_')
     ) {
         return next();
