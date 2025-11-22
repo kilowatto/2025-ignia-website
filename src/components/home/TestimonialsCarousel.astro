@@ -6,13 +6,14 @@
  * Section: #12 of Home
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 ---
 
 <section
@@ -26,10 +27,10 @@ const { locale = "en" } = Astro.props;
         id="testimonials-heading"
         class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
       >
-        {t("home.testimonials.title", undefined, { locale })}
+        {t("home.testimonials.title", { locale })}
       </h2>
       <p class="text-lg text-gray-600">
-        {t("home.testimonials.subtitle", undefined, { locale })}
+        {t("home.testimonials.subtitle", { locale })}
       </p>
     </div>
 
@@ -38,7 +39,7 @@ const { locale = "en" } = Astro.props;
       <div
         class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide"
         role="region"
-        aria-label={t("home.testimonials.carousel_label", undefined, {
+        aria-label={t("home.testimonials.carousel_label", {
           locale,
         })}
       >
@@ -58,14 +59,14 @@ const { locale = "en" } = Astro.props;
               <div class="ml-4">
                 <h3 class="text-base font-semibold text-gray-900">
                   {
-                    t("home.testimonials.testimonial1_name", undefined, {
+                    t("home.testimonials.testimonial1_name", {
                       locale,
                     })
                   }
                 </h3>
                 <p class="text-sm text-gray-500">
                   {
-                    t("home.testimonials.testimonial1_role", undefined, {
+                    t("home.testimonials.testimonial1_role", {
                       locale,
                     })
                   }
@@ -125,14 +126,12 @@ const { locale = "en" } = Astro.props;
               </svg>
             </div>
             <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
-              "{
-                t("home.testimonials.testimonial1_quote", undefined, { locale })
-              }"
+              "{t("home.testimonials.testimonial1_quote", { locale })}"
             </blockquote>
             <div class="flex items-center">
               <img
                 src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Company+Logo&font=raleway"
-                alt={t("home.testimonials.testimonial1_company", undefined, {
+                alt={t("home.testimonials.testimonial1_company", {
                   locale,
                 })}
                 class="h-8"
@@ -160,14 +159,14 @@ const { locale = "en" } = Astro.props;
               <div class="ml-4">
                 <h3 class="text-base font-semibold text-gray-900">
                   {
-                    t("home.testimonials.testimonial2_name", undefined, {
+                    t("home.testimonials.testimonial2_name", {
                       locale,
                     })
                   }
                 </h3>
                 <p class="text-sm text-gray-500">
                   {
-                    t("home.testimonials.testimonial2_role", undefined, {
+                    t("home.testimonials.testimonial2_role", {
                       locale,
                     })
                   }
@@ -227,14 +226,12 @@ const { locale = "en" } = Astro.props;
               </svg>
             </div>
             <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
-              "{
-                t("home.testimonials.testimonial2_quote", undefined, { locale })
-              }"
+              "{t("home.testimonials.testimonial2_quote", { locale })}"
             </blockquote>
             <div class="flex items-center">
               <img
                 src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Retail+Corp&font=raleway"
-                alt={t("home.testimonials.testimonial2_company", undefined, {
+                alt={t("home.testimonials.testimonial2_company", {
                   locale,
                 })}
                 class="h-8"
@@ -262,14 +259,14 @@ const { locale = "en" } = Astro.props;
               <div class="ml-4">
                 <h3 class="text-base font-semibold text-gray-900">
                   {
-                    t("home.testimonials.testimonial3_name", undefined, {
+                    t("home.testimonials.testimonial3_name", {
                       locale,
                     })
                   }
                 </h3>
                 <p class="text-sm text-gray-500">
                   {
-                    t("home.testimonials.testimonial3_role", undefined, {
+                    t("home.testimonials.testimonial3_role", {
                       locale,
                     })
                   }
@@ -329,14 +326,12 @@ const { locale = "en" } = Astro.props;
               </svg>
             </div>
             <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
-              "{
-                t("home.testimonials.testimonial3_quote", undefined, { locale })
-              }"
+              "{t("home.testimonials.testimonial3_quote", { locale })}"
             </blockquote>
             <div class="flex items-center">
               <img
                 src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Media+Group&font=raleway"
-                alt={t("home.testimonials.testimonial3_company", undefined, {
+                alt={t("home.testimonials.testimonial3_company", {
                   locale,
                 })}
                 class="h-8"
@@ -364,14 +359,14 @@ const { locale = "en" } = Astro.props;
               <div class="ml-4">
                 <h3 class="text-base font-semibold text-gray-900">
                   {
-                    t("home.testimonials.testimonial4_name", undefined, {
+                    t("home.testimonials.testimonial4_name", {
                       locale,
                     })
                   }
                 </h3>
                 <p class="text-sm text-gray-500">
                   {
-                    t("home.testimonials.testimonial4_role", undefined, {
+                    t("home.testimonials.testimonial4_role", {
                       locale,
                     })
                   }
@@ -431,14 +426,12 @@ const { locale = "en" } = Astro.props;
               </svg>
             </div>
             <blockquote class="flex-grow text-base text-gray-700 italic mb-6">
-              "{
-                t("home.testimonials.testimonial4_quote", undefined, { locale })
-              }"
+              "{t("home.testimonials.testimonial4_quote", { locale })}"
             </blockquote>
             <div class="flex items-center">
               <img
                 src="https://placehold.co/100x40/1f2937/ffffff/webp?text=Healthcare+Plus&font=raleway"
-                alt={t("home.testimonials.testimonial4_company", undefined, {
+                alt={t("home.testimonials.testimonial4_company", {
                   locale,
                 })}
                 class="h-8"

@@ -16,11 +16,12 @@
  * @see src/components/SearchModal.astro - Modal que este botón controla
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 // Obtener locale actual de forma robusta
 const rawLocale = Astro.currentLocale || "en";
 const locale = rawLocale.split("-")[0];
+const t = await useTranslations(locale);
 ---
 
 <!-- 
@@ -30,7 +31,7 @@ const locale = rawLocale.split("-")[0];
 <button
   id="search-toggle"
   class="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
-  aria-label={t("search.aria_label", undefined, { locale })}
+  aria-label={t("search.aria_label", { locale })}
   type="button"
 >
   <!-- Icono SVG de lupa -->

@@ -1,0 +1,892 @@
+{
+  "footer": {
+    "legal": {
+      "copyright": "© 2025 Ignia. Tous droits réservés."
+    },
+    "newsletter": {
+      "button": "S'abonner",
+      "cta": "Abonnez-vous à notre newsletter",
+      "description": "Recevez les dernières nouvelles et mises à jour directement dans votre boîte de réception."
+    },
+    "sitemap": {
+      "title": "Nos Liens Rapides",
+      "aria_label": "Plan de navigation du site"
+    },
+    "corporate": {
+      "label": "Entreprise",
+      "press": "Communiqués de Presse",
+      "offices": "Bureaux",
+      "about": "À Propos",
+      "team": "Équipe",
+      "careers": "Carrières",
+      "partners": "Partenaires",
+      "status": "État du Système"
+    },
+    "contact_form": {
+      "title": "Contactez-nous",
+      "description": "Rejoignez la communauté Ignia et découvrez comment nous pouvons vous aider",
+      "subtitle": "Remplissez le formulaire et nous vous répondrons bientôt",
+      "fields": {
+        "name": {
+          "label": "Nom Complet",
+          "placeholder": "Jean Dupont",
+          "error": "Oups! On doit savoir comment vous appeler (on ne mord pas 😊)"
+        },
+        "country_code": {
+          "label": "Pays",
+          "placeholder": "Sélectionner un pays"
+        },
+        "phone": {
+          "label": "Téléphone",
+          "placeholder": "1 23 45 67 89",
+          "error": "Ce téléphone semble d'une autre dimension 🌌 Vous en avez un terrestre?"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "votre@email.com",
+          "error": "Hmm... cet email est suspect 🕵️ Sûr qu'il a @ et .com?"
+        }
+      },
+      "button": {
+        "send": "Envoyer",
+        "sending": "Envoi..."
+      },
+      "success": {
+        "title": "Message envoyé avec succès!",
+        "message": "Merci de nous avoir contactés. Un de nos spécialistes vous contactera bientôt.",
+        "reset_link": "Besoin d'envoyer un autre message?"
+      },
+      "already_submitted": {
+        "title": "Vous avez déjà une demande active",
+        "message": "Nous vous contacterons bientôt."
+      },
+      "error": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "header": {
+    "logo_alt": "Logo Ignia Cloud",
+    "nav": {
+      "aria": {
+        "desktop": "Navigation principale",
+        "mobile": "Navigation mobile",
+        "social": "Liens sociaux Ignia"
+      },
+      "mobile": {
+        "blog": "Blog & insights",
+        "contact": "Contact"
+      },
+      "social": {
+        "linkedin": "LinkedIn",
+        "whatsapp": "WhatsApp"
+      },
+      "toggle": "Ouvrir le menu"
+    },
+    "sections": {
+      "explore_all": "Tout explorer",
+      "ai": {
+        "items": {
+          "copilotStudio": {
+            "description": "Concevez des copilotes avec garde-fous, analytics et diffusion omnicanale.",
+            "title": "Copilot Studio"
+          },
+          "llmHosting": {
+            "description": "Déployez des LLM ouverts ou privés avec clusters isolés, GPU et autoscaling.",
+            "title": "LLM Hosting"
+          },
+          "mlopsMonitoring": {
+            "description": "Opérez vos charges IA avec suivi d'expériences, alertes de dérive et gouvernance.",
+            "title": "MLOps et monitoring"
+          },
+          "ragBlueprints": {
+            "description": "Ingestion, vectorisation et contextualisation des LLM avec pipelines gérés.",
+            "title": "Blueprints RAG"
+          }
+        },
+        "label": "AI & Larry",
+        "summary": "Faites tourner vos LLM sur Ignia Cloud avec GPU gérés, pipelines de données et copilotes."
+      },
+      "products": {
+        "items": {
+          "blockStorage": {
+            "description": "Stockage à IOPS élevé pour bases de données et applications critiques.",
+            "title": "Stockage par blocs"
+          },
+          "cloudBackup": {
+            "description": "Sauvegardes cloud chiffrées avec gestion de la rétention.",
+            "title": "Cloud Backup"
+          },
+          "cloudFirewall": {
+            "description": "Pare-feux managés avec IPS/IDS, WAF et micro-segmentation.",
+            "title": "Cloud Firewall"
+          },
+          "dns": {
+            "description": "DNS résilient avec routage géo, bascule et analytics.",
+            "title": "DNS managé"
+          },
+          "kubernetesService": {
+            "description": "Clusters Kubernetes prêts pour la production et gérés.",
+            "title": "Kubernetes as a Service"
+          },
+          "loadBalancer": {
+            "description": "Répartiteurs de charge élastiques avec health checks et routage global.",
+            "title": "Load Balancer"
+          },
+          "objectStorage": {
+            "description": "Stockage massif pour fichiers et sauvegardes.",
+            "title": "Stockage objet"
+          },
+          "virtualMachines": {
+            "description": "Serveurs virtuels haute performance pour charges exigeantes.",
+            "title": "Machines virtuelles"
+          },
+          "mdm": {
+            "description": "Gestion et sécurité centralisées des appareils mobiles dans toute l'organisation.",
+            "title": "MDM (Mobile Device Manager)"
+          },
+          "monitoring": {
+            "description": "Surveillance en temps réel de l'infrastructure et des applications avec alertes et tableaux de bord.",
+            "title": "Monitoring"
+          },
+          "patchManager": {
+            "description": "Gestion automatisée des correctifs pour serveurs, VMs et endpoints afin de garder les systèmes sécurisés et à jour.",
+            "title": "Patch Manager"
+          }
+        },
+        "label": "Produits",
+        "summary": "Services modulaires à composer"
+      },
+      "services": {
+        "items": {
+          "cloudConsulting": {
+            "description": "Migrations, audits et conseil en architecture par des experts.",
+            "title": "Conseil Cloud"
+          },
+          "managedIt": {
+            "description": "Gestion 24/7 avec SLA, monitoring et réponse aux incidents.",
+            "title": "IT géré"
+          },
+          "supportCenter": {
+            "description": "Support, base de connaissances et assistance proactive pour vos équipes.",
+            "title": "Centre de support"
+          }
+        },
+        "label": "Services",
+        "summary": "Des experts pour opérer, sécuriser et faire évoluer votre stack"
+      },
+      "solutions": {
+        "items": {
+          "bcpDraas": {
+            "description": "Continuité et reprise avec réplication et bascule.",
+            "title": "BCP/DRaaS"
+          },
+          "complianceCloud": {
+            "description": "Logs WORM, métriques et rapports CNBV/ISO/PCI.",
+            "title": "Compliance Cloud pour Fintechs"
+          },
+          "kubernetesDevops": {
+            "description": "Kubernetes géré avec CI/CD et observabilité.",
+            "title": "Plateforme DevOps Kubernetes"
+          },
+          "nocaas": {
+            "description": "Surveillance et opérations 24/7 avec gestion des correctifs et mises à jour.",
+            "title": "SecureOps 365"
+          },
+          "privateCloudOnPremise": {
+            "description": "Cloud privé déployé et géré sur site.",
+            "title": "Private Cloud On-Premise"
+          },
+          "privateCloudService": {
+            "description": "Cloud privé élastique et isolé, prêt à évoluer.",
+            "title": "Private Cloud as a Service"
+          },
+          "regulatoryBackupArchival": {
+            "description": "Sauvegardes chiffrées avec rétention de 5 à 10 ans.",
+            "title": "Archivage & sauvegarde réglementaire"
+          }
+        },
+        "label": "Solutions",
+        "summary": "Offres qui répondent à des besoins concrets"
+      }
+    }
+  },
+  "language": {
+    "banner": {
+      "aria": {
+        "banner": "Suggestion de changement de langue",
+        "group": "Actions de langue"
+      },
+      "change": "Changer de langue",
+      "description": "Nous avons détecté que votre navigateur est configuré en français",
+      "dismiss": "Ignorer la suggestion de langue",
+      "prompt": "Préférez-vous voir le site en français ?"
+    },
+    "language_banner": {
+      "aria_label": "Bannière de suggestion de langue",
+      "flag_aria": "Drapeau de {{language}}",
+      "message": "Préférez-vous voir le site en {{language}}?",
+      "accept_button": "Changer langue",
+      "accept_aria": "Changer le site web en {{language}}",
+      "dismiss_aria": "Rejeter la suggestion de langue",
+      "actions_aria": "Actions de langue"
+    },
+    "switcher": {
+      "label": "Choisir la langue",
+      "languages": {
+        "en": {
+          "english": "Anglais",
+          "native": "English",
+          "short": "EN"
+        },
+        "es": {
+          "english": "Espagnol",
+          "native": "Español",
+          "short": "ES"
+        },
+        "fr": {
+          "english": "Français",
+          "native": "Français",
+          "short": "FR"
+        }
+      }
+    }
+  },
+  "layout": {
+    "skip_link": "Aller au contenu principal"
+  },
+  "meta": {
+    "description": "Ignia est un fournisseur de solutions technologiques innovantes qui aide les entreprises à prospérer à l'ère numérique.",
+    "title": "Ignia - Votre partenaire technologique de confiance"
+  },
+  "routes": {
+    "solutions": {
+      "base": "/solutions/",
+      "nocaas": "/solutions/nocaas/",
+      "privateCloudService": "/solutions/private-cloud-as-a-service/",
+      "privateCloudOnPremise": "/solutions/private-cloud-on-premise/",
+      "bcpDraas": "/solutions/bcp-draas/",
+      "kubernetesDevops": "/solutions/kubernetes-devops-platform/",
+      "complianceCloud": "/solutions/compliance-cloud/",
+      "regulatoryBackupArchival": "/solutions/regulatory-backup-archival/"
+    },
+    "products": {
+      "base": "/produits/",
+      "virtualMachines": "/produits/virtual-machines/",
+      "kubernetesService": "/produits/kubernetes-as-a-service/",
+      "blockStorage": "/produits/block-storage/",
+      "objectStorage": "/produits/object-storage/",
+      "cloudBackup": "/produits/cloud-backup/",
+      "cloudFirewall": "/produits/cloud-firewall/",
+      "dns": "/produits/dns/",
+      "loadBalancer": "/produits/load-balancer/"
+    },
+    "ai": {
+      "base": "/ia/",
+      "llmHosting": "/ia/llm-hosting/",
+      "ragBlueprints": "/ia/rag-blueprints/",
+      "copilotStudio": "/ia/copilots/",
+      "mlopsMonitoring": "/ia/mlops/"
+    },
+    "services": {
+      "base": "/services/",
+      "managedIt": "/services/managed-it/",
+      "cloudConsulting": "/services/conseil-cloud/",
+      "supportCenter": "/services/support/"
+    },
+    "common": {
+      "blog": "/blog/",
+      "contact": "/contact/"
+    },
+    "corporate": {
+      "press": "/press/",
+      "offices": "/offices/",
+      "about": "/about-us/",
+      "team": "/team/",
+      "careers": "/careers/",
+      "partners": "/partners/",
+      "status": "/status/"
+    }
+  },
+  "404": {
+    "title": "Oups! Page non trouvée",
+    "subtitle": "Erreur 404",
+    "description": "La page que vous recherchez semble s'être égarée dans le nuage...",
+    "humor": "Même nos meilleurs ingénieurs cloud ne peuvent pas trouver cette page. Peut-être est-elle en vacances? 🏖️",
+    "extra_humor": "Nous avons vérifié tous nos serveurs, même demandé à la machine à café ☕ - rien!",
+    "secondary": "Ne vous inquiétez pas, cela arrive aux meilleurs d'entre nous. Remettons-vous sur la bonne voie.",
+    "cta": {
+      "home": "Aller à l'accueil",
+      "search": "Rechercher sur notre site"
+    },
+    "meta": {
+      "title": "404 - Page non trouvée | Ignia Cloud",
+      "description": "La page que vous recherchez n'existe pas. Retournez à l'accueil ou recherchez sur notre site."
+    }
+  },
+  "search": {
+    "aria_label": "Rechercher sur le site web",
+    "button": "Rechercher",
+    "empty": "Saisissez un terme de recherche pour commencer",
+    "error_message": "Une erreur est survenue lors de la recherche. Veuillez réessayer.",
+    "error_title": "Erreur de recherche",
+    "filters": {
+      "category": {
+        "all": "Toutes les catégories",
+        "article": "Articles",
+        "product": "Produits",
+        "service": "Services"
+      },
+      "clear": "Effacer les filtres",
+      "sort": {
+        "label": "Trier par",
+        "options": {
+          "category": "Catégorie",
+          "relevance": "Pertinence",
+          "title": "Titre A-Z"
+        }
+      },
+      "type": {
+        "all": "Tous les types"
+      }
+    },
+    "keyboard_shortcuts": "Raccourcis clavier",
+    "loading": "Recherche en cours...",
+    "meta_description": "Résultats de recherche sur le site Ignia",
+    "modal_title": "Rechercher",
+    "no_results": {
+      "message": "Essayez d'autres mots-clés ou vérifiez votre orthographe.",
+      "tips": {
+        "intro": "Conseils de recherche :",
+        "items": {
+          "general": "Utilisez des mots-clés plus généraux",
+          "spelling": "Vérifiez votre orthographe",
+          "combinations": "Essayez différentes combinaisons de mots",
+          "filters": "Retirez des filtres pour voir plus de résultats"
+        }
+      },
+      "title": "Aucun résultat trouvé"
+    },
+    "placeholder": "Rechercher...",
+    "related_title": "Recherches associées",
+    "results_description": "Affichage de {{from}}-{{to}} sur {{total}} résultats pour \"{{query}}\"",
+    "results_for": "Résultats pour",
+    "results_title": "Résultats de recherche",
+    "search_button": "Rechercher",
+    "suggestions": "Suggestions rapides :",
+    "quick_searches": [
+      {
+        "label": "Solutions Cloud",
+        "query": "cloud privé public hybride"
+      },
+      {
+        "label": "Kubernetes et DevOps",
+        "query": "kubernetes devops conteneurs"
+      },
+      {
+        "label": "Sauvegarde et Récupération",
+        "query": "sauvegarde récupération catastrophe pra draas"
+      },
+      {
+        "label": "Conformité et Sécurité",
+        "query": "conformité sécurité rgpd hipaa pci"
+      },
+      {
+        "label": "IA et Machine Learning",
+        "query": "intelligence artificielle llm machine learning rag"
+      }
+    ],
+    "stats": {
+      "page": "Page actuelle :",
+      "time": "Temps de recherche :",
+      "title": "Statistiques de recherche",
+      "total": "Résultats totaux :"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "to_close": "pour fermer",
+    "to_search": "pour rechercher"
+  },
+  "status": {
+    "meta": {
+      "title": "État du Système - Ignia Cloud",
+      "description": "Surveillance en temps réel des services Ignia Cloud. Consultez l'état opérationnel actuel de notre infrastructure."
+    },
+    "title": "État du Système",
+    "subtitle": "Surveillance des services en temps réel",
+    "last_check": "Dernière vérification",
+    "auto_refresh": "Cette page se rafraîchit automatiquement toutes les 5 minutes",
+    "services": {
+      "title": "Services",
+      "website": {
+        "name": "Site Web",
+        "description": "Site web principal et pages d'accueil"
+      },
+      "odoo_api": {
+        "name": "API Odoo",
+        "description": "Système CRM et gestion des contacts"
+      }
+    },
+    "status": {
+      "operational": "Opérationnel",
+      "degraded": "Performance Dégradée",
+      "down": "Service Indisponible"
+    },
+    "details": {
+      "title": "Détails",
+      "response_time": "Temps de Réponse",
+      "user_id": "ID Utilisateur",
+      "error": "Erreur",
+      "code": "Code"
+    },
+    "logs": {
+      "title": "Logs de Diagnostic",
+      "protected": "Contenu Protégé",
+      "auth_required": "Authentification requise pour voir les logs de diagnostic.",
+      "auth_hint": "Ajoutez ?token=VOTRE_TOKEN à l'URL",
+      "export": "Exporter JSON",
+      "copy": "Copier les Logs",
+      "copied": "Copié!"
+    },
+    "aria": {
+      "status_page": "Page d'état du système",
+      "services_list": "Liste des services surveillés",
+      "service_card": "Carte d'état du service {{service}}",
+      "operational_icon": "Service opérationnel",
+      "degraded_icon": "Service dégradé",
+      "down_icon": "Service indisponible",
+      "logs_section": "Section des logs de diagnostic",
+      "export_button": "Exporter les données de diagnostic en JSON",
+      "copy_button": "Copier les logs dans le presse-papiers"
+    }
+  },
+  "countries": {
+    "us": "États-Unis",
+    "mx": "Mexique",
+    "fr": "France",
+    "es": "Espagne",
+    "ar": "Argentine",
+    "au": "Australie",
+    "at": "Autriche",
+    "be": "Belgique",
+    "br": "Brésil",
+    "ca": "Canada",
+    "cl": "Chili",
+    "cn": "Chine",
+    "co": "Colombie",
+    "cr": "Costa Rica",
+    "cz": "République Tchèque",
+    "de": "Allemagne",
+    "dk": "Danemark",
+    "ec": "Équateur",
+    "eg": "Égypte",
+    "fi": "Finlande",
+    "gb": "Royaume-Uni",
+    "gr": "Grèce",
+    "gt": "Guatemala",
+    "hk": "Hong Kong",
+    "hu": "Hongrie",
+    "id": "Indonésie",
+    "ie": "Irlande",
+    "il": "Israël",
+    "in": "Inde",
+    "it": "Italie",
+    "jp": "Japon",
+    "kr": "Corée du Sud",
+    "my": "Malaisie",
+    "nl": "Pays-Bas",
+    "no": "Norvège",
+    "nz": "Nouvelle-Zélande",
+    "pa": "Panama",
+    "pe": "Pérou",
+    "ph": "Philippines",
+    "pl": "Pologne",
+    "pt": "Portugal",
+    "ro": "Roumanie",
+    "ru": "Russie",
+    "sa": "Arabie Saoudite",
+    "se": "Suède",
+    "sg": "Singapour",
+    "th": "Thaïlande",
+    "tr": "Turquie",
+    "tw": "Taïwan",
+    "ua": "Ukraine",
+    "uy": "Uruguay",
+    "ve": "Venezuela",
+    "vn": "Vietnam",
+    "za": "Afrique du Sud"
+  },
+  "home": {
+    "hero": {
+      "title": "Le cloud d'entreprise avec tarification transparente et support humain 24/7 propulsé par Larry AI",
+      "subtitle": "Performance d'entreprise, sécurité anti-DDoS incluse et opération multicloud sans friction.",
+      "cta_primary": "Voir les tarifs maintenant",
+      "cta_secondary": "Parler à un ingénieur"
+    },
+    "trustBar": {
+      "title": "Approuvé par des entreprises en croissance en Amérique latine",
+      "subtitle": "Infrastructure et support depuis le Mexique pour l'Amérique latine et le monde",
+      "stat1_number": "99,99%",
+      "stat1_label": "SLA de Disponibilité",
+      "stat1_sublabel": "Fiabilité garantie",
+      "stat2_number": "24/7/365",
+      "stat2_label": "Support Humain",
+      "stat2_sublabel": "Vrais ingénieurs, pas de bots",
+      "stat3_number": "<15min",
+      "stat3_label": "Temps de Réponse",
+      "stat3_sublabel": "Moyenne première réponse",
+      "clients_subtitle": "Rejoignez les entreprises qui font confiance à Ignia pour leur infrastructure cloud"
+    },
+    "whyIgnia": {
+      "title": "Pourquoi Ignia Cloud?",
+      "subtitle": "Quatre piliers qui nous différencient",
+      "pillar1_title": "Transparence totale",
+      "pillar1_description": "Tarification simple et prévisible. Pas de frais cachés, pas de surprises en fin de mois.",
+      "pillar2_title": "Sécurité toujours active",
+      "pillar2_description": "Protection anti-DDoS incluse dans tous les services. Votre infrastructure protégée 24/7.",
+      "pillar3_title": "Multicloud sans friction",
+      "pillar3_description": "Connectez Azure, GCP et on-prem sans complexité. Une console pour tout.",
+      "pillar4_title": "Support humain 24/7 en espagnol",
+      "pillar4_description": "Ingénieurs qui résolvent les problèmes, pas de bots. De vraies personnes prêtes à aider."
+    },
+    "contact": {
+      "meta": {
+        "title": "Nous Contacter - Ignia Cloud",
+        "description": "Contactez notre équipe ou planifiez une réunion avec nos experts commerciaux. Nous sommes là pour vous aider avec vos besoins d'infrastructure cloud."
+      },
+      "hero": {
+        "title": "Parlons de votre cloud",
+        "subtitle": "Que vous ayez une question ou souhaitiez planifier une démo, nous sommes là pour vous aider à trouver la solution parfaite pour votre entreprise."
+      },
+      "form": {
+        "title": "Envoyez-nous un message",
+        "subtitle": "Remplissez le formulaire et nous vous répondrons dans les 24 heures",
+        "name_label": "Nom Complet",
+        "name_placeholder": "Jean Dupont",
+        "name_error": "Veuillez entrer votre nom complet (minimum 2 caractères)",
+        "company_label": "Entreprise (optionnel)",
+        "company_placeholder": "Acme SARL",
+        "email_label": "Email",
+        "email_placeholder": "votre@email.com",
+        "email_error": "Veuillez entrer une adresse email valide",
+        "country_code_label": "Pays",
+        "country_code_placeholder": "Sélectionner pays",
+        "phone_label": "Téléphone",
+        "phone_placeholder": "01 23 45 67 89",
+        "phone_error": "Veuillez entrer un numéro de téléphone valide",
+        "message_label": "Message",
+        "message_placeholder": "Parlez-nous de votre projet ou question...",
+        "message_error": "Veuillez entrer un message (minimum 10 caractères)",
+        "consent_label": "J'accepte la politique de confidentialité et les conditions de service",
+        "consent_error": "Vous devez accepter la politique de confidentialité pour continuer",
+        "button_submit": "Envoyer le Message",
+        "button_sending": "Envoi...",
+        "success_title": "Message envoyé avec succès!",
+        "success_message": "Merci de nous avoir contactés. Notre équipe vous répondra bientôt.",
+        "error_title": "Oups! Quelque chose s'est mal passé",
+        "error_message": "Nous n'avons pas pu envoyer votre message. Veuillez réessayer ou nous contacter directement à contact@ignia.cloud"
+      },
+      "schedule": {
+        "title": "Planifier une réunion",
+        "subtitle": "Parlez directement avec notre équipe commerciale et découvrez comment Ignia peut transformer votre infrastructure",
+        "name_label": "Nom Complet",
+        "name_placeholder": "Jean Dupont",
+        "name_error": "Veuillez entrer votre nom complet (minimum 2 caractères)",
+        "company_label": "Entreprise",
+        "company_placeholder": "Acme SARL",
+        "company_error": "Veuillez entrer le nom de votre entreprise",
+        "email_label": "Email",
+        "email_placeholder": "votre@email.com",
+        "email_error": "Veuillez entrer une adresse email valide",
+        "country_code_label": "Pays",
+        "country_code_placeholder": "Sélectionner pays",
+        "phone_label": "Téléphone",
+        "phone_placeholder": "01 23 45 67 89",
+        "phone_error": "Veuillez entrer un numéro de téléphone valide",
+        "date_label": "Date Préférée",
+        "date_error": "Veuillez sélectionner une date",
+        "time_label": "Heure Préférée (fuseau horaire Mexico)",
+        "time_placeholder": "Sélectionner l'heure",
+        "time_error": "Veuillez sélectionner une heure",
+        "topic_label": "Sujet de la Réunion",
+        "topic_placeholder": "De quoi aimeriez-vous discuter?",
+        "topic_error": "Veuillez entrer le sujet de la réunion",
+        "button_submit": "Demander une Réunion",
+        "button_sending": "Envoi...",
+        "success_title": "Demande de réunion reçue!",
+        "success_message": "Nous vous contacterons bientôt pour confirmer la date et l'heure. Vérifiez votre email pour plus de détails.",
+        "error_title": "Oups! Quelque chose s'est mal passé",
+        "error_message": "Nous n'avons pas pu planifier votre réunion. Veuillez réessayer ou nous contacter directement à sales@ignia.cloud"
+      },
+      "info": {
+        "title": "Nos Bureaux",
+        "subtitle": "Visitez-nous ou contactez-nous",
+        "corporate": {
+          "label": "Siège Social",
+          "address_line1": "28789 Hardin Store RD.",
+          "address_line2": "Suite 230, Magnolia TX",
+          "address_line3": "77354",
+          "country": "États-Unis"
+        },
+        "mexico_corp": {
+          "label": "Bureau Corporatif Mexique",
+          "address_line1": "Nueva York 32 Int 901",
+          "address_line2": "Napoles, Benito Juárez",
+          "address_line3": "03810",
+          "country": "Mexico City"
+        },
+        "mexico_sales": {
+          "label": "Bureau des Ventes Mexique",
+          "address_line1": "Av. Insurgentes Centro 1458",
+          "address_line2": "Actipan, Benito Juárez",
+          "address_line3": "03230 Ciudad de México, CDMX",
+          "phone": "+52 55 6952 7498",
+          "whatsapp": "+52 55 6952 7498",
+          "country": "Mexique"
+        }
+      }
+    },
+    "pricingCTA": {
+      "title": "Découvrez nos prix et optimisez vos dépenses cloud",
+      "subtitle": "Calculez votre coût en quelques minutes",
+      "bullets": {
+        "transparent": "Prix transparents et prévisibles",
+        "comparison": "Comparaison multicloud (Ignia, Azure, GCP)",
+        "recommendations": "Recommandations d'économies personnalisées",
+        "breakdown": "Ventilation détaillée par service"
+      },
+      "cta": "Aller au calculateur de prix"
+    },
+    "solutions": {
+      "title": "Solutions adaptées à votre entreprise",
+      "subtitle": "Plus qu'une infrastructure: des résultats mesurables",
+      "regulatoryBackup": {
+        "title": "Backup Réglementaire",
+        "description": "Rétention de sauvegardes long terme pour la conformité réglementaire avec 99,99 % de durabilité",
+        "feature1": "Politiques de rétention de 7 à 10 ans",
+        "feature2": "99,99 % de durabilité des données",
+        "feature3": "Chiffré et immuable"
+      },
+      "kubernetes": {
+        "title": "Kubernetes DevOps",
+        "description": "Kubernetes géré avec pipelines CI/CD intégrés et observabilité complète",
+        "feature1": "Clusters prêts pour production en minutes",
+        "feature2": "CI/CD intégré avec GitOps",
+        "feature3": "Observabilité full-stack"
+      },
+      "nocaas": {
+        "title": "NOC en tant que Service",
+        "description": "Supervision 24/7 et opérations avec gestion des correctifs et réponse aux incidents",
+        "feature1": "Surveillance proactive de l'infrastructure",
+        "feature2": "Correctifs et mises à jour gérés",
+        "feature3": "Runbooks alignés sur les bonnes pratiques ITIL"
+      },
+      "multicloud": {
+        "title": "Architecture Multicloud",
+        "description": "Concevez et exploitez des topologies hybrides et multicloud avec connectivité dédiée",
+        "feature1": "Connexions directes vers Azure, GCP et on-premise",
+        "feature2": "Gouvernance et observabilité unifiées",
+        "feature3": "Migrations et exploitation menées par des experts"
+      },
+      "privateCloud": {
+        "title": "Cloud Privé en Service",
+        "description": "Clusters de cloud privé dédiés avec calcul, stockage et réseau élastiques",
+        "feature1": "Ressources isolées avec sécurité d'entreprise",
+        "feature2": "Segmentation et audit prêts pour la conformité",
+        "feature3": "Scalabilité prévisible avec support géré"
+      },
+      "aiMl": {
+        "title": "Plateforme IA & ML",
+        "description": "Infrastructure GPU et outils MLOps pour déployer vos charges IA en toute sécurité",
+        "feature1": "Clusters GPU gérés pour entraînement et inférence",
+        "feature2": "Pipelines intégrés et automatisation pour les modèles ML",
+        "feature3": "Garde-fous de gouvernance pour données et conformité"
+      },
+      "cta": "Voir les détails"
+    },
+    "products": {
+      "title": "Produits d'infrastructure",
+      "subtitle": "Pour les profils techniques qui ont besoin de contrôle",
+      "cta": "En savoir plus",
+      "product1_title": "Machines Virtuelles",
+      "product1_description": "VMs haute performance avec 4-64 vCPU, SSD NVMe et réseau 10Gbps",
+      "product2_title": "Kubernetes",
+      "product2_description": "Clusters gérés avec auto-scaling, haute disponibilité et gestion du cycle de vie",
+      "product3_title": "Stockage par Blocs",
+      "product3_description": "Stockage à IOPS élevé pour bases de données et applications critiques",
+      "product4_title": "Stockage d'Objets",
+      "product4_description": "Stockage compatible S3 avec évolutivité massive et géo-redondance",
+      "product5_title": "Load Balancer",
+      "product5_description": "Équilibrage de charge L4/L7 avec déchargement SSL et health checks",
+      "product6_title": "Cloud Firewall",
+      "product6_description": "Pare-feu géré avec WAF, protection DDoS et IDS/IPS",
+      "product7_title": "Backup as a Service",
+      "product7_description": "Sauvegardes incrémentielles avec chiffrement et récupération instantanée"
+    },
+    "multicloud": {
+      "title": "Architecture Multicloud et Hybride",
+      "subtitle": "Vos clouds, unifiés",
+      "diagram_alt": "Ignia Cloud au centre connectant Azure, Google Cloud et infrastructure on-premise",
+      "feature1_title": "Connectez vos clouds",
+      "feature1_description": "Liens dédiés 10/100 Gbps",
+      "feature2_title": "Console de gestion unique",
+      "feature2_description": "Gérez les ressources externes comme Azure Arc",
+      "feature3_title": "Accélérez DR/HA",
+      "feature3_description": "Évitez le vendor lock-in"
+    },
+    "ai": {
+      "title": "AI & Larry prêts pour la production",
+      "subtitle": "Déployez des solutions intelligentes en toute sécurité",
+      "badge": "IA et Machine Learning",
+      "card1_title": "Hébergement LLM",
+      "card1_description": "Déployez des modèles Llama, Mistral ou GPT personnalisés avec infrastructure GPU dédiée",
+      "card1_feature1": "GPUs NVIDIA A100/H100",
+      "card1_feature2": "Clusters isolés",
+      "card1_feature3": "Auto-scaling selon la demande",
+      "card2_title": "RAG Blueprints",
+      "card2_description": "Bases de données vectorielles et pipelines de récupération prêts à utiliser avec vos données",
+      "card2_feature1": "Bases de données vectorielles gérées",
+      "card2_feature2": "Pipelines de récupération pré-construits",
+      "card2_feature3": "Outils d'ingestion de données",
+      "card3_title": "Copilot Studio",
+      "card3_description": "Créez des assistants IA personnalisés avec vos données et logique métier",
+      "card3_feature1": "Interface copilot avec votre marque",
+      "card3_feature2": "Garde-fous et conformité",
+      "card3_feature3": "Déploiement omnicanal",
+      "cta": "Explorer AI & Larry"
+    },
+    "useCases": {
+      "title": "Cas d'usage par industrie",
+      "subtitle": "Nous parlons le langage de votre entreprise",
+      "tabs_aria_label": "Onglets de cas d'usage par industrie",
+      "tab1_title": "Fintech / Finserv",
+      "tab1_heading": "Services Financiers et Fintech",
+      "tab1_description": "Infrastructure robuste et sécurisée pour les banques, fintechs et institutions financières devant se conformer à des réglementations strictes et évolutives imposées par les agences gouvernementales.",
+      "tab1_outcome1": "Réduction de 40 % des coûts de reprise après sinistre.",
+      "tab1_outcome2": "RTO inférieur à 15 minutes dans les plans de contingence.",
+      "tab1_outcome3": "Conformité aux réglementations complexes et aux audits réglementaires.",
+      "tab1_image_alt": "Diagramme d'infrastructure Fintech",
+      "tab2_title": "Retail / eCommerce",
+      "tab2_heading": "Retail et E-commerce",
+      "tab2_description": "Infrastructure évolutive pour plateformes retail à fort trafic",
+      "tab2_outcome1": "99.99% uptime pendant la haute saison",
+      "tab2_outcome2": "50% d'économies sur le stockage",
+      "tab2_outcome3": "Latence <50ms LATAM",
+      "tab2_image_alt": "Diagramme d'infrastructure Retail",
+      "tab3_title": "Médias et Apps",
+      "tab3_heading": "Médias et Applications Numériques",
+      "tab3_description": "Infrastructure haute performance pour streaming et contenu numérique",
+      "tab3_outcome1": "Streaming vers 1M+ utilisateurs simultanés",
+      "tab3_outcome2": "CDN + object storage intégrés",
+      "tab3_outcome3": "Mise à l'échelle élastique 0-100 en minutes",
+      "tab3_image_alt": "Diagramme d'infrastructure Médias",
+      "cta": "Voir le cas de réussite"
+    },
+    "sla": {
+      "title": "SLA et support sur lequel vous pouvez compter",
+      "subtitle": "Nous sommes là quand vous avez besoin de nous",
+      "badge": "Support d'Entreprise",
+      "table_header1": "Gravité",
+      "table_header2": "Temps de Réponse",
+      "table_header3": "Objectif de Résolution",
+      "table_header4": "Disponibilité",
+      "row1_col1": "Critique",
+      "row1_col2": "15 minutes",
+      "row1_col3": "4 heures",
+      "row1_col4": "24/7/365",
+      "row2_col1": "Élevé",
+      "row2_col2": "1 heure",
+      "row2_col3": "8 heures",
+      "row2_col4": "24/7/365",
+      "row3_col1": "Moyen",
+      "row3_col2": "4 heures",
+      "row3_col3": "2 jours ouvrables",
+      "row3_col4": "Heures de bureau",
+      "row4_col1": "Bas",
+      "row4_col2": "24 heures",
+      "row4_col3": "5 jours ouvrables",
+      "row4_col4": "Heures de bureau",
+      "feature1_title": "Support Humain 24/7",
+      "feature1_description": "De vrais ingénieurs, pas de bots",
+      "feature2_title": "Surveillance Proactive",
+      "feature2_description": "Nous détectons les problèmes avant vous",
+      "feature3_title": "Gestionnaire de Compte Dédié",
+      "feature3_description": "Pour les clients d'entreprise"
+    },
+    "compliance": {
+      "title": "Conformité et résidence des données",
+      "subtitle": "Vos données, vos règles",
+      "badge": "Sécurité et Conformité",
+      "cert1_alt": "Badge de certification ISO 27001",
+      "cert1_label": "ISO 27001",
+      "cert2_alt": "Badge de certification SOC 2 Type II",
+      "cert2_label": "SOC 2 Type II",
+      "cert3_alt": "Badge de certification PCI-DSS",
+      "cert3_label": "PCI-DSS Level 1",
+      "cert4_alt": "Badge de conformité RGPD",
+      "cert4_label": "Conforme RGPD",
+      "features_title": "Fonctionnalités de Protection des Données",
+      "feature1": "Résidence des données au Mexique",
+      "feature2": "Chiffrement au repos et en transit",
+      "feature3": "Journalisation immuable WORM",
+      "feature4": "Audits de sécurité réguliers",
+      "image_alt": "Illustration de conformité de sécurité"
+    },
+    "testimonials": {
+      "title": "Ce que disent nos clients",
+      "subtitle": "Résultats réels, entreprises réelles",
+      "carousel_label": "Carrousel de témoignages de clients",
+      "testimonial1_name": "Carlos Mendoza",
+      "testimonial1_role": "CTO",
+      "testimonial1_company": "Fintech ACME",
+      "testimonial1_quote": "Ignia nous a aidés à réduire nos coûts d'infrastructure de 40% tout en améliorant la fiabilité. L'équipe de support est exceptionnelle.",
+      "testimonial2_name": "Ana Rodríguez",
+      "testimonial2_role": "VP d'Ingénierie",
+      "testimonial2_company": "Global Retail",
+      "testimonial2_quote": "La migration vers Ignia s'est déroulée sans accroc. Leurs ingénieurs ont travaillé côte à côte avec notre équipe, et l'intégration multicloud nous a fait économiser des mois de travail.",
+      "testimonial3_name": "Luis Fernández",
+      "testimonial3_role": "Responsable DevOps",
+      "testimonial3_company": "Media Corp",
+      "testimonial3_quote": "Nous gérons des millions de requêtes quotidiennes. L'infrastructure d'Ignia s'adapte automatiquement, et la protection DDoS est incluse—sans frais supplémentaires.",
+      "testimonial4_name": "María García",
+      "testimonial4_role": "Directrice IT",
+      "testimonial4_company": "Solutions d'Entreprise",
+      "testimonial4_quote": "Le support humain 24/7 fait toute la différence. De vrais ingénieurs qui comprennent notre métier et résolvent les problèmes rapidement."
+    },
+    "finalCTA": {
+      "title": "Prêt à transformer votre infrastructure?",
+      "subtitle": "Rejoignez des centaines d'entreprises utilisant déjà Ignia Cloud",
+      "cta_primary": "Commencer aujourd'hui",
+      "cta_secondary": "Parler à un ingénieur",
+      "trust1": "Essai gratuit avec 500$ de crédit de bienvenue",
+      "trust2": "Aucune carte de crédit requise",
+      "trust3": "Assistance à la migration incluse"
+    }
+  },
+  "section_pages": {
+    "ai": {
+      "title": "Intelligence Artificielle",
+      "subtitle": "Exploitez la puissance de l'IA.",
+      "hero_image": "/images/sections/ai_hero.webp",
+      "features": []
+    },
+    "products": {
+      "title": "Produits",
+      "subtitle": "Des produits innovants pour votre entreprise.",
+      "hero_image": "/images/sections/product_hero.webp",
+      "features": []
+    },
+    "services": {
+      "title": "Services",
+      "subtitle": "Des services professionnels pour vous aider à réussir.",
+      "hero_image": "/images/sections/services_hero.webp",
+      "features": []
+    },
+    "solutions": {
+      "title": "Solutions",
+      "subtitle": "Évolutives, sécurisées et efficaces.",
+      "hero_image": "/images/sections/solutions_hero.webp",
+      "features": []
+    }
+  }
+}

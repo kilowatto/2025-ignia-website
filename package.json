@@ -17,7 +17,6 @@
     "@astrojs/tailwind": "^6.0.2",
     "astro": "^5.13.10",
     "astro-compress": "^2.3.6",
-    "astro-i18n": "^2.2.4",
     "astro-og-canvas": "^0.7.0",
     "astro-seo": "^0.8.4",
     "autoprefixer": "^10.4.21",

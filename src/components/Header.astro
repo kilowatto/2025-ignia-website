@@ -23,8 +23,7 @@
 import LangSelect from "./langSelect.astro";
 // SearchBox: Proporciona modal de búsqueda estilo command-palette
 import SearchBox from "./SearchBox.astro";
-// Función de traducción de astro-i18n
-import { t } from 'astro-i18n';
+import { useTranslations } from '@/utils/i18n';
 
 // Normalizar el locale de Astro para que todos los helpers usen un valor consistente.
 // Split en '-' para manejar variantes regionales (es-MX → es, fr-CA → fr)
@@ -32,7 +31,8 @@ const rawLocale = Astro.currentLocale || "es";
 const locale = rawLocale.split("-")[0];
 
 // Función helper para traducir con locale específico
-const translate = (key: string) => t(key, undefined, { locale });
+const t = await useTranslations(locale);
+const translate = (key: string) => t(key, { locale });
 
 // Prefijo de rutas internas según locale (inglés sin prefijo, otros con /{locale}/)
 const ensureLocalePath = (href: string) => {

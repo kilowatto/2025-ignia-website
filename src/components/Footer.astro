@@ -30,12 +30,13 @@
  * @see src/i18n/fr.json - Traducciones footer.* (FR)
  */
 import "../styles/global.css";
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 import SitemapFooter from "./SitemapFooter.astro";
 
 // Obtener el locale actual desde Astro (normalizado)
 const rawLocale = Astro.currentLocale || "en";
 const locale = rawLocale.split("-")[0];
+const t = await useTranslations(locale);
 ---
 
 <footer
@@ -89,6 +90,6 @@ const locale = rawLocale.split("-")[0];
 
   <!-- Copyright -->
   <p class="text-center text-white text-sm mb-4">
-    {t("footer.legal.copyright", undefined, { locale })}
+    {t("footer.legal.copyright", { locale })}
   </p>
 </footer>

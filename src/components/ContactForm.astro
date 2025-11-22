@@ -21,7 +21,7 @@
  * @see src/scripts/contact-form.ts - Lógica cliente
  * @see src/i18n/es.json - Traducciones
  */
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 // Detección de idioma (patrón SitemapFooter)
 const rawLocale = Astro.currentLocale || "en";
@@ -31,7 +31,8 @@ const locale = supportedLocales.includes(rawLocale as Locale)
   ? (rawLocale as Locale)
   : "en";
 
-const translate = (key: string) => t(key, undefined, { locale });
+const t = await useTranslations(locale);
+const translate = (key: string) => t(key, { locale });
 ---
 
 <!-- Mini-formulario compacto y discreto -->

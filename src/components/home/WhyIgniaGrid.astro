@@ -6,13 +6,14 @@
  * Section: #3 of Home
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 ---
 
 <section class="py-20 bg-white" aria-labelledby="why-ignia-heading">
@@ -23,10 +24,10 @@ const { locale = "en" } = Astro.props;
         id="why-ignia-heading"
         class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
       >
-        {t("home.whyIgnia.title", undefined, { locale })}
+        {t("home.whyIgnia.title", { locale })}
       </h2>
       <p class="text-lg text-gray-600">
-        {t("home.whyIgnia.subtitle", undefined, { locale })}
+        {t("home.whyIgnia.subtitle", { locale })}
       </p>
     </div>
 
@@ -55,10 +56,10 @@ const { locale = "en" } = Astro.props;
           </div>
           <div class="ml-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-3">
-              {t("home.whyIgnia.pillar1_title", undefined, { locale })}
+              {t("home.whyIgnia.pillar1_title", { locale })}
             </h3>
             <p class="text-base text-gray-600 leading-relaxed">
-              {t("home.whyIgnia.pillar1_description", undefined, { locale })}
+              {t("home.whyIgnia.pillar1_description", { locale })}
             </p>
           </div>
         </div>
@@ -87,10 +88,10 @@ const { locale = "en" } = Astro.props;
           </div>
           <div class="ml-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-3">
-              {t("home.whyIgnia.pillar2_title", undefined, { locale })}
+              {t("home.whyIgnia.pillar2_title", { locale })}
             </h3>
             <p class="text-base text-gray-600 leading-relaxed">
-              {t("home.whyIgnia.pillar2_description", undefined, { locale })}
+              {t("home.whyIgnia.pillar2_description", { locale })}
             </p>
           </div>
         </div>
@@ -119,10 +120,10 @@ const { locale = "en" } = Astro.props;
           </div>
           <div class="ml-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-3">
-              {t("home.whyIgnia.pillar3_title", undefined, { locale })}
+              {t("home.whyIgnia.pillar3_title", { locale })}
             </h3>
             <p class="text-base text-gray-600 leading-relaxed">
-              {t("home.whyIgnia.pillar3_description", undefined, { locale })}
+              {t("home.whyIgnia.pillar3_description", { locale })}
             </p>
           </div>
         </div>
@@ -151,10 +152,10 @@ const { locale = "en" } = Astro.props;
           </div>
           <div class="ml-6">
             <h3 class="text-xl font-semibold text-gray-900 mb-3">
-              {t("home.whyIgnia.pillar4_title", undefined, { locale })}
+              {t("home.whyIgnia.pillar4_title", { locale })}
             </h3>
             <p class="text-base text-gray-600 leading-relaxed">
-              {t("home.whyIgnia.pillar4_description", undefined, { locale })}
+              {t("home.whyIgnia.pillar4_description", { locale })}
             </p>
           </div>
         </div>

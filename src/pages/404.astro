@@ -25,7 +25,7 @@
  * @see arquitecture.md §2 - Requisito de página 404 personalizada
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 // Detectar idioma desde URL pathname o Astro.currentLocale
 const pathname = Astro.url.pathname;
@@ -50,6 +50,8 @@ const searchUrl =
 
 // Configurar status HTTP 404
 Astro.response.status = 404;
+
+const t = await useTranslations(detectedLocale);
 ---
 
 <!doctype html>

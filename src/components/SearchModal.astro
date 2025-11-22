@@ -15,7 +15,7 @@
  * @see src/components/SearchBox.astro - Botón que dispara este modal
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 import enTranslations from "../i18n/en.json";
 import esTranslations from "../i18n/es.json";
 import frTranslations from "../i18n/fr.json";
@@ -23,6 +23,7 @@ import frTranslations from "../i18n/fr.json";
 // Obtener locale actual de forma robusta (igual que otros componentes)
 const rawLocale = Astro.currentLocale || "en";
 const locale = rawLocale.split("-")[0];
+const t = await useTranslations(locale);
 
 // URL de la página de resultados según el idioma detectado
 const searchUrl = locale === "en" ? "/search" : `/${locale}/search`;
@@ -59,13 +60,13 @@ const quickSearches = translations[locale as keyof typeof translations].search
     <!-- Header del modal con título y botón cerrar -->
     <div class="flex items-center justify-between p-6 border-b border-gray-200">
       <h2 id="search-title" class="text-xl font-semibold text-gray-900">
-        {t("search.modal_title", undefined, { locale })}
+        {t("search.modal_title", { locale })}
       </h2>
       <!-- Botón cerrar (X) -->
       <button
         id="close-search"
         class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-        aria-label={t("search.close", undefined, { locale })}
+        aria-label={t("search.close", { locale })}
       >
         <svg
           class="w-6 h-6"
@@ -109,7 +110,7 @@ const quickSearches = translations[locale as keyof typeof translations].search
             type="search"
             name="q"
             id="search-input"
-            placeholder={t("search.placeholder", undefined, { locale })}
+            placeholder={t("search.placeholder", { locale })}
             class="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 bg-gray-50 focus:bg-white"
             autocomplete="off"
             spellcheck="false"
@@ -122,14 +123,14 @@ const quickSearches = translations[locale as keyof typeof translations].search
           type="submit"
           class="mt-4 w-full bg-primary text-white py-3 px-6 rounded-xl font-medium hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
-          {t("search.search_button", undefined, { locale })}
+          {t("search.search_button", { locale })}
         </button>
       </form>
 
       <!-- Sugerencias rápidas - Tags clickeables para búsquedas comunes -->
       <div class="mt-6">
         <p class="text-sm text-gray-500 mb-3">
-          {t("search.suggestions", undefined, { locale })}
+          {t("search.suggestions", { locale })}
         </p>
         <div class="flex flex-wrap gap-2">
           <!-- Loop dinámico sobre quick_searches desde i18n (cumple §5 arquitecture.md) -->
@@ -149,17 +150,17 @@ const quickSearches = translations[locale as keyof typeof translations].search
       <!-- Atajos de teclado - Información visual de teclas disponibles -->
       <div class="mt-6 pt-4 border-t border-gray-100">
         <div class="flex items-center justify-between text-sm text-gray-500">
-          <span>{t("search.keyboard_shortcuts", undefined, { locale })}</span>
+          <span>{t("search.keyboard_shortcuts", { locale })}</span>
           <div class="flex items-center gap-4">
             <!-- Enter para buscar -->
             <span class="flex items-center gap-1">
               <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">↵</kbd>
-              {t("search.to_search", undefined, { locale })}
+              {t("search.to_search", { locale })}
             </span>
             <!-- Escape para cerrar -->
             <span class="flex items-center gap-1">
               <kbd class="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd>
-              {t("search.to_close", undefined, { locale })}
+              {t("search.to_close", { locale })}
             </span>
           </div>
         </div>
@@ -186,7 +187,7 @@ const quickSearches = translations[locale as keyof typeof translations].search
     const searchModal = document.getElementById("search-modal");
     const closeSearch = document.getElementById("close-search");
     const searchInput = document.getElementById(
-      "search-input"
+      "search-input",
     ) as HTMLInputElement;
     const suggestionTags = document.querySelectorAll(".suggestion-tag");
 

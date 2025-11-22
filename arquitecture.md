@@ -52,10 +52,10 @@ Idiomas: EN (default), ES, FR.
 
 * **Astro**: SSG \+ SSR selectivo. Island architecture sólo si es imprescindible.  
 * **Framework CSS**: **Tailwind CSS** (vía @astrojs/tailwind).  
-* **Internacionalización**: **astro-i18n** (librería para traducciones) + **i18n nativo de Astro** (routing). Esta arquitectura híbrida nos dio los mejores resultados: astro-i18n maneja las traducciones centralizadas vía función t() y archivos JSON, mientras que el i18n nativo de Astro gestiona el routing automático por idioma.  
+* **Internacionalización**: **Astro Content Collections** (Nativo). Eliminamos dependencias externas (`astro-i18n`). Las traducciones viven en `src/content/i18n/{lang}.json` y se consumen con seguridad de tipos.
 * **Lenguajes base**: HTML5, **TypeScript**.  
 * **Fuentes**: Raleway (Light/Medium/Regular) en WOFF2 con subset Latin; font-display: swap.  
-* **Búsqueda**: /search server‑side; **minisearch** opcional y exclusivo de esa ruta (defer, ≤100KB índice gz).  
+* **Búsqueda**: /search server‑side; **minisearch** con índice generado automáticamente en build-time (defer, ≤100KB índice gz).  
 * **Analítica**: server‑side (rutas de salida /out/\*), opcional beacon propio (≤2KB) defer.  
 * **Integración Email**: API **Odoo SaaS** para newsletter/CRM (alta/baja, doble opt‑in, confirmaciones).
 * **Partytown** ✅ **IMPLEMENTADO** - Scripts de terceros en Web Worker (Google Tag Manager, Google Analytics 4, chatbots, etc.). Mueve ejecución de scripts pesados fuera del main thread, mejorando LCP y TBT. Configuración: `forward: ['dataLayer.push', 'gtag']` para soporte GTM/GA4. Ver `src/components/Analytics.astro` para implementación y `README.md` para guía de uso completa.
@@ -66,6 +66,11 @@ Idiomas: EN (default), ES, FR.
 ```
 /  
 ├─ src/  
+│  ├─ content/             # [NUEVO] Content Collections
+│  │  └─ i18n/             # Colección de traducciones (Type-safe)
+│  │     ├─ en.json        # Source of truth
+│  │     ├─ es.json
+│  │     └─ fr.json
 │  ├─ pages/  
 │  │  ├─ index.astro           # Página principal (EN)
 │  │  ├─ search.astro          # Búsqueda (EN)
@@ -86,16 +91,9 @@ Idiomas: EN (default), ES, FR.
 │  │  ├─ SearchBox.astro       # Botón búsqueda (trigger modal)
 │  │  ├─ SearchModal.astro     # Modal búsqueda
 │  │  ├─ SearchPage.astro      # Componente búsqueda reutilizable
+│  │  ├─ SmartImage.astro      # [NUEVO] Wrapper de imagen con performance automática
 │  │  ├─ langSelect.astro      # Selector de idioma
 │  │  └─ LanguageSuggestionBanner.astro  # Banner sugerencia idioma
-│  ├─ data/  
-│  │  └─ searchData.ts         # Datos para minisearch (indexación)
-│  ├─ i18n/  
-│  │  ├─ en.json               # Cadenas en Inglés (default)
-│  │  ├─ es.json               # Cadenas en Español
-│  │  └─ fr.json               # Cadenas en Francés
-│  ├─ integrations/  
-│  │  └─ astroI18n.mjs         # Integración personalizada astro-i18n
 │  ├─ styles/  
 │  │  ├─ global.css            # Estilos base de Tailwind (@tailwind)
 │  │  └─ header.css            # Estilos CSS-only para Header (sin JS bloqueante)
@@ -103,6 +101,8 @@ Idiomas: EN (default), ES, FR.
 │  │  ├─ header-progressive.ts # Progressive enhancement mínimo (defer)
 │  │  └─ ...                   # Scripts diferidos por página (si requeridos)
 │  ├─ utils/  
+│  │  ├─ i18n.ts               # [NUEVO] Helper useTranslations (reemplaza t())
+│  │  ├─ routes.ts             # [NUEVO] Definición de rutas tipadas
 │  │  ├─ languageDetection.ts  # Utilidades detección de idioma
 │  │  └─ searchConfig.ts       # Configuración de búsqueda
 │  ├─ types/  
@@ -115,151 +115,82 @@ Idiomas: EN (default), ES, FR.
 │  ├─ Ignia-blanco.png  
 │  ├─ site.webmanifest  
 │  ├─ icons/  
-│  │  ├─ android-chrome-192x192.png  
-│  │  ├─ android-chrome-512x512.png  
-│  │  ├─ apple-touch-icon.png  
-│  │  ├─ favicon-16x16.png  
-│  │  ├─ favicon-32x32.png  
-│  │  ├─ favicon.ico  
-│  │  └─ flags/  
-│  │     ├─ en.svg  
-│  │     ├─ es.svg  
-│  │     └─ fr.svg  
+│  │  └─ ... 
 │  └─ scripts/  
-│     └─ header-progressive.js # Script compilado (generado desde src/scripts/)
+│     └─ header-progressive.js # Script compilado
 ├─ astro.config.mjs            # Configuración principal de Astro
-├─ astro-i18n.config.mjs       # Configuración astro-i18n (traducciones)
 ├─ tailwind.config.mjs         # Configuración Tailwind CSS
 ├─ tsconfig.json               # Configuración TypeScript
 └─ package.json                # Dependencias y scripts
 ```
 
-**Notas sobre la Estructura:**
+**Notas sobre la Estructura (v2.0):**
 
-1. **src/pages/**: Usa routing file-based de Astro. La estructura espejo (`/`, `/es/`, `/fr/`) refleja las URLs finales.
+1. **src/content/i18n/**: Reemplaza a `src/i18n/`. Usamos Content Collections de tipo `data` para validar el esquema de traducción y generar tipos automáticamente.
 
-2. **src/layouts/**: Solo `BaseLayout.astro` (§2: Evitar Encadenamiento). Eliminados layouts redundantes.
+2. **src/utils/routes.ts**: Centraliza todas las rutas del sitio en un objeto tipado para evitar "magic strings" en los hrefs.
 
-3. **src/components/**: Componentes reutilizables. `SearchPage.astro` es usado por los 3 wrappers de búsqueda.
+3. **Eliminado**: `astro-i18n.config.mjs` y la carpeta `src/integrations/` (ya no son necesarios).
 
-4. **src/data/**: Contiene datos estáticos/generados para features específicas (ej: índice de búsqueda).
-
-5. **src/i18n/**: Traducciones centralizadas. Un archivo JSON por idioma, siguiendo convención de astro-i18n.
-
-6. **src/integrations/**: Integraciones personalizadas de Astro (actualmente solo astro-i18n custom).
-
-7. **src/styles/**: 
-   - `global.css`: Estilos globales (Tailwind + Header/Navegación + componentes compartidos)
-
-8. **src/scripts/**: Scripts TypeScript que se compilan a JavaScript diferido:
-   - `header-progressive.ts`: Progressive enhancement mínimo (~30 líneas)
-   - Otros scripts se agregan aquí SOLO si son absolutamente necesarios (§2: JS mínimo)
-
-9. **src/utils/**: Funciones de utilidad compartidas (detección idioma, configuración búsqueda).
-
-10. **src/types/**: Tipos TypeScript compartidos entre componentes y páginas.
-
-11. **src/middleware/**: `index.ts` es el único archivo de middleware de Astro (maneja redirects, i18n routing).
-
-12. **public/**: Assets estáticos servidos directamente (imágenes, iconos, scripts compilados).
+4. **src/components/SmartImage.astro**: Nuevo componente estándar para imágenes.
 
 ## **5\) Gestión de Contenido e Internacionalización (i18n)**
 
-Esta sección define las reglas no negociables para manejar el contenido multi-idioma.
+Esta sección define las reglas no negociables para manejar el contenido multi-idioma en la arquitectura v2.0.
 
-### **Arquitectura Híbrida i18n (astro-i18n + i18n nativo de Astro)**
+### **Astro Content Collections (Nativo)**
 
-Este proyecto utiliza una arquitectura híbrida que combina dos sistemas complementarios:
+Abandonamos las librerías externas para usar la potencia nativa de Astro:
 
-1. **astro-i18n (librería)**: Gestiona las traducciones de contenido
-   - Función `t()` para renderizar texto traducido
-   - Archivos JSON centralizados en `src/i18n/{locale}.json`
-   - Configuración en `astro-i18n.config.mjs`
-   - Detecta automáticamente el idioma actual vía `Astro.currentLocale`
+1.  **Content Collections (`src/content/i18n/`)**:
+    *   Usamos colecciones de tipo `data` para almacenar los JSONs de traducción.
+    *   Astro valida el esquema automáticamente (Zod).
+    *   Genera tipos de TypeScript para todas las claves.
 
-2. **i18n nativo de Astro**: Gestiona el routing multi-idioma
-   - Configuración en `astro.config.mjs` → `i18n: { defaultLocale, locales, routing }`
-   - Routing automático: `/` (EN), `/es/`, `/fr/`
-   - `Astro.currentLocale` disponible en todos los componentes
-   - Generación automática de `alternate` links para SEO
-
-**¿Por qué esta arquitectura híbrida?**
-
-Probamos varias soluciones y esta combinación nos dio los mejores resultados:
-- **Separación de responsabilidades**: Routing (Astro nativo) vs Traducciones (astro-i18n)
-- **Type-safety**: astro-i18n ofrece mejor tipado para las traducciones
-- **Performance**: Sin overhead de runtime, todo se resuelve en build-time
-- **DX (Developer Experience)**: Función `t()` intuitiva + routing automático
-- **Mantenibilidad**: Archivos JSON centralizados + estructura de carpetas espejo
+2.  **Helper `useTranslations`**:
+    *   Una función utilitaria simple en `src/utils/i18n.ts` carga la colección correcta según el idioma actual.
 
 **Patrón de Uso:**
 
 ```astro
 ---
 // En cualquier componente .astro
-import { t } from 'astro-i18n';
+import { useTranslations } from '@/utils/i18n';
 
-// Astro.currentLocale viene del i18n nativo (routing)
-const currentLocale = Astro.currentLocale || 'en';
+const t = await useTranslations(Astro.currentLocale);
 ---
 
 <h1>{t('home.hero.title')}</h1>
-<p>{t('home.hero.description', { city: 'Montreal' })}</p>
 ```
 
 **Integridad Arquitectónica:**
 
-Para mantener la integridad de esta arquitectura, se debe cumplir:
-1. **Nunca hardcodear texto** en componentes (.astro, .tsx)
-2. **Usar `t()` exclusivamente** para todo texto visible
-3. **Mantener sincronizados** los 3 archivos JSON (en.json, es.json, fr.json)
-4. **Respetar la estructura espejo** de páginas (/pages/search.astro, /pages/es/search.astro, /pages/fr/search.astro)
-5. **Usar componentes reutilizables** con prop `locale` para evitar duplicación (ej: SearchPage.astro)
-6. **Configurar ambos sistemas** correctamente en astro.config.mjs y astro-i18n.config.mjs
+1.  **Type-Safety**: Si intentas usar una clave que no existe (`t('home.wrong')`), el editor mostrará un error y el build fallará.
+2.  **Source of Truth**: `src/content/i18n/en.json` define el esquema.
+3.  **Sincronización**: Los archivos `es.json` y `fr.json` deben cumplir con el mismo esquema que `en.json`.
 
 ### **Reglas de Implementación**
 
-* **Centralización Obligatoria**: Todo el texto visible para el usuario (botones, títulos, párrafos, metadatos, etc.) **debe** gestionarse a través de archivos de traducción JSON en src/i18n/. Queda estrictamente prohibido escribir texto directamente en los componentes (.astro, .tsx, etc.).  
-* **Estructura de Claves (Keys)**:  
-  * Las claves deben estar en inglés y usar dot.notation para agrupar contenido relacionado (p. ej., header.nav.solutions, home.hero.cta).  
-  * Esta estructura jerárquica es obligatoria para mantener el orden y la legibilidad.  
-  * **Ejemplo (en.json)**:  
-    {  
-      "header": { "nav": { "solutions": "Solutions", "products": "Products" } },  
-      "home": { "hero": { "title": "Your Cloud, Your Rules", "cta": "Schedule a Demo" } }  
-    }
+*   **Centralización Obligatoria**: Todo texto visible vive en `src/content/i18n/`. Prohibido hardcodear.
+*   **Estructura de Claves**: `seccion.componente.campo` (ej: `header.nav.solutions`).
+*   **Flujo de Trabajo**:
+    1.  Agregar clave en `en.json`.
+    2.  Agregar clave en `es.json` y `fr.json` (aunque sea con placeholder).
+    3.  Usar `t('clave')` en el componente.
 
-* **Uso en Componentes**: Se utilizará la función t() proporcionada por i18n nativo para renderizar todo el texto.  
-  \---  
-  import { t } from "i18n nativo";  
-  \---  
-  \<a href="/en/solutions/"\>{t('header.nav.solutions')}\</a\>  
-  \<h1\>{t('home.hero.title')}\</h1\>
 
-* **Flujo de Trabajo (No Negociable)**:  
-  1. Al añadir nuevo texto, la clave **primero** se debe agregar al archivo del idioma por defecto (en.json).  
-  2. Inmediatamente después, la misma clave debe ser añadida a los demás archivos de idioma (es.json, fr.json), incluso si es con una traducción temporal o un placeholder (p. ej., "\[TRANSLATE\] Soluciones").
-* **Generación y Mantenimiento de archivos JSON (No negociable)**:  
-  * Ubicación única: todos los diccionarios viven en `src/i18n/<locale>.json`. Queda prohibido crear carpetas paralelas (`public/locales`, `content/i18n`, etc.) o distribuir claves en múltiples archivos por idioma.  
-  * Convención de nombres: el nombre del archivo SIEMPRE coincide con el código de idioma soportado por astro-i18n (en.json, es.json, fr.json). Cada nuevo idioma requiere un archivo homónimo.  
-  * Formato y estilo: JSON válido, codificado en UTF-8, con sangría de dos espacios, claves ordenadas alfabéticamente y sin comentarios. Todas las cadenas usan comillas dobles y terminan sin espacios sobrantes ni comas finales innecesarias.  
-  * Claves e interpolaciones: las claves siguen la notación punto descrita arriba y la última sección SIEMPRE es un sustantivo/acción (ej. `home.hero.title`). Para interpolar valores dinámicos se definen marcadores en snake_case entre llaves dobles (`"cta": "Reserva tu demo en {{city}}"`) y se resuelven exclusivamente con `t(key, properties)`. No se permite concatenar strings ni incrustar HTML dentro de los JSON.  
-  * Flujo de sincronización:  
-    1. Agrega/actualiza la clave en `en.json`.  
-    2. Duplica la entrada en `es.json` y `fr.json` con la traducción oficial. Si la traducción no está lista, usa `"[PENDING] ..."` y abre el ticket correspondiente; nunca dejes claves ausentes.  
-    3. Ejecuta la validación (ej. `npm run lint` + `npm test` cuando existan) y revisa que ninguna clave quede por resolver en los otros idiomas.  
-  * QA manual obligatorio: antes de mergear, navega por los idiomas afectados (`/en`, `/es`, `/fr`) y confirma que el contenido renderiza desde `t()` sin hardcodes ni cadenas vacías.  
-  * Debt register: todo placeholder `[PENDING]` debe registrarse en el tablero de traducciones y eliminarse en la siguiente iteración; mantenerlos en master por más de un release infringe esta política.
+## **6\) Ruteo y SEO Técnico (i18n)**
 
 ## **6\) Ruteo y SEO Técnico (i18n)**
 
 * **Idiomas**: /en (default), /es, /fr. x-default apuntará a /en.  
-* **Rutas limpias** y predecibles: /en/solutions/private-cloud-as-a-service/.  
-* **hreflang**: astro-i18n gestionará automáticamente la generación de etiquetas link para hreflang.  
-* **Detección de Idioma**: La detección inicial se basará en la cabecera Accept-Language del navegador para una redirección en el servidor. Opcionalmente, se podrá usar un script de JS ligero y no bloqueante para guardar la preferencia explícita del usuario en localStorage y agilizar futuras visitas.  
-* **Selector EN/ES/FR**: bandera + texto, accesible por teclado.  
-* **Canonical & Sitemap**: Canónico por idioma. Sitemap(s) por idioma generados en build.
-* **Internal Linking**: Todas las páginas interiores deben implementar referencias cruzadas (ver §17: Referencias Cruzadas). Objetivo: mejorar SEO interno y user journey.
+* **Rutas Seguras (Type-Safe Routing)**:
+  * Prohibido usar strings manuales (`href="/solutions/..."`).
+  * Usar objeto `ROUTES` centralizado en `src/utils/routes.ts`.
+  * Ejemplo: `<a href={ROUTES.solutions.detail(slug, lang)}>`
+* **hreflang**: Generado automáticamente por Astro.  
+* **Detección de Idioma**: Middleware ligero basado en Accept-Language y Cookie.
+* **Internal Linking**: Todas las páginas interiores deben implementar referencias cruzadas (ver §17). Objetivo: mejorar SEO interno y user journey.
 
 ## **7\) Layouts y Componentes (sin JS)**
 
@@ -324,25 +255,34 @@ export default {
   * Usar `<picture>` para responsive images cuando sea necesario
   * SVG optimizados con SVGO (eliminar metadata innecesaria)
 
-* **Cumplimiento Performance**:
-  * LCP candidate images: `fetchpriority="high"` + sin lazy loading
-  * Secondary images: `loading="lazy"` para reducir carga inicial
+* **Componente `<SmartImage />`**:
+  * Se introduce `src/components/SmartImage.astro` para estandarizar la carga.
+  * Prop `priority={true}`: Aplica `fetchpriority="high"`, `loading="eager"`, `decoding="async"` (Para Hero/Logo).
+  * Prop `priority={false}` (default): Aplica `loading="lazy"`, `decoding="async"` (Para el resto).
+  * **Regla**: Usar este componente en lugar de `<img>` o `<Image />` directo para garantizar cumplimiento de métricas.
+
+* **Optimización**:
+  * Comprimir con `astro-compress` (automático en build)
+  * Formatos AVIF/WebP automáticos.
   * Objetivo: LCP < 2.5s (arquitecture.md §14)
 
 ## **11\) Formularios & Flujos (Server‑Side)**
 
-* **Validación** en servidor; devolver estados accesibles.  
-* **Anti‑spam**: honeypot \+ tiempo mínimo.  
-* **Integración Odoo SaaS**.
+*   **Validación** en servidor; devolver estados accesibles.  
+*   **Anti‑spam**: honeypot \+ tiempo mínimo.  
+*   **Integración Odoo SaaS**.
 
-## **12\) Búsqueda (/search) con Minisearch (opcional)**
+## **12\) Búsqueda (/search) con Minisearch**
 
-* Render server‑side; cargar script de minisearch **sólo** en /search vía defer.
+*   **Generación Automática**: El índice de búsqueda se genera **automáticamente en build-time**.
+*   **Script**: Un script de integración lee las Content Collections y genera el JSON de MiniSearch.
+*   **Beneficio**: Garantiza que no existan enlaces rotos en los resultados de búsqueda y que el índice siempre esté sincronizado con el contenido real.
+*   **Cliente**: Carga diferida del script de búsqueda (JS) solo cuando el usuario interactúa con el buscador.
 
 ## **13\) Analítica & Consentimiento (Ligero)**
 
-* **Tracking server‑side** mediante rutas de salida.  
-* **Consentimiento**: banner sin JS.
+*   **Tracking server‑side** mediante rutas de salida.  
+*   **Consentimiento**: banner sin JS.
 
 ## **14\) Performance (Presupuesto y Métricas)**
 

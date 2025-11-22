@@ -14,11 +14,11 @@
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContactPage from "../../components/ContactPage.astro";
-import { l, t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 import esTranslations from "../../i18n/es.json";
 
 const lang = "es";
-
+const t = await useTranslations(lang);
 // Extract contact translations and flatten to match component usage
 const translations: Record<string, string> = {};
 const contactData = esTranslations.home.contact;

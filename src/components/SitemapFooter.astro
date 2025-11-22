@@ -48,8 +48,13 @@
  * @see arquitecture.md §9 - SEO/GEO & Datos Estructurados
  */
 
-import { t } from 'astro-i18n';
+import { useTranslations } from '@/utils/i18n';
 import { COUNTRY_CODES, getPriorityCountries, getRegularCountries } from '../data/countryCodes';
+
+// Inicializar traducciones
+const rawLocale = Astro.currentLocale || 'en';
+const locale = rawLocale.split('-')[0];
+const t = await useTranslations(locale);
 
 /**
  * Helper para traducir nombre de país según idioma actual
@@ -81,8 +86,9 @@ const regularCountries = getRegularCountries();
  * 
  * Idiomas soportados: en (English), es (Español), fr (Français)
  */
-const rawLocale = Astro.currentLocale || 'en';
-const locale = rawLocale.split('-')[0];
+// Idiomas soportados: en (English), es (Español), fr (Français)
+// const rawLocale = Astro.currentLocale || 'en'; // Ya declarado arriba
+// const locale = rawLocale.split('-')[0]; // Ya declarado arriba
 
 /**
  * Helper function para traducir con el idioma detectado
@@ -91,7 +97,7 @@ const locale = rawLocale.split('-')[0];
  * @param key - Clave de traducción en formato dot.notation (ej: 'footer.sitemap.title')
  * @returns Texto traducido según el idioma actual
  */
-const translate = (key: string) => t(key, undefined, { locale });
+const translate = (key: string) => t(key, { locale });
 
 /**
  * Función helper para construir rutas con prefijo de idioma correcto

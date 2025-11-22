@@ -19,7 +19,8 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-import { t } from "astro-i18n";
+const t = await useTranslations(locale);
+import { useTranslations } from "@/utils/i18n";
 ---
 
 <section
@@ -33,10 +34,10 @@ import { t } from "astro-i18n";
         id="pricing-cta-title"
         class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
       >
-        {t("home.pricingCTA.title", undefined, { locale })}
+        {t("home.pricingCTA.title", { locale })}
       </h2>
       <p class="text-lg md:text-xl text-gray-600">
-        {t("home.pricingCTA.subtitle", undefined, { locale })}
+        {t("home.pricingCTA.subtitle", { locale })}
       </p>
     </div>
 
@@ -59,7 +60,7 @@ import { t } from "astro-i18n";
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-gray-700 text-base md:text-lg leading-relaxed">
-            {t("home.pricingCTA.bullets.transparent", undefined, { locale })}
+            {t("home.pricingCTA.bullets.transparent", { locale })}
           </span>
         </li>
 
@@ -76,7 +77,7 @@ import { t } from "astro-i18n";
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-gray-700 text-base md:text-lg leading-relaxed">
-            {t("home.pricingCTA.bullets.comparison", undefined, { locale })}
+            {t("home.pricingCTA.bullets.comparison", { locale })}
           </span>
         </li>
 
@@ -94,7 +95,7 @@ import { t } from "astro-i18n";
           </svg>
           <span class="text-gray-700 text-base md:text-lg leading-relaxed">
             {
-              t("home.pricingCTA.bullets.recommendations", undefined, {
+              t("home.pricingCTA.bullets.recommendations", {
                 locale,
               })
             }
@@ -114,7 +115,7 @@ import { t } from "astro-i18n";
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-gray-700 text-base md:text-lg leading-relaxed">
-            {t("home.pricingCTA.bullets.breakdown", undefined, { locale })}
+            {t("home.pricingCTA.bullets.breakdown", { locale })}
           </span>
         </li>
       </ul>
@@ -124,9 +125,9 @@ import { t } from "astro-i18n";
         <a
           href={`/${locale === "en" ? "" : locale + "/"}calculadora`}
           class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-          aria-label={t("home.pricingCTA.cta", undefined, { locale })}
+          aria-label={t("home.pricingCTA.cta", { locale })}
         >
-          {t("home.pricingCTA.cta", undefined, { locale })}
+          {t("home.pricingCTA.cta", { locale })}
           <svg
             class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
             fill="none"

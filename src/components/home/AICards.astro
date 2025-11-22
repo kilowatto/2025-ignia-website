@@ -6,13 +6,14 @@
  * Section: #8 of Home
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 
 const getUrl = (path: string) => {
   return locale === "en" ? path : `/${locale}${path}`;
@@ -29,16 +30,16 @@ const getUrl = (path: string) => {
       <div
         class="inline-flex items-center justify-center px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-4"
       >
-        {t("home.ai.badge", undefined, { locale })}
+        {t("home.ai.badge", { locale })}
       </div>
       <h2
         id="ai-heading"
         class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
       >
-        {t("home.ai.title", undefined, { locale })}
+        {t("home.ai.title", { locale })}
       </h2>
       <p class="text-lg text-gray-600">
-        {t("home.ai.subtitle", undefined, { locale })}
+        {t("home.ai.subtitle", { locale })}
       </p>
     </div>
 
@@ -68,10 +69,10 @@ const getUrl = (path: string) => {
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
-            {t("home.ai.card1_title", undefined, { locale })}
+            {t("home.ai.card1_title", { locale })}
           </h3>
           <p class="text-base text-gray-600 text-center mb-6">
-            {t("home.ai.card1_description", undefined, { locale })}
+            {t("home.ai.card1_description", { locale })}
           </p>
           <ul class="space-y-3 mb-6">
             <li class="flex items-start">
@@ -87,7 +88,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card1_feature1", undefined, { locale })}
+                {t("home.ai.card1_feature1", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -103,7 +104,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card1_feature2", undefined, { locale })}
+                {t("home.ai.card1_feature2", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -119,7 +120,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card1_feature3", undefined, { locale })}
+                {t("home.ai.card1_feature3", { locale })}
               </span>
             </li>
           </ul>
@@ -127,7 +128,7 @@ const getUrl = (path: string) => {
             href={getUrl("/productos/gpu")}
             class="block w-full text-center px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
           >
-            {t("home.ai.cta", undefined, { locale })}
+            {t("home.ai.cta", { locale })}
           </a>
         </div>
       </article>
@@ -156,10 +157,10 @@ const getUrl = (path: string) => {
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
-            {t("home.ai.card2_title", undefined, { locale })}
+            {t("home.ai.card2_title", { locale })}
           </h3>
           <p class="text-base text-gray-600 text-center mb-6">
-            {t("home.ai.card2_description", undefined, { locale })}
+            {t("home.ai.card2_description", { locale })}
           </p>
           <ul class="space-y-3 mb-6">
             <li class="flex items-start">
@@ -175,7 +176,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card2_feature1", undefined, { locale })}
+                {t("home.ai.card2_feature1", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -191,7 +192,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card2_feature2", undefined, { locale })}
+                {t("home.ai.card2_feature2", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -207,7 +208,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card2_feature3", undefined, { locale })}
+                {t("home.ai.card2_feature3", { locale })}
               </span>
             </li>
           </ul>
@@ -215,7 +216,7 @@ const getUrl = (path: string) => {
             href={getUrl("/soluciones/ml-pipelines")}
             class="block w-full text-center px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-200"
           >
-            {t("home.ai.cta", undefined, { locale })}
+            {t("home.ai.cta", { locale })}
           </a>
         </div>
       </article>
@@ -244,10 +245,10 @@ const getUrl = (path: string) => {
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 text-center mb-4">
-            {t("home.ai.card3_title", undefined, { locale })}
+            {t("home.ai.card3_title", { locale })}
           </h3>
           <p class="text-base text-gray-600 text-center mb-6">
-            {t("home.ai.card3_description", undefined, { locale })}
+            {t("home.ai.card3_description", { locale })}
           </p>
           <ul class="space-y-3 mb-6">
             <li class="flex items-start">
@@ -263,7 +264,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card3_feature1", undefined, { locale })}
+                {t("home.ai.card3_feature1", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -279,7 +280,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card3_feature2", undefined, { locale })}
+                {t("home.ai.card3_feature2", { locale })}
               </span>
             </li>
             <li class="flex items-start">
@@ -295,7 +296,7 @@ const getUrl = (path: string) => {
                   clip-rule="evenodd"></path>
               </svg>
               <span class="ml-3 text-sm text-gray-700">
-                {t("home.ai.card3_feature3", undefined, { locale })}
+                {t("home.ai.card3_feature3", { locale })}
               </span>
             </li>
           </ul>
@@ -303,7 +304,7 @@ const getUrl = (path: string) => {
             href={getUrl("/soluciones/model-deployment")}
             class="block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-medium rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-all duration-200"
           >
-            {t("home.ai.cta", undefined, { locale })}
+            {t("home.ai.cta", { locale })}
           </a>
         </div>
       </article>

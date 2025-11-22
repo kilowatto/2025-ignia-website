@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 import { getSearchDataByLocale } from "../data/searchData";
 import { getSiteUrl } from "../utils/siteConfig";
 
@@ -24,7 +24,8 @@ const locale = (supportedLocales as readonly string[]).includes(requestedLocale)
   ? (requestedLocale as "en" | "es" | "fr")
   : "en";
 
-const translate = (key: string) => t(key, undefined, { locale });
+const t = await useTranslations(locale);
+const translate = (key: string) => t(key, { locale });
 
 const pageType = "SearchResultsPage";
 const layoutTitle = initialQuery
@@ -388,13 +389,13 @@ const structuredData = [
 
     // Actualizar filtros en la UI
     const categorySelect = document.getElementById(
-      "category-filter"
+      "category-filter",
     ) as HTMLSelectElement;
     const typeSelect = document.getElementById(
-      "type-filter"
+      "type-filter",
     ) as HTMLSelectElement;
     const sortSelect = document.getElementById(
-      "sort-select"
+      "sort-select",
     ) as HTMLSelectElement;
     const clearFiltersBtn = document.getElementById("clear-filters");
 
@@ -428,7 +429,7 @@ const structuredData = [
       query: string,
       filters: { category?: string; type?: string } = {},
       sort: string = "relevance",
-      page: number = 1
+      page: number = 1,
     ) {
       if (!query.trim()) {
         showEmptyState();
@@ -525,7 +526,7 @@ const structuredData = [
                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs bg-gray-50 text-gray-600 border border-gray-200">
                       #${tag}
                     </span>
-                  `
+                  `,
                     )
                     .join("")}
                 </div>
@@ -557,7 +558,7 @@ const structuredData = [
               </div>
             </div>
           </article>
-        `
+        `,
         )
         .join("");
 
@@ -577,7 +578,7 @@ const structuredData = [
         const regex = new RegExp(`(${word})`, "gi");
         highlightedText = highlightedText.replace(
           regex,
-          '<mark class="bg-yellow-200/70 text-yellow-900 font-medium px-1 rounded">$1</mark>'
+          '<mark class="bg-yellow-200/70 text-yellow-900 font-medium px-1 rounded">$1</mark>',
         );
       });
 
@@ -657,7 +658,7 @@ const structuredData = [
       document.querySelectorAll(".pagination-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           const newPage = parseInt(
-            (e.target as HTMLElement).dataset.page || "1"
+            (e.target as HTMLElement).dataset.page || "1",
           );
           currentPage = newPage;
           updateURL();
@@ -678,7 +679,7 @@ const structuredData = [
         const suggestions = getSearchSuggestions(
           query,
           locale as "en" | "es" | "fr",
-          5
+          5,
         );
 
         if (suggestions.length > 0) {
@@ -688,7 +689,7 @@ const structuredData = [
               <button class="suggestion-btn w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
                 ${suggestion}
               </button>
-            `
+            `,
             )
             .join("");
 
@@ -700,7 +701,7 @@ const structuredData = [
             btn.addEventListener("click", (e) => {
               const suggestion = (e.target as HTMLElement).textContent || "";
               const searchInput = document.getElementById(
-                "search-input"
+                "search-input",
               ) as HTMLInputElement;
               if (searchInput) {
                 searchInput.value = suggestion;

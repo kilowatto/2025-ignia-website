@@ -43,7 +43,7 @@ import {
   supportedLanguages,
   type SupportedLanguage,
 } from "../utils/languageDetection";
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 // Obtener el locale actual de Astro de forma más robusta
 const rawLocale = Astro.currentLocale || "en";
@@ -52,7 +52,8 @@ const locale = supportedLanguages.includes(baseLocale) ? baseLocale : "en";
 const currentPath = Astro.url?.pathname ?? "/";
 
 // Helper para traducir con el locale correcto
-const translate = (key: string) => t(key, undefined, { locale });
+const t = await useTranslations(locale);
+const translate = (key: string) => t(key, { locale });
 
 // Configuración de idiomas usando las utilidades
 const languages = Object.entries(languageNames).map(([code, info]) => ({
@@ -260,10 +261,10 @@ const currentLanguage =
       const menu = document.getElementById("language-menu");
       const arrow = document.getElementById("language-arrow");
       const mobileSelect = document.getElementById(
-        "language-select-mobile"
+        "language-select-mobile",
       ) as HTMLSelectElement | null;
       const mobileFlag = document.getElementById(
-        "language-flag-mobile"
+        "language-flag-mobile",
       ) as HTMLElement | null;
 
       const resetLanguageSuggestionState = () => {
@@ -370,7 +371,7 @@ const currentLanguage =
       document.querySelectorAll("[data-lang-switch]").forEach((link) => {
         link.addEventListener("click", (e) => {
           const targetLang = (e.currentTarget as HTMLElement).getAttribute(
-            "data-lang-switch"
+            "data-lang-switch",
           );
           if (targetLang) {
             resetLanguageSuggestionState();

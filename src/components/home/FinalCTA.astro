@@ -6,13 +6,14 @@
  * Section: #13 of Home (Final)
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 
 const getUrl = (path: string) => {
   return locale === "en" ? path : `/${locale}${path}`;
@@ -30,12 +31,12 @@ const getUrl = (path: string) => {
         id="final-cta-heading"
         class="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-6"
       >
-        {t("home.finalCTA.title", undefined, { locale })}
+        {t("home.finalCTA.title", { locale })}
       </h2>
 
       <!-- Subtitle -->
       <p class="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl mx-auto">
-        {t("home.finalCTA.subtitle", undefined, { locale })}
+        {t("home.finalCTA.subtitle", { locale })}
       </p>
 
       <!-- CTA Buttons -->
@@ -45,7 +46,7 @@ const getUrl = (path: string) => {
           href={getUrl("/calculadora")}
           class="inline-flex items-center px-8 py-4 bg-white text-orange-500 font-semibold text-lg rounded-lg shadow-lg hover:bg-gray-50 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
         >
-          {t("home.finalCTA.cta_primary", undefined, { locale })}
+          {t("home.finalCTA.cta_primary", { locale })}
           <svg
             class="ml-3 h-6 w-6"
             fill="none"
@@ -66,7 +67,7 @@ const getUrl = (path: string) => {
           href="#contact"
           class="inline-flex items-center px-8 py-4 bg-transparent text-white font-semibold text-lg rounded-lg border-2 border-white hover:bg-white hover:text-orange-500 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
         >
-          {t("home.finalCTA.cta_secondary", undefined, { locale })}
+          {t("home.finalCTA.cta_secondary", { locale })}
           <svg
             class="ml-3 h-6 w-6"
             fill="none"
@@ -101,7 +102,7 @@ const getUrl = (path: string) => {
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-sm font-medium"
-            >{t("home.finalCTA.trust1", undefined, { locale })}</span
+            >{t("home.finalCTA.trust1", { locale })}</span
           >
         </div>
 
@@ -118,7 +119,7 @@ const getUrl = (path: string) => {
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-sm font-medium"
-            >{t("home.finalCTA.trust2", undefined, { locale })}</span
+            >{t("home.finalCTA.trust2", { locale })}</span
           >
         </div>
 
@@ -135,7 +136,7 @@ const getUrl = (path: string) => {
               clip-rule="evenodd"></path>
           </svg>
           <span class="text-sm font-medium"
-            >{t("home.finalCTA.trust3", undefined, { locale })}</span
+            >{t("home.finalCTA.trust3", { locale })}</span
           >
         </div>
       </div>

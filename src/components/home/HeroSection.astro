@@ -20,7 +20,8 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-import { t } from "astro-i18n";
+const t = await useTranslations(locale);
+import { useTranslations } from "@/utils/i18n";
 
 // URL de placeholder con texto descriptivo
 const heroImageUrl =
@@ -39,13 +40,13 @@ const heroImageUrl =
           id="hero-title"
           class="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight"
         >
-          {t("home.hero.title", undefined, { locale })}
+          {t("home.hero.title", { locale })}
         </h1>
 
         <p
           class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0"
         >
-          {t("home.hero.subtitle", undefined, { locale })}
+          {t("home.hero.subtitle", { locale })}
         </p>
 
         <!-- CTAs -->
@@ -57,7 +58,7 @@ const heroImageUrl =
             href={`/${locale === "en" ? "" : locale + "/"}calculadora`}
             class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
           >
-            {t("home.hero.cta_primary", undefined, { locale })}
+            {t("home.hero.cta_primary", { locale })}
             <svg
               class="w-5 h-5 ml-2"
               fill="none"
@@ -78,7 +79,7 @@ const heroImageUrl =
             href={`/${locale === "en" ? "" : locale + "/"}contact`}
             class="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-medium text-gray-900 bg-white border-2 border-gray-900 rounded-lg hover:bg-gray-900 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
           >
-            {t("home.hero.cta_secondary", undefined, { locale })}
+            {t("home.hero.cta_secondary", { locale })}
           </a>
         </div>
       </div>
@@ -87,7 +88,7 @@ const heroImageUrl =
       <div class="relative z-10">
         <img
           src="/hero.png"
-          alt={t("home.hero.title", undefined, { locale })}
+          alt={t("home.hero.title", { locale })}
           width="1023"
           height="471"
           fetchpriority="high"

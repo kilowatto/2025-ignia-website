@@ -6,13 +6,14 @@
  * Section: #6 of Home
  */
 
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 
 const getUrl = (path: string) => {
   return locale === "en" ? path : `/${locale}${path}`;
@@ -27,10 +28,10 @@ const getUrl = (path: string) => {
         id="products-heading"
         class="text-3xl md:text-4xl font-light text-gray-900 mb-4"
       >
-        {t("home.products.title", undefined, { locale })}
+        {t("home.products.title", { locale })}
       </h2>
       <p class="text-lg text-gray-600">
-        {t("home.products.subtitle", undefined, { locale })}
+        {t("home.products.subtitle", { locale })}
       </p>
     </div>
 
@@ -58,17 +59,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product1_title", undefined, { locale })}
+            {t("home.products.product1_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product1_description", undefined, { locale })}
+          {t("home.products.product1_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/vms")}
           class="text-sm text-orange-500 hover:text-orange-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -92,17 +93,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product2_title", undefined, { locale })}
+            {t("home.products.product2_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product2_description", undefined, { locale })}
+          {t("home.products.product2_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/kubernetes")}
           class="text-sm text-blue-500 hover:text-blue-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -126,17 +127,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product3_title", undefined, { locale })}
+            {t("home.products.product3_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product3_description", undefined, { locale })}
+          {t("home.products.product3_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/storage")}
           class="text-sm text-green-500 hover:text-green-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -160,17 +161,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product4_title", undefined, { locale })}
+            {t("home.products.product4_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product4_description", undefined, { locale })}
+          {t("home.products.product4_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/networking")}
           class="text-sm text-purple-500 hover:text-purple-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -194,17 +195,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product5_title", undefined, { locale })}
+            {t("home.products.product5_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product5_description", undefined, { locale })}
+          {t("home.products.product5_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/backup")}
           class="text-sm text-red-500 hover:text-red-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -228,17 +229,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product6_title", undefined, { locale })}
+            {t("home.products.product6_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product6_description", undefined, { locale })}
+          {t("home.products.product6_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/security")}
           class="text-sm text-yellow-600 hover:text-yellow-700 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -262,17 +263,17 @@ const getUrl = (path: string) => {
             ></path>
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
-            {t("home.products.product7_title", undefined, { locale })}
+            {t("home.products.product7_title", { locale })}
           </h3>
         </div>
         <p class="text-sm text-gray-600 mb-4">
-          {t("home.products.product7_description", undefined, { locale })}
+          {t("home.products.product7_description", { locale })}
         </p>
         <a
           href={getUrl("/productos/monitoring")}
           class="text-sm text-indigo-500 hover:text-indigo-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
 
@@ -297,7 +298,7 @@ const getUrl = (path: string) => {
           </svg>
           <h3 class="ml-3 text-lg font-semibold text-gray-900">
             {
-              t("header.sections.products.items.mdm.title", undefined, {
+              t("header.sections.products.items.mdm.title", {
                 locale,
               })
             }
@@ -305,7 +306,7 @@ const getUrl = (path: string) => {
         </div>
         <p class="text-sm text-gray-600 mb-4">
           {
-            t("header.sections.products.items.mdm.description", undefined, {
+            t("header.sections.products.items.mdm.description", {
               locale,
             })
           }
@@ -314,7 +315,7 @@ const getUrl = (path: string) => {
           href={getUrl("/productos/mdm")}
           class="text-sm text-cyan-500 hover:text-cyan-600 font-medium"
         >
-          {t("home.products.cta", undefined, { locale })} →
+          {t("home.products.cta", { locale })} →
         </a>
       </article>
     </div>

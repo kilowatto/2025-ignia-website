@@ -25,14 +25,14 @@
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import StatusPage from "../../components/StatusPage.astro";
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 // Forzar locale francés
 const locale = "fr" as const;
-
+const t = await useTranslations(locale);
 // Metadatos SEO
-const pageTitle = t("status.meta.title", undefined, { locale });
-const pageDescription = t("status.meta.description", undefined, { locale });
+const pageTitle = t("status.meta.title", { locale });
+const pageDescription = t("status.meta.description", { locale });
 
 // JSON-LD para WebPage (§9: Datos Estructurados)
 const structuredData = [

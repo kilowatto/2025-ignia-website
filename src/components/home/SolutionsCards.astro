@@ -5,13 +5,14 @@
  * Architecture: Zero JS, 100% Tailwind, WCAG 2.2 AA, i18n compliant.
  * Section: #5 of Home
  */
-import { t } from "astro-i18n";
+import { useTranslations } from "@/utils/i18n";
 
 interface Props {
   locale?: "en" | "es" | "fr";
 }
 
 const { locale = "en" } = Astro.props;
+const t = await useTranslations(locale);
 
 // Build URL helper for CTAs, respecting the current language
 const getUrl = (path: string) => {
@@ -102,10 +103,10 @@ const solutions = [
         id="solutions-heading"
         class="text-3xl font-extrabold text-gray-900 sm:text-4xl"
       >
-        {t("home.solutions.title", undefined, { locale })}
+        {t("home.solutions.title", { locale })}
       </h2>
       <p class="mt-4 text-xl text-gray-600">
-        {t("home.solutions.subtitle", undefined, { locale })}
+        {t("home.solutions.subtitle", { locale })}
       </p>
     </div>
 
@@ -126,11 +127,11 @@ const solutions = [
                   <Fragment set:html={solution.icon} />
                 </span>
                 <h3 class="ml-4 text-2xl font-semibold text-gray-900">
-                  {t(solution.titleKey, undefined, { locale })}
+                  {t(solution.titleKey, { locale })}
                 </h3>
               </div>
               <p class="text-base text-gray-600 mb-6">
-                {t(solution.descriptionKey, undefined, { locale })}
+                {t(solution.descriptionKey, { locale })}
               </p>
               <ul class="space-y-3 mb-6">
                 {solution.features.map((featureKey) => (
@@ -148,7 +149,7 @@ const solutions = [
                       />
                     </svg>
                     <span class="ml-3 text-sm text-gray-700">
-                      {t(featureKey, undefined, { locale })}
+                      {t(featureKey, { locale })}
                     </span>
                   </li>
                 ))}
@@ -159,7 +160,7 @@ const solutions = [
                 href={getUrl(solution.urlPath)}
                 class="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors duration-200"
               >
-                {t("home.solutions.cta", undefined, { locale })}
+                {t("home.solutions.cta", { locale })}
                 <svg
                   class="ml-2 h-5 w-5"
                   fill="none"
