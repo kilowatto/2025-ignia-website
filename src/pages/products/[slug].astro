@@ -1,0 +1,217 @@
+---
+import { getCollection } from "astro:content";
+
+export const prerender = true;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "@/utils/i18n";
+
+export async function getStaticPaths() {
+    const products = await getCollection("products", ({ id }) =>
+        id.startsWith("en/"),
+    );
+    return products.map((product) => ({
+        params: { slug: product.slug.split("/").pop() },
+        props: { product },
+    }));
+}
+
+const { product } = Astro.props;
+const { data } = product;
+const t = await useTranslations("en");
+
+// Icons map for features
+const iconMap: Record<string, string> = {
+    storage:
+        '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>',
+    os: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>',
+    network:
+        '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>',
+    shield: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>',
+};
+---
+
+<BaseLayout title={data.seo.title} description={data.seo.description}>
+    <!-- Hero Section -->
+    <section
+        class="relative bg-gradient-to-br from-gray-50 to-white pt-32 pb-20 overflow-hidden"
+    >
+        <div
+            class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"
+        >
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <div
+                        class="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium mb-6"
+                    >
+                        {t("products.label")}
+                    </div>
+                    <h1
+                        class="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                    >
+                        {data.title}
+                    </h1>
+                    <p class="text-2xl text-gray-500 font-light mb-8">
+                        {data.subtitle}
+                    </p>
+                    <p class="text-lg text-gray-600 mb-10 leading-relaxed">
+                        {data.description}
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a
+                            href="/contact"
+                            class="bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl"
+                        >
+                            {t("products.cta.start")}
+                        </a>
+                        <a
+                            href="#specs"
+                            class="bg-white text-gray-700 border border-gray-200 px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                        >
+                            {t("products.cta.specs")}
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 relative">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-full blur-3xl transform rotate-12"
+                    >
+                    </div>
+                    <img
+                        src={data.heroImage}
+                        alt={data.title}
+                        class="relative w-full h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                        width="800"
+                        height="600"
+                    />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specs Grid -->
+    <section id="specs" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            >
+                {
+                    Object.entries(data.specs).map(([key, value]) => (
+                        <div class="bg-gray-50 rounded-xl p-8 border border-gray-100 text-center hover:border-orange-200 transition-colors">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                {key}
+                            </h3>
+                            <p class="text-2xl font-bold text-gray-900">
+                                {String(value)}
+                            </p>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-16">
+                Key Features
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto"
+            >
+                {
+                    data.features.map((feature) => (
+                        <div class="flex gap-6">
+                            <div
+                                class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 text-orange-600"
+                                set:html={
+                                    feature.icon
+                                        ? iconMap[feature.icon]
+                                        : iconMap.default
+                                }
+                            />
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">
+                                    {feature.title}
+                                </h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-16">
+                Use Cases
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                {
+                    data.useCases.map(
+                        (
+                            useCase: { title: string; description: string },
+                            index: number,
+                        ) => (
+                            <div class="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-500" />
+                                <span class="text-4xl font-bold text-orange-100 absolute top-4 right-4">
+                                    {index + 1}
+                                </span>
+                                <h3 class="text-xl font-bold text-gray-900 mb-4 relative z-10">
+                                    {useCase.title}
+                                </h3>
+                                <p class="text-gray-600 relative z-10">
+                                    {useCase.description}
+                                </p>
+                            </div>
+                        ),
+                    )
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Solutions -->
+    <section class="py-20 bg-gray-900 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-12">Related Solutions</h2>
+            <div class="flex flex-wrap justify-center gap-6">
+                {
+                    data.relatedSolutions.map((slug: string) => (
+                        <a
+                            href={`/solutions/${slug}`}
+                            class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-full transition-colors border border-gray-700 hover:border-orange-500"
+                        >
+                            <span class="capitalize">
+                                {slug.replace(/-/g, " ")}
+                            </span>
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                                />
+                            </svg>
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+</BaseLayout>

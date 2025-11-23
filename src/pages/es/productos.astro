@@ -1,26 +1,46 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import SectionWrapper from "../../components/SectionWrapper.astro";
-import es from "../../i18n/es.json";
+import { getCollection } from "astro:content";
+import { useTranslations } from "@/utils/i18n";
 
-const { title, subtitle, hero_image, features } = es.section_pages.products;
+const locale = "es";
+const t = await useTranslations(locale);
+const products = await getCollection("products", ({ id }) => id.startsWith("es/"));
+
+const title = "Bloques de Alto Rendimiento";
+const subtitle = "Cómputo puro, almacenamiento NVMe y Kubernetes certificado.";
 ---
 
-<BaseLayout title={`${title} | Ignia Cloud`} description={subtitle}>
-  <SectionWrapper title={title} subtitle={subtitle} hero_image={hero_image}>
-    <div class="features-grid grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-      {
-        features && features.length > 0 ? (
-          features.map((feature) => (
-            <div class="feature-card p-6 border rounded-lg shadow-md">
-              <h3 class="text-2xl font-bold mb-2">{feature.title}</h3>
-              <p>{feature.description}</p>
-            </div>
-          ))
-        ) : (
-          <p>No hay características para mostrar en esta sección todavía.</p>
-        )
-      }
+<BaseLayout title="Productos | Ignia Cloud" description={subtitle}>
+  <!-- Hero Section -->
+  <section class="relative bg-gray-900 text-white pt-32 pb-20 overflow-hidden">
+    <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-10 pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10 text-center">
+      <h1 class="text-5xl lg:text-7xl font-bold mb-6 tracking-tight">{title}</h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">{subtitle}</p>
     </div>
-  </SectionWrapper>
+  </section>
+
+  <!-- Product Catalog Grid -->
+  <section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {products.map((product) => (
+          <a href={`/es/products/${product.slug.split('/').pop()}`} class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 flex flex-col">
+            <div class="h-48 mb-6 overflow-hidden rounded-xl bg-gray-100 relative group-hover:scale-105 transition-transform duration-500">
+               <img src={product.data.heroImage} alt={product.data.title} class="w-full h-full object-cover" />
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">{product.data.title}</h3>
+            <p class="text-gray-500 mb-6 flex-grow">{product.data.description}</p>
+            <div class="flex items-center text-orange-600 font-semibold">
+              Ver Especificaciones
+              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>

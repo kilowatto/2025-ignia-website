@@ -262,32 +262,53 @@
       "base": "/solutions/",
       "cloud": "/solutions/cloud-transformation/",
       "data": "/solutions/data-analytics/",
-      "digital": "/solutions/digital-transformation/"
+      "digital": "/solutions/digital-transformation/",
+      "nocaas": "/solutions/secureops-365/",
+      "privateCloudService": "/solutions/private-cloud-as-a-service/",
+      "privateCloudOnPremise": "/solutions/private-cloud-on-premise/",
+      "bcpDraas": "/solutions/business-resilience-draas/",
+      "kubernetesDevops": "/solutions/kubernetes-devops-platform/",
+      "complianceCloud": "/solutions/compliance-cloud-fintech/",
+      "regulatoryBackupArchival": "/solutions/regulatory-backup-archival/"
     },
     "products": {
       "base": "/products/",
       "platform": "/products/ignia-platform/",
       "studio": "/products/ignia-studio/",
-      "connect": "/products/ignia-connect/"
+      "connect": "/products/ignia-connect/",
+      "virtualMachines": "/products/virtual-machines/",
+      "kubernetesService": "/products/kubernetes-as-a-service/",
+      "blockStorage": "/products/block-storage/",
+      "objectStorage": "/products/object-storage/",
+      "cloudBackup": "/products/cloud-backup/",
+      "cloudFirewall": "/products/cloud-firewall/",
+      "dns": "/products/managed-dns/",
+      "loadBalancer": "/products/load-balancer/",
+      "mdm": "/products/mdm/",
+      "monitoring": "/products/monitoring/",
+      "patchManager": "/products/patch-manager/"
     },
     "ai": {
       "base": "/ai/",
       "consulting": "/ai/consulting/",
       "implementation": "/ai/implementation/",
-      "models": "/ai/custom-models/"
+      "models": "/ai/custom-models/",
+      "llmHosting": "/ai/llm-hosting/",
+      "ragBlueprints": "/ai/rag-blueprints/",
+      "copilotStudio": "/ai/copilot-studio/",
+      "mlopsMonitoring": "/ai/mlops-monitoring/"
     },
     "services": {
       "base": "/services/",
       "consulting": "/services/consulting/",
       "development": "/services/development/",
-      "support": "/services/support/"
-    },
-    "common": {
-      "home": "/",
-      "contact": "/contact/",
-      "about": "/about/"
+      "support": "/services/support/",
+      "managedIt": "/services/managed-it/",
+      "cloudConsulting": "/services/cloud-consulting/",
+      "supportCenter": "/services/support-center/"
     },
     "corporate": {
+      "base": "/corporate/",
       "press": "/press/",
       "offices": "/offices/",
       "about": "/about-us/",
@@ -295,6 +316,13 @@
       "careers": "/careers/",
       "partners": "/partners/",
       "status": "/status/"
+    }
+  },
+  "products": {
+    "label": "Products",
+    "cta": {
+      "start": "Start Now",
+      "specs": "View Specs"
     }
   },
   "404": {

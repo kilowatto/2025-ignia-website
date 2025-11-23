@@ -259,51 +259,74 @@
   },
   "routes": {
     "solutions": {
-      "base": "/solutions/",
-      "nocaas": "/solutions/nocaas/",
-      "privateCloudService": "/solutions/private-cloud-as-a-service/",
-      "privateCloudOnPremise": "/solutions/private-cloud-on-premise/",
-      "bcpDraas": "/solutions/bcp-draas/",
-      "kubernetesDevops": "/solutions/kubernetes-devops-platform/",
-      "complianceCloud": "/solutions/compliance-cloud/",
-      "regulatoryBackupArchival": "/solutions/regulatory-backup-archival/"
+      "base": "/fr/solutions/",
+      "cloud": "/fr/solutions/transformation-cloud/",
+      "data": "/fr/solutions/analyse-donnees/",
+      "digital": "/fr/solutions/transformation-numerique/",
+      "nocaas": "/fr/solutions/secureops-365/",
+      "privateCloudService": "/fr/solutions/cloud-prive-en-tant-que-service/",
+      "privateCloudOnPremise": "/fr/solutions/cloud-prive-sur-site/",
+      "bcpDraas": "/fr/solutions/resilience-entreprise-draas/",
+      "kubernetesDevops": "/fr/solutions/plateforme-devops-kubernetes/",
+      "complianceCloud": "/fr/solutions/cloud-conformite-fintech/",
+      "regulatoryBackupArchival": "/fr/solutions/sauvegarde-reglementaire-archivage/"
     },
     "products": {
-      "base": "/produits/",
-      "virtualMachines": "/produits/virtual-machines/",
-      "kubernetesService": "/produits/kubernetes-as-a-service/",
-      "blockStorage": "/produits/block-storage/",
-      "objectStorage": "/produits/object-storage/",
-      "cloudBackup": "/produits/cloud-backup/",
-      "cloudFirewall": "/produits/cloud-firewall/",
-      "dns": "/produits/dns/",
-      "loadBalancer": "/produits/load-balancer/"
+      "base": "/fr/produits/",
+      "platform": "/fr/produits/plateforme-ignia/",
+      "studio": "/fr/produits/studio-ignia/",
+      "connect": "/fr/produits/ignia-connect/",
+      "virtualMachines": "/fr/produits/machines-virtuelles/",
+      "kubernetesService": "/fr/produits/kubernetes-en-tant-que-service/",
+      "blockStorage": "/fr/produits/stockage-bloc/",
+      "objectStorage": "/fr/produits/stockage-objet/",
+      "cloudBackup": "/fr/produits/sauvegarde-cloud/",
+      "cloudFirewall": "/fr/produits/pare-feu-cloud/",
+      "dns": "/fr/produits/dns-gere/",
+      "loadBalancer": "/fr/produits/equilibreur-charge/",
+      "mdm": "/fr/produits/mdm/",
+      "monitoring": "/fr/produits/surveillance/",
+      "patchManager": "/fr/produits/gestionnaire-correctifs/"
     },
     "ai": {
-      "base": "/ia/",
-      "llmHosting": "/ia/llm-hosting/",
-      "ragBlueprints": "/ia/rag-blueprints/",
-      "copilotStudio": "/ia/copilots/",
-      "mlopsMonitoring": "/ia/mlops/"
+      "base": "/fr/ia/",
+      "consulting": "/fr/ia/conseil/",
+      "implementation": "/fr/ia/mise-en-oeuvre/",
+      "models": "/fr/ia/modeles-personnalises/",
+      "llmHosting": "/fr/ia/hebergement-llm/",
+      "ragBlueprints": "/fr/ia/blueprints-rag/",
+      "copilotStudio": "/fr/ia/studio-copilot/",
+      "mlopsMonitoring": "/fr/ia/surveillance-mlops/"
     },
     "services": {
-      "base": "/services/",
-      "managedIt": "/services/managed-it/",
-      "cloudConsulting": "/services/conseil-cloud/",
-      "supportCenter": "/services/support/"
+      "base": "/fr/services/",
+      "consulting": "/fr/services/conseil/",
+      "development": "/fr/services/developpement/",
+      "support": "/fr/services/support/",
+      "managedIt": "/fr/services/informatique-geree/",
+      "cloudConsulting": "/fr/services/conseil-cloud/",
+      "supportCenter": "/fr/services/centre-support/"
     },
     "common": {
       "blog": "/blog/",
       "contact": "/contact/"
     },
     "corporate": {
-      "press": "/press/",
-      "offices": "/offices/",
-      "about": "/about-us/",
-      "team": "/team/",
-      "careers": "/careers/",
-      "partners": "/partners/",
-      "status": "/status/"
+      "base": "/fr/entreprise/",
+      "press": "/fr/presse/",
+      "offices": "/fr/bureaux/",
+      "about": "/fr/a-propos/",
+      "team": "/fr/equipe/",
+      "careers": "/fr/carrieres/",
+      "partners": "/fr/partenaires/",
+      "status": "/fr/statut/"
+    }
+  },
+  "products": {
+    "label": "Produits",
+    "cta": {
+      "start": "Commencer",
+      "specs": "Voir les Spécifications"
     }
   },
   "404": {

@@ -1,0 +1,204 @@
+---
+import { getCollection } from "astro:content";
+export const prerender = true;
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "@/utils/i18n";
+
+export async function getStaticPaths() {
+    const solutions = await getCollection("solutions", ({ id }) =>
+        id.startsWith("en/"),
+    );
+    return solutions.map((solution) => ({
+        params: { slug: solution.slug.split("/").pop() },
+        props: { solution },
+    }));
+}
+
+const { solution } = Astro.props;
+const { data } = solution;
+const t = await useTranslations("en");
+
+// Icons map for features
+const iconMap: Record<string, string> = {
+    monitor: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>',
+    shield: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>',
+    clock: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+    document: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>',
+    server: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>',
+    scale: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>',
+    stack: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>',
+    network: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>',
+    kubernetes: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>',
+    pipeline: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>',
+    chart: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" /></svg>',
+    lock: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>',
+    map: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+    key: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>',
+};
+---
+
+<BaseLayout title={data.seo.title} description={data.seo.description}>
+    <!-- Hero Section -->
+    <section
+        class="relative bg-gradient-to-br from-gray-900 to-gray-800 pt-32 pb-20 overflow-hidden text-white"
+    >
+        <div
+            class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-10 pointer-events-none"
+        >
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <div
+                        class="inline-flex items-center px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-sm font-medium mb-6 border border-orange-500/30"
+                    >
+                        {t("header.sections.solutions.label")}
+                    </div>
+                    <h1
+                        class="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+                    >
+                        {data.title}
+                    </h1>
+                    <p class="text-2xl text-gray-300 font-light mb-8">
+                        {data.subtitle}
+                    </p>
+                    <p class="text-lg text-gray-400 mb-10 leading-relaxed">
+                        {data.description}
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a
+                            href="/contact"
+                            class="bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors shadow-lg hover:shadow-orange-900/50"
+                        >
+                            {t("products.cta.start")}
+                        </a>
+                        <a
+                            href="#features"
+                            class="bg-transparent text-white border border-gray-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                        >
+                            {t("products.cta.specs")}
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 relative">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-purple-500/20 rounded-full blur-3xl transform rotate-12"
+                    >
+                    </div>
+                    <img
+                        src={data.heroImage}
+                        alt={data.title}
+                        class="relative w-full h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                        width="800"
+                        height="600"
+                    />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-16">
+                Key Features
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto"
+            >
+                {
+                    data.features.map((feature) => (
+                        <div class="flex gap-6">
+                            <div
+                                class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 text-orange-600"
+                                set:html={
+                                    feature.icon
+                                        ? iconMap[feature.icon]
+                                        : iconMap.default
+                                }
+                            />
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">
+                                    {feature.title}
+                                </h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-16">
+                Why Choose This Solution?
+            </h2>
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                {
+                    data.benefits.map(
+                        (
+                            benefit: { title: string; description: string },
+                            index: number,
+                        ) => (
+                            <div class="bg-white rounded-xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-500" />
+                                <span class="text-4xl font-bold text-orange-100 absolute top-4 right-4">
+                                    {index + 1}
+                                </span>
+                                <h3 class="text-xl font-bold text-gray-900 mb-4 relative z-10">
+                                    {benefit.title}
+                                </h3>
+                                <p class="text-gray-600 relative z-10">
+                                    {benefit.description}
+                                </p>
+                            </div>
+                        ),
+                    )
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    {
+        data.relatedProducts && (
+            <section class="py-20 bg-gray-900 text-white">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-3xl font-bold mb-12">Built With</h2>
+                    <div class="flex flex-wrap justify-center gap-6">
+                        {data.relatedProducts.map((slug: string) => (
+                            <a
+                                href={`/products/${slug}`}
+                                class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-full transition-colors border border-gray-700 hover:border-orange-500"
+                            >
+                                <span class="capitalize">
+                                    {slug.replace(/-/g, " ")}
+                                </span>
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                                    />
+                                </svg>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        )
+    }
+</BaseLayout>

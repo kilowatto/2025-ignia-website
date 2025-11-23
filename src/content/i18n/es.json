@@ -259,42 +259,70 @@
   },
   "routes": {
     "solutions": {
-      "base": "/soluciones/",
-      "cloud": "/soluciones/transformacion-cloud/",
-      "data": "/soluciones/analisis-de-datos/",
-      "digital": "/soluciones/transformacion-digital/"
+      "base": "/es/soluciones/",
+      "cloud": "/es/soluciones/transformacion-nube/",
+      "data": "/es/soluciones/analitica-datos/",
+      "digital": "/es/soluciones/transformacion-digital/",
+      "nocaas": "/es/soluciones/secureops-365/",
+      "privateCloudService": "/es/soluciones/nube-privada-como-servicio/",
+      "privateCloudOnPremise": "/es/soluciones/nube-privada-on-premise/",
+      "bcpDraas": "/es/soluciones/resiliencia-empresarial-draas/",
+      "kubernetesDevops": "/es/soluciones/plataforma-devops-kubernetes/",
+      "complianceCloud": "/es/soluciones/nube-cumplimiento-fintech/",
+      "regulatoryBackupArchival": "/es/soluciones/respaldo-regulatorio-archivo/"
     },
     "products": {
-      "base": "/productos/",
-      "platform": "/productos/plataforma-ignia/",
-      "studio": "/productos/ignia-studio/",
-      "connect": "/productos/ignia-connect/"
+      "base": "/es/productos/",
+      "platform": "/es/productos/plataforma-ignia/",
+      "studio": "/es/productos/estudio-ignia/",
+      "connect": "/es/productos/ignia-connect/",
+      "virtualMachines": "/es/productos/maquinas-virtuales/",
+      "kubernetesService": "/es/productos/kubernetes-como-servicio/",
+      "blockStorage": "/es/productos/almacenamiento-bloque/",
+      "objectStorage": "/es/productos/almacenamiento-objetos/",
+      "cloudBackup": "/es/productos/respaldo-nube/",
+      "cloudFirewall": "/es/productos/firewall-nube/",
+      "dns": "/es/productos/dns-gestionado/",
+      "loadBalancer": "/es/productos/balanceador-carga/",
+      "mdm": "/es/productos/mdm/",
+      "monitoring": "/es/productos/monitorizacion/",
+      "patchManager": "/es/productos/gestor-parches/"
     },
     "ai": {
-      "base": "/IA/",
-      "consulting": "/IA/consultoria/",
-      "implementation": "/IA/implementacion/",
-      "models": "/IA/modelos-personalizados/"
+      "base": "/es/ia/",
+      "consulting": "/es/ia/consultoria/",
+      "implementation": "/es/ia/implementacion/",
+      "models": "/es/ia/modelos-personalizados/",
+      "llmHosting": "/es/ia/alojamiento-llm/",
+      "ragBlueprints": "/es/ia/blueprints-rag/",
+      "copilotStudio": "/es/ia/estudio-copilot/",
+      "mlopsMonitoring": "/es/ia/monitorizacion-mlops/"
     },
     "services": {
-      "base": "/servicios/",
-      "consulting": "/servicios/consultoria/",
-      "development": "/servicios/desarrollo/",
-      "support": "/servicios/soporte/"
-    },
-    "common": {
-      "home": "/",
-      "contact": "/contacto/",
-      "about": "/acerca-de/"
+      "base": "/es/servicios/",
+      "consulting": "/es/servicios/consultoria/",
+      "development": "/es/servicios/desarrollo/",
+      "support": "/es/servicios/soporte/",
+      "managedIt": "/es/servicios/ti-gestionada/",
+      "cloudConsulting": "/es/servicios/consultoria-nube/",
+      "supportCenter": "/es/servicios/centro-soporte/"
     },
     "corporate": {
-      "press": "/press/",
-      "offices": "/offices/",
-      "about": "/about-us/",
-      "team": "/team/",
-      "careers": "/careers/",
-      "partners": "/partners/",
-      "status": "/status/"
+      "base": "/es/corporativo/",
+      "press": "/es/prensa/",
+      "offices": "/es/oficinas/",
+      "about": "/es/nosotros/",
+      "team": "/es/equipo/",
+      "careers": "/es/carreras/",
+      "partners": "/es/socios/",
+      "status": "/es/estado/"
+    }
+  },
+  "products": {
+    "label": "Productos",
+    "cta": {
+      "start": "Empezar Ahora",
+      "specs": "Ver Especificaciones"
     }
   },
   "404": {

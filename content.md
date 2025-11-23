@@ -260,19 +260,151 @@ Infrastructure is dangerous when left alone. That's why SecureOps 360° is a sta
 
 ### **3.1. PRODUCT CATALOG & DETAILS**
 
-Product | Short Description (Card Copy) | Key "Anti-Vendor" Feature  
-\--- | \--- | \---  
-Virtual Machines | Compute guarded by SecureOps. NVMe-backed VMs with Ubuntu Pro included. | Ubuntu Pro Included: Security patching for 30k+ packages. No hidden CPU steal.  
-Kubernetes K8s | Pure upstream K8s. The robust foundation for scaling your Agentic swarms. | SecureOps Included: We manage control plane updates and node security. Zero lock-in.  
-Block Storage | High IOPS for databases. NVMe-backed volumes attached instantly. | Predictable performance. SecureOps monitors disk health proactively.  
-Object Storage | S3-Compatible infinite bucket. Store assets, backups, and logs. | Standard API. Plug-and-play with AWS S3 tools.  
-Cloud Backup | Snapshot-based protection. Granular recovery for files or full images. | Deduplication built-in to save storage costs.  
-Cloud Firewall | Network edge security. Manage rules visually before traffic hits your server. | Free DDoS protection included and monitored by the NOC.  
-Managed DNS | Global lookup speed. Resilient DNS infrastructure with Geo-routing. | Anycast network for low latency queries.  
-Load Balancer | Traffic distribution. Layer 4/7 balancing with SSL termination. | Auto-scaling based on active connections.  
-MDM | Mobile Fleet Control. Secure phones and laptops outside the office. | Remote wipe & policy enforcement.  
-Monitoring | Full-stack visibility. Dashboards for infrastructure and APM. | "Larry" analyzes these metrics for you.  
-Patch Manager | Vulnerability killer. Auto-update OS and 3rd party apps. | Test patches before deploying to production.
+**Global Note:** Unlike commodity cloud providers, **Ignia Cloud Products** are never sold "naked". Every compute unit includes **SecureOps 360° Basic** (Monitoring \+ Patching) to ensure the ecosystem remains healthy and secure.
+
+#### **COMPUTE**
+
+**1\. Virtual Machines (The Workhorses)**
+
+* **Concept:** High-performance compute instances built on Canonical OpenStack. No shared vCPU stealing; you get the cycles you pay for.  
+* **The Specs:**  
+  * **Storage:** 100% NVMe Local or Block Storage.  
+  * **OS:** **Ubuntu Pro** included (10-year security patching for Kernel \+ 30,000 Universe packages like Python, Go, Node.js). Windows Server Standard/Datacenter available.  
+  * **Network:** 1 Gbps Unmetered Internet \+ 200 Gbps Internal Backbone.  
+* **SecureOps Included:** We handle the OS updates, monitor CPU/RAM spikes, and ensure the hypervisor is hardened.  
+* **Use Cases:**  
+  1. **Legacy App Migration:** Move your monolith "as-is" to a faster home.  
+  2. **High-Traffic Web Servers:** Nginx/Apache clusters that need raw speed.  
+  3. **Database Nodes:** MySQL/Postgres instances demanding low-latency disk I/O.
+
+**2\. Kubernetes as a Service (The Engine)**
+
+* **Concept:** Pure upstream Kubernetes. No vendor-specific API modifications. Portable, scalable, and certified by the Cloud Native Computing Foundation (CNCF).  
+* **The Advantage:**  
+  * **Canonical Charmed Kubernetes:** We use the same tech that powers global telcos.  
+  * **Auto-Healing:** Nodes that fail are automatically replaced.  
+  * **Shamanops Ready:** Pre-configured to work instantly with our No-Code DevOps platform.  
+* **SecureOps Included:** We manage the Control Plane updates, worker node security patching, and etcd backups. You focus on the Pods.  
+* **Use Cases:**  
+  1. **Microservices Architecture:** Breaking down monoliths into scalable containers.  
+  2. **AI/ML Workloads:** Orchestrating training jobs across GPU nodes.  
+  3. **CI/CD Pipelines:** Ephemeral build agents that scale up and down.
+
+#### **STORAGE**
+
+**3\. Block Storage (The Expansion Pack)**
+
+* **Concept:** Enterprise-grade Ceph block storage on NVMe. Designed to be attached to standalone VMs or used as a massive "Burst Buffer" for our Private Cloud clusters.  
+* **The "Elastic Private Cloud" Advantage:**  
+  * **Extend your Dedicated Cluster:** Clients of our **Private Cloud as a Service (Section 2.2)** usually run on fixed dedicated storage nodes. When that fills up, you don't need to buy another expensive physical server.  
+  * **Shared Ceph Integration:** You can instantly mount volumes from this shared Block Storage pool to your dedicated private cloud nodes. It gives you the scalability of the public cloud (pay-per-GB) while keeping your compute dedicated.  
+* **Performance Tiers (Optimized for Your Workload):**  
+  * **Capacity Tier (Smart Value):** Powered by **Erasure Coding** technology. This tier maximizes storage density and cost-efficiency without sacrificing data integrity. Ideal for logs, backups, and massive datasets where cost-per-GB is the priority.  
+  * **Balanced Tier (Production Ready):** The sweet spot for 80% of workloads. Uses **Triple Replication (3x)** for maximum availability. Delivers a consistent, guaranteed throughput of **1,500 IOPS**, perfect for Web Servers, CMS, and Application Logic.  
+  * **Extreme Tier (Mission Critical):** When speed is everything. Uses **Triple Replication (3x)** on premium NVMe lanes. Unleashes up to **10,000 IOPS** per volume to feed hungry SQL/NoSQL databases and AI training models that cannot afford to wait.  
+* **SecureOps Included:** Predictive failure monitoring. We monitor drive health and replace hardware before it breaks, ensuring your data is always available regardless of the tier.  
+* **Use Cases:**  
+  1. **Private Cloud Bursting:** Adding 50TB of "Capacity Tier" storage instantly to a dedicated cluster for archival.  
+  2. **Transactional Databases:** Running Oracle/Postgres on "Extreme Tier" volumes.  
+  3. **Web Farms:** Hosting Nginx clusters on "Balanced Tier" volumes.
+
+**4\. Object Storage (Scale)**
+
+* **Concept:** Infinite, S3-compatible bucket storage. Store petabytes of unstructured data accessible via API.  
+* **The Advantage:**  
+  * **S3 API:** Works with all your existing tools (AWS CLI, Veeam, Cyberduck).  
+  * **WORM Capable:** Supports "Object Lock" for immutable compliance data.  
+* **SecureOps Included:** Access logging and bucket policy auditing to prevent data leaks.  
+* **Use Cases:**  
+  1. **Backup Repositories:** Storing Veeam/Acronis backup chains.  
+  2. **Media Streaming:** Hosting video assets for global distribution.  
+  3. **Data Lakes:** Dumping raw IoT/Analytics data for future processing.
+
+**5\. Cloud Backup (Safety)**
+
+* **Concept:** Managed backup agent that protects files, applications, and system states.  
+* **The Tech:** Incremental forever strategy with deduplication to save storage costs.  
+* **SecureOps Included:** We monitor the success of every backup job. If it fails, we fix it. We also run random restoration tests.  
+* **Use Cases:**  
+  1. **Ransomware Recovery:** "Undo" an infection by restoring to yesterday.  
+  2. **Deleted File Recovery:** "Oops, I deleted the HR folder."  
+  3. **Compliance Archival:** Long-term retention policies.
+
+#### **NETWORK & SECURITY**
+
+**6\. Cloud Firewall (The Edge)**
+
+* **Concept:** A comprehensive, next-generation perimeter firewall based on open-source enterprise standards. It sits at the edge of your Private Cloud or VPC, filtering traffic before it ever reaches your servers.  
+* **The "Fortress" Capabilities:**  
+  * **Stateful Packet Inspection (SPI):** We don't just check ports; we analyze the state of every connection. Invalid packets are dropped instantly.  
+  * **IDS/IPS (Intrusion Prevention):** Built-in Deep Packet Inspection sensors (Snort/Suricata technology) sniff traffic for malicious signatures. If an attacker tries a known exploit, the firewall blocks them automatically.  
+  * **VPN Concentrator:** Stop paying "per-user" VPN fees. Our firewall supports unlimited **IPsec Site-to-Site** tunnels for branch offices and **OpenVPN/WireGuard** for remote workers.  
+  * **Geo-Blocking:** One-click blocking of entire countries or regions. If you don't do business in a specific country, why let their bots scan your network?  
+  * **Traffic Shaping (QoS):** Prioritize critical VoIP or Database traffic over bulk file downloads, ensuring your operations never lag.  
+* **SecureOps Included (NOC Level):** Firewalls are complex. Our NOC manages policy changes, monitors up/down status, and helps mitigate volumetric DDoS attacks.  
+* **SOC/SIEM Ready (Bring Your Own):**  
+  * **Important Distinction:** Ignia Cloud **does not** provide managed SOC (Security Operations Center) or SIEM analysis services. We manage the *infrastructure*, not the *forensics*.  
+  * **Universal Integration:** Our firewall is engineered to stream logs (Syslog/NetFlow) to **any** external SIEM (Splunk, Datadog, Wazuh) or SOAR platform.  
+  * **Vendor Neutral:** You are free to hire the MSSP or SOC provider of your choice. We provide the open pipes and access they need to protect you, without vendor lock-in.  
+* **Use Cases:**  
+  1. **Public Facing Web Apps:** Allow port 80/443 with Geo-Blocking enabled to reduce attack surface.  
+  2. **Secure Remote Work:** Providing encrypted access to internal ERPs for home-office employees.  
+  3. **VPC Isolation:** Creating DMZs and secure subnets for sensitive backend logic.
+
+**7\. Managed DNS (The Directory)**
+
+* **Headline:** Global Resolution. Two Architectures.  
+* **Sub-headline:** Whether you need the massive scale of the public edge or the granular control of private infrastructure, we manage the resolution.  
+* **Option A: The Global Edge (Powered by Cloudflare)**  
+  * **Concept:** We wrap the world's fastest DNS network with our managed service. You get **Cloudflare’s** 300+ city Anycast network, but *we* manage the records, the security policies, and the monitoring via SecureOps 360°.  
+  * **The Advantage:** 100% Uptime SLA, massive **DDoS Shield** included, and WAF integration ready.  
+  * **Best For:** Public-facing websites, E-commerce, and apps needing global speed and attack protection.  
+* **Option B: The Sovereign Core (Powered by Ignia Bind9)**  
+  * **Concept:** Hosted directly on our **Private Cloud** infrastructure using enterprise-grade **Bind9** clusters.  
+  * **The Advantage:** Fully integrated with our **Global Load Balancer (Product \#8)** for advanced traffic steering. Total sovereignty—your DNS records live on our metal, not a third-party public cloud.  
+  * **Best For:** Internal corporate networks, Split-Horizon DNS, or compliance requirements demanding data sovereignty.  
+* **SecureOps Included:** For both flavors, we handle the zone changes, DNSSEC rotation, and availability monitoring.
+
+**8\. Load Balancer (The Traffic Cop)**
+
+* **Concept:** Distribute incoming traffic across multiple servers to ensure uptime and speed.  
+* **The Tech:** Layer 4 (TCP) and Layer 7 (HTTP/HTTPS) balancing with SSL Offloading.  
+* **SecureOps Included:** We monitor the health checks. If a backend server dies, we alert you while the LB redirects traffic.  
+* **Use Cases:**  
+  1. **Horizontal Scaling:** Add more web servers during Black Friday; the LB fills them up evenly.  
+  2. **Blue/Green Deployment:** Route 10% of traffic to the new version to test it safely.  
+  3. **High Availability:** Ensure no single point of failure for critical apps.
+
+#### **MANAGEMENT**
+
+**9\. MDM \- Mobile Device Manager (The Fleet)**
+
+* **Concept:** Control your company's laptops and phones, wherever they are.  
+* **The Features:**  
+  * **Remote Wipe:** Lost laptop? Delete the data instantly.  
+  * **Policy Enforcement:** Force password complexity and disk encryption.  
+* **SecureOps Included:** We help you configure the policies and track lost devices.  
+* **Use Cases:**  
+  1. **Remote Work:** Securing laptops for employees working from coffee shops.  
+  2. **Sales Force:** Managing iPads/Tablets used by field agents.
+
+**10\. Monitoring (The Eyes)**
+
+* **Concept:** The "Site24x7" engine provided as a service. Dashboards for Infrastructure, APM, and User Experience.  
+* **The Value:** "Larry" (our AI) analyzes these metrics to find anomalies before they become outages.  
+* **SecureOps Included:** This IS the tool our NOC uses. We share our view with you.  
+* **Use Cases:**  
+  1. **Performance Tuning:** Finding which SQL query is slowing down the checkout.  
+  2. **Uptime Reporting:** Proving SLAs to your own customers.
+
+**11\. Patch Manager (The Vaccine)**
+
+* **Concept:** Automated vulnerability remediation.  
+* **The Scope:** Updates OS (Windows/Linux) AND 200+ third-party apps (Chrome, Java, Adobe).  
+* **SecureOps Included:** We schedule the patches, test them, and deploy them. You just get the green report.  
+* **Use Cases:**  
+  1. **Compliance:** Meeting ISO/PCI requirements for "up-to-date systems."  
+  2. **Zero-Day Defense:** Rapidly patching critical vulnerabilities like Log4j.
 
 ## **4\. SECTION: AI & LARRY**
 
